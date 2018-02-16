@@ -91,6 +91,11 @@ function render ()
 			brick.width, brick.height,
 			middle_x_px + curr_x, middle_y_px,
 			brickwidth_foreshortened_px, brickheight_px);
+		ctx.drawImage(brick,
+			-brick.width + brickoffs_x_srcpx, 0,
+			brick.width, brick.height,
+			middle_x_px + curr_x, middle_y_px,
+			brickwidth_foreshortened_px, brickheight_px);
 
 		curr_x += brickwidth_foreshortened_px;
 	}
