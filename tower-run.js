@@ -34,21 +34,21 @@ bctx = brick.getContext('2d');
 
 brickratio = 0.5;
 brick.width = 512;
-brick.height = brickratio * brick.width;
+brick.height = Math.floor(brickratio * brick.width);
 
 bctx.fillRect(0, 0, brick.width, brick.height);
 bctx.strokeRect(0, 0, brick.width, brick.height);
 
 function render ()
 {
-	const towerwidth_px = 0.8 * canv.width;
-	const towerradius_px = 0.5 * towerwidth_px;
+	const towerwidth_px = Math.floor(0.8 * canv.width);
+	const towerradius_px = Math.floor(0.5 * towerwidth_px);
 
-	const brickwidth_px = 2 * Math.PI * towerradius_px * brickwidth_rad;
-	const brickheight_px = brickratio * brickwidth_px;
+	const brickwidth_px = Math.floor(2 * Math.PI * towerradius_px * brickwidth_rad);
+	const brickheight_px = Math.floor(brickratio * brickwidth_px);
 
-	const middle_x_px = canv.width / 2;
-	const middle_y_px = canv.height / 2;
+	const middle_x_px = Math.floor(0.5 * canv.width);
+	const middle_y_px = Math.floor(0.5 * canv.height);
 
 	ctx.drawImage(brick, 0, 0, brick.width, brick.height,
 		middle_x_px, middle_y_px, brickwidth_px, brickheight_px);
