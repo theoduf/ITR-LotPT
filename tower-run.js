@@ -76,14 +76,17 @@ function render ()
 		 * Bottom row.
 		 */
 
-		/*
 		// Place brick on left half of screen.
 		ctx.drawImage(brick,
-			0, 0,
+			brickoffs_x_srcpx, 0,
 			brick.width, brick.height,
 			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px,
 			brickwidth_foreshortened_px, brickheight_px);
-		*/
+		ctx.drawImage(brick,
+			-brick.width + brickoffs_x_srcpx, 0,
+			brick.width, brick.height,
+			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px,
+			brickwidth_foreshortened_px, brickheight_px);
 
 		// Place brick on right half of screen.
 		ctx.drawImage(brick,
