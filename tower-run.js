@@ -58,11 +58,13 @@ function render ()
 	{
 		brickwidth_foreshortened_px = Math.floor(Math.cos((curr_x / towerradius_px) * 0.5 * Math.PI) * brickwidth_px);
 
-		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
-			middle_x_px + curr_x, middle_y_px, brickwidth_foreshortened_px, brickheight_px);
-
+		// Left half
 		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
 			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px, brickwidth_foreshortened_px, brickheight_px);
+
+		// Right half
+		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
+			middle_x_px + curr_x, middle_y_px, brickwidth_foreshortened_px, brickheight_px);
 
 		curr_x += brickwidth_foreshortened_px;
 		console.log(curr_x);
