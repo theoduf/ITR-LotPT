@@ -53,10 +53,19 @@ function render ()
 	const middle_x_px = Math.floor(0.5 * canv.width);
 	const middle_y_px = Math.floor(0.5 * canv.height);
 
+	// The two rows in the middle have no vertical distortion.
 	let curr_x = 0;
 	for (let i = 0 ; i < 10 ; i++)
 	{
 		brickwidth_foreshortened_px = Math.floor(Math.cos((curr_x / towerradius_px) * 0.5 * Math.PI) * brickwidth_px);
+
+		/*
+		 * Top row.
+		 */
+
+		/*
+		 * Bottom row.
+		 */
 
 		// Left half
 		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
