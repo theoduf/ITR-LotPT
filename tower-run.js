@@ -61,6 +61,9 @@ function render ()
 		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
 			middle_x_px + curr_x, middle_y_px, brickwidth_foreshortened_px, brickheight_px);
 
+		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
+			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px, brickwidth_foreshortened_px, brickheight_px);
+
 		curr_x += brickwidth_foreshortened_px;
 		console.log(curr_x);
 	}
