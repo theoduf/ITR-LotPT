@@ -36,8 +36,11 @@ brickratio = 0.5;
 brick.width = 512;
 brick.height = Math.floor(brickratio * brick.width);
 
+bctx.fillStyle = '#999';
 bctx.fillRect(0, 0, brick.width, brick.height);
-bctx.strokeRect(0, 0, brick.width, brick.height);
+bctx.strokeStyle = '#333';
+bctx.lineWidth = Math.floor(brick.width / 10);
+bctx.strokeRect(0.5, 0.5, brick.width, brick.height);
 
 function render ()
 {
