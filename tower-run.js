@@ -27,7 +27,7 @@ canv.height = window.innerHeight;
 // The width of a brick when viewed from the front is specified in radians.
 const brickwidth_rad = 2 * Math.PI / 360;
 
-const angular_velocity = 5 * brickwidth_rad; // Unit: radians / second
+const angular_velocity = 50 * brickwidth_rad; // Unit: radians / second
 
 brick = document.createElement('canvas');
 bctx = brick.getContext('2d');
@@ -42,8 +42,12 @@ bctx.strokeStyle = '#333';
 bctx.lineWidth = Math.floor(brick.width / 10);
 bctx.strokeRect(0.5, 0.5, brick.width, brick.height);
 
+let angle = 0;
+
 function render ()
 {
+	ctx.clearRect(0, 0, canv.width, canv.height);
+
 	const towerwidth_px = Math.floor(0.8 * canv.width);
 	const towerradius_px = Math.floor(0.5 * towerwidth_px);
 
@@ -52,6 +56,11 @@ function render ()
 
 	const middle_x_px = Math.floor(0.5 * canv.width);
 	const middle_y_px = Math.floor(0.5 * canv.height);
+
+	const brickoffs_x_pct = angle / (2 * Math.PI);
+	const brickoffs_x_srcpx = Math.floor(brickoffs_x_pct * brick.width);
+
+	ctx.fillText(brickoffs_x_srcpx, 64, 64);
 
 	// The two rows middle rows of bricks on screen have no vertical distortion.
 	let curr_x = 0;
@@ -67,21 +76,37 @@ function render ()
 		 * Bottom row.
 		 */
 
-		// Left half
-		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
-			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px, brickwidth_foreshortened_px, brickheight_px);
+		/*
+		// Place brick on left half of screen.
+		ctx.drawImage(brick,
+			0, 0,
+			brick.width, brick.height,
+			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px,
+			brickwidth_foreshortened_px, brickheight_px);
+		*/
 
-		// Right half
-		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
-			middle_x_px + curr_x, middle_y_px, brickwidth_foreshortened_px, brickheight_px);
+		// Place brick on right half of screen.
+		ctx.drawImage(brick,
+			brickoffs_x_srcpx, 0,
+			brick.width, brick.height,
+			middle_x_px + curr_x, middle_y_px,
+			brickwidth_foreshortened_px, brickheight_px);
 
 		curr_x += brickwidth_foreshortened_px;
-		console.log(curr_x);
 	}
 }
 
+let t_prev = Date.now();
+
 function run ()
 {
+	const t_now = Date.now();
+	const dt = t_now - t_prev;
+
+	angle = (angle + angular_velocity * dt / 1000) % (2 * Math.PI);
+
+	console.log(dt, angle);
+
 	// TODO: Update game object positions.
 
 	// TODO: Check positions.
@@ -89,6 +114,8 @@ function run ()
 	render();
 
 	window.requestAnimationFrame(run);
+
+	t_prev = t_now;
 }
 
 // TODO: Title screen.
