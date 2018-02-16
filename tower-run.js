@@ -53,8 +53,17 @@ function render ()
 	const middle_x_px = Math.floor(0.5 * canv.width);
 	const middle_y_px = Math.floor(0.5 * canv.height);
 
-	ctx.drawImage(brick, 0, 0, brick.width, brick.height,
-		middle_x_px, middle_y_px, brickwidth_px, brickheight_px);
+	let curr_x = 0;
+	for (let i = 0 ; i < 10 ; i++)
+	{
+		brickwidth_foreshortened_px = Math.floor(Math.cos((curr_x / towerradius_px) * 0.5 * Math.PI) * brickwidth_px);
+
+		ctx.drawImage(brick, 0, 0, brick.width, brick.height,
+			middle_x_px + curr_x, middle_y_px, brickwidth_foreshortened_px, brickheight_px);
+
+		curr_x += brickwidth_foreshortened_px;
+		console.log(curr_x);
+	}
 }
 
 function run ()
