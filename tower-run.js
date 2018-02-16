@@ -53,7 +53,7 @@ function render ()
 	const middle_x_px = Math.floor(0.5 * canv.width);
 	const middle_y_px = Math.floor(0.5 * canv.height);
 
-	// The two rows in the middle have no vertical distortion.
+	// The two rows middle rows of bricks on screen have no vertical distortion.
 	let curr_x = 0;
 	for (let i = 0 ; i < 10 ; i++)
 	{
