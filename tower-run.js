@@ -128,9 +128,11 @@ for (let i = 0 ; i < num_bricks_around ; i++)
 		brickwidth_fullpx, brickheight_fullpx);
 
 	// Brick-numbers (debug)
+	/*
 	actx.fillText(i,
 		brickwidth_fullpx * i + Math.ceil(0.2 * brickwidth_fullpx),
 		2 * brickheight_fullpx - Math.floor(0.2 * fontsize));
+	*/
 }
 
 const a_middle_x = Math.floor(0.5 * atomic_ring.width);
