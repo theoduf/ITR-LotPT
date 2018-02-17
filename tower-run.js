@@ -27,9 +27,9 @@ canv.height = window.innerHeight;
 
 // The width of a brick when viewed from the front is specified in radians.
 const num_bricks_around = 64;
-const brickwidth_rad = 0.25 * Math.PI / num_bricks_around;
+const brickwidth_rad = 2 * Math.PI / num_bricks_around;
 
-let angular_velocity = 8 * brickwidth_rad; // Unit: radians / second
+let angular_velocity = brickwidth_rad; // Unit: radians / second
 let angular_acceleration = 0; // Unit: rads / s^2
 
 // Bricks
@@ -78,9 +78,9 @@ for (let i = 0 ; i < num_bricks_around ; i++)
 		curr_x_top, 0,
 		brick.width, brick.height);
 
-	rctx.fillStyle = 'red';
-	rctx.font = '24px serif';
-	rctx.fillText(i, curr_x_top + 24, Math.ceil(brick.height / 2) + 6)
+	//rctx.fillStyle = 'red';
+	//rctx.font = '24px serif';
+	//rctx.fillText(i, curr_x_top + 24, Math.ceil(brick.height / 2) + 6)
 
 	/*
 	 * Bottom row.
