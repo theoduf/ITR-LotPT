@@ -62,9 +62,7 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 	angle_offset_pos_dir += angle_offset_pos_dir < 0 ? 2 * Math.PI : 0;
 	angle_offset_neg_dir += angle_offset_neg_dir < 0 ? 2 * Math.PI : 0;
 
-	//console.log(angle_offset_pos_dir, angle_offset_neg_dir);
-
-	let on_left_side, angle_offset;
+	let angle_offset;
 
 	if (angle_offset_pos_dir <= angle_offset_neg_dir)
 	{
@@ -77,43 +75,61 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 		angle_offset = angle_offset_neg_dir;
 	}
 
+	console.log(on_left_side, angle_offset);
+
+	let sign;
+
+	if (on_left_side)
+	{
+		sign = -1;
+	}
+	else
+	{
+		sign = 1;
+	}
+
 	if (angle_offset <= 0.5 * Math.PI)
 	{
-		let sign;
-
-		if (on_left_side)
-		{
-			sign = -1;
-		}
-		else
-		{
-			sign = 1;
-		}
-
-		const grad_middle_x_px = towerstart_x_px + towerradius_px + sign * Math.sin(angle_offset) * towerradius_px;
+		const grad_middle_x_px = towerstart_x_px + towerradius_px + Math.sin(sign * angle_offset) * towerradius_px;
 		const grad_right_width_px = towerradius_px;
 		const grad_left_width_px  = towerradius_px;
 
 		const grad_left = ctx.createLinearGradient(grad_middle_x_px - grad_left_width_px, Math.floor(0.5 * canv.height),
 			grad_middle_x_px, Math.floor(0.5 * canv.height));
 		grad_left.addColorStop(0, 'transparent');
-		grad_left.addColorStop(1, color);
-
-		const grad_right = ctx.createLinearGradient(grad_middle_x_px, Math.floor(0.5 * canv.height),
-			grad_middle_x_px + grad_right_width_px, Math.floor(0.5 * canv.height));
-		grad_right.addColorStop(0, color);
-		grad_right.addColorStop(1, 'transparent');
+		grad_left.addColorStop(1, 'red');
 
 		ctx.fillStyle = grad_left;
 		ctx.fillRect(grad_middle_x_px - grad_left_width_px, 0, grad_left_width_px, canv.height);
 
+		const grad_right = ctx.createLinearGradient(grad_middle_x_px, Math.floor(0.5 * canv.height),
+			grad_middle_x_px + grad_right_width_px, Math.floor(0.5 * canv.height));
+		grad_right.addColorStop(0, 'green');
+		grad_right.addColorStop(1, 'transparent');
+
 		ctx.fillStyle = grad_right;
 		ctx.fillRect(grad_middle_x_px, 0, grad_right_width_px, canv.height);
-
-		return true;
 	}
 
-	return false;
+	else if (angle_offset <= Math.PI && on_left_side)
+	{
+		const grad_middle_x_px = towerstart_x_px;
+		const grad_right_width_px = Math.sin(angle_offset) * towerradius_px;
+		console.log(grad_right_width_px);
+
+		const grad_right = ctx.createLinearGradient(grad_middle_x_px, Math.floor(0.5 * canv.height),
+			grad_middle_x_px + grad_right_width_px, Math.floor(0.5 * canv.height));
+		grad_right.addColorStop(0, 'blue');
+		grad_right.addColorStop(1, 'transparent');
+
+		ctx.fillStyle = grad_right;
+		ctx.fillRect(grad_middle_x_px, 0, grad_right_width_px, canv.height);
+	}
+
+	else if (angle_offset <= Math.PI && !on_left_side)
+	{
+		// TODO
+	}
 }
 
 function render ()
@@ -216,7 +232,7 @@ function render ()
 	 */
 
 	render_gradient_if_visible(0, 'rgba(255, 255, 255, 0.3)');
-	render_gradient_if_visible(Math.PI, 'rgba(0, 0, 0, 0.7)');
+	//render_gradient_if_visible(Math.PI, 'rgba(0, 0, 0, 0.7)');
 
 	// End highlight and shadow.
 
