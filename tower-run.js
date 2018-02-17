@@ -147,7 +147,7 @@ function bricks (angle)
 		const w_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI);
 		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx * w_frac_rad);
 
-		const h_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * Math.PI);
+		const h_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.25 * Math.PI);
 		const brickheight_foreshortened_dstpx = Math.ceil(brickheight_dstpx * h_frac_rad);
 
 		offset_dst_x_right += brickwidth_foreshortened_dstpx;
