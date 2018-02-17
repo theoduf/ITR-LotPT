@@ -134,7 +134,7 @@ function render ()
 	const brickheight_dstpx = brickwidth_dstpx * brickratio;
 
 	const offs_x_pct = angle / (2 * Math.PI);
-	const offs_x_srcpx = offs_x_pct * ring.width;
+	const src_offs_x_by_angle_px = offs_x_pct * ring.width;
 
 	const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
 
@@ -145,10 +145,22 @@ function render ()
 		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx *
 			Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI));
 
+		const src_offset_x_px = Math.floor(brick_pair_num * brick.width);
+		const dst_offset_center_x_px = towerstart_x_px + towerradius_px;
+		const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx
+
+		// Right half
 		ctx.drawImage(ring,
-			Math.floor(offs_x_srcpx + brick_pair_num * brick.width), 0,
-			brick.width, 2 * brick.height,
-			towerstart_x_px + towerradius_px + dstpos_x_px, Math.floor(0.5 * canv.height) - brickheight_dstpx,
+			src_offs_x_by_angle_px + src_offset_x_px, 0,
+			brick.width, ring.height,
+			dst_offset_center_x_px + dstpos_x_px, dst_y,
+			brickwidth_foreshortened_dstpx, brickheight_dstpx);
+
+		// Left half
+		ctx.drawImage(ring,
+			src_offs_x_by_angle_px - src_offset_x_px, 0,
+			brick.width, ring.height,
+			dst_offset_center_x_px - dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
 		dstpos_x_px += brickwidth_foreshortened_dstpx;
