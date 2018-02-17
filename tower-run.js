@@ -77,8 +77,6 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 		angle_offset = angle_offset_neg_dir;
 	}
 
-	console.log(on_left_side, angle_offset);
-
 	let sign;
 
 	if (on_left_side)
@@ -117,7 +115,6 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 	{
 		const grad_middle_x_px = towerstart_x_px;
 		const grad_right_width_px = Math.sin(angle_offset) * towerradius_px;
-		console.log(grad_right_width_px);
 
 		const grad_right = ctx.createLinearGradient(grad_middle_x_px, Math.floor(0.5 * canv.height),
 			grad_middle_x_px + grad_right_width_px, Math.floor(0.5 * canv.height));
@@ -132,7 +129,6 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 	{
 		const grad_middle_x_px = towerstart_x_px + towerwidth_px;
 		const grad_left_width_px = Math.sin(angle_offset) * towerradius_px;
-		console.log(grad_left_width_px);
 
 		const grad_left = ctx.createLinearGradient(
 			grad_middle_x_px - grad_left_width_px, Math.floor(0.5 * canv.height),
