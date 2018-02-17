@@ -88,9 +88,12 @@ for (let i = 0 ; i < num_bricks_around ; i++)
 		brick.width * i, brick.height,
 		brick.width, brick.height);
 
+	/*
+	// Brick-numbers (debug)
 	rctx.fillStyle = 'red';
 	rctx.font = '24px serif';
 	rctx.fillText(i, brick.width * i + 24, 1.5 * brick.height + 6)
+	*/
 }
 
 /*
@@ -179,9 +182,12 @@ function bricks (angle)
 				dst_y + j * brickheight_foreshortened_dstpx,
 				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 
+			/*
+			// Grid left half (debug)
 			ctx.fillRect(towerstart_x_px + offset_dst_x_left - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
+			*/
 
 			// Right half
 			ctx.drawImage(ring,
@@ -191,9 +197,12 @@ function bricks (angle)
 				dst_y + j * brickheight_foreshortened_dstpx,
 				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 
+			/*
+			// Grid right half (debug)
 			ctx.fillRect(towerend_x_px + offset_dst_x_right - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
+			*/
 		}
 
 		offset_dst_x_left += brickwidth_foreshortened_dstpx;
