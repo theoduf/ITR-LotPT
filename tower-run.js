@@ -274,7 +274,7 @@ function start ()
 	dt_recent.fill(0);
 	num_frames_rendered = 0;
 	stopped = false;
-	render();
+	run();
 }
 
 start();
