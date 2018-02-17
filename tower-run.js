@@ -149,6 +149,14 @@ function bricks (angle)
 			Math.floor(0.5 * canv.width) + dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
+		ctx.fillStyle = 'blue';
+		for (let j = -7 ; j < 9 ; j++)
+		{
+			ctx.fillRect(Math.floor(0.5 * canv.width) + dstpos_x_px - 2,
+				dst_y + j * brickheight_dstpx - 2,
+				4, 4);
+		}
+
 		dstpos_x_px += brickwidth_foreshortened_dstpx;
 
 		// Left half
@@ -157,6 +165,14 @@ function bricks (angle)
 			brick.width, ring.height,
 			Math.floor(0.5 * canv.width) - dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
+
+		ctx.fillStyle = 'orange';
+		for (let j = -7 ; j < 9 ; j++)
+		{
+			ctx.fillRect(Math.floor(0.5 * canv.width) - dstpos_x_px - 2,
+				dst_y + j * brickheight_dstpx - 2,
+				4, 4);
+		}
 	}
 }
 
