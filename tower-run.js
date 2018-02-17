@@ -153,28 +153,20 @@ function render ()
 		const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx
 
 		// Right half
-		ctx.fillStyle = 'green';
-		ctx.fillRect(
-			dst_offset_center_x_px + dstpos_x_px, dst_y,
-			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 		ctx.drawImage(ring,
 			src_offs_x_by_angle_px + src_offset_x_px, 0,
 			brick.width, ring.height,
 			dst_offset_center_x_px + dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
+		dstpos_x_px += brickwidth_foreshortened_dstpx;
+
 		// Left half
-		ctx.fillStyle = 'red';
-		ctx.fillRect(
-			dst_offset_center_x_px - dstpos_x_px, dst_y,
-			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 		ctx.drawImage(ring,
 			src_offs_x_by_angle_px - src_offset_x_px, 0,
 			brick.width, ring.height,
 			dst_offset_center_x_px - dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
-
-		dstpos_x_px += brickwidth_foreshortened_dstpx;
 	}
 
 	ctx.fillStyle = '#449';
