@@ -51,8 +51,10 @@ let t_prev = t_start;
 let dt = 0;
 let dt_recent = new Array(480);
 
+let towerwidth_px;
 let towerradius_px;
 let towerstart_x_px;
+let towerend_x_px;
 
 function render_gradient_if_visible (middle_pos_at_angle, color)
 {
@@ -100,7 +102,7 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 		grad_left.addColorStop(1, 'red');
 
 		ctx.fillStyle = grad_left;
-		ctx.fillRect(grad_middle_x_px - grad_left_width_px, 0, grad_left_width_px, canv.height);
+		ctx.fillRect(towerstart_x_px, 0, grad_middle_x_px - towerstart_x_px, canv.height);
 
 		const grad_right = ctx.createLinearGradient(grad_middle_x_px, Math.floor(0.5 * canv.height),
 			grad_middle_x_px + grad_right_width_px, Math.floor(0.5 * canv.height));
@@ -108,7 +110,7 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 		grad_right.addColorStop(1, 'transparent');
 
 		ctx.fillStyle = grad_right;
-		ctx.fillRect(grad_middle_x_px, 0, grad_right_width_px, canv.height);
+		ctx.fillRect(grad_middle_x_px, 0, towerend_x_px - grad_middle_x_px, canv.height);
 	}
 
 	else if (angle_offset <= Math.PI && on_left_side)
@@ -128,7 +130,18 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 
 	else if (angle_offset <= Math.PI && !on_left_side)
 	{
-		// TODO
+		const grad_middle_x_px = towerstart_x_px + towerwidth_px;
+		const grad_left_width_px = Math.sin(angle_offset) * towerradius_px;
+		console.log(grad_left_width_px);
+
+		const grad_left = ctx.createLinearGradient(
+			grad_middle_x_px - grad_left_width_px, Math.floor(0.5 * canv.height),
+			grad_middle_x_px, Math.floor(0.5 * canv.height));
+		grad_left.addColorStop(0, 'transparent');
+		grad_left.addColorStop(1, 'yellow');
+
+		ctx.fillStyle = grad_left;
+		ctx.fillRect(grad_middle_x_px - grad_left_width_px, 0, grad_left_width_px, canv.height);
 	}
 }
 
@@ -136,9 +149,10 @@ function render ()
 {
 	ctx.clearRect(0, 0, canv.width, canv.height);
 
-	const towerwidth_px = Math.floor(0.8 * canv.width);
+	towerwidth_px = Math.floor(0.8 * canv.width);
 	towerradius_px = Math.floor(0.5 * towerwidth_px);
 	towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
+	towerend_x_px = towerstart_x_px + towerwidth_px;
 
 	const brickwidth_px = Math.floor(2 * Math.PI * towerradius_px * brickwidth_rad);
 	const brickheight_px = Math.floor(brickratio * brickwidth_px);
