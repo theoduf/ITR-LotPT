@@ -57,6 +57,7 @@ function render ()
 
 	const towerwidth_px = Math.floor(0.8 * canv.width);
 	const towerradius_px = Math.floor(0.5 * towerwidth_px);
+	const towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
 
 	const brickwidth_px = Math.floor(2 * Math.PI * towerradius_px * brickwidth_rad);
 	const brickheight_px = Math.floor(brickratio * brickwidth_px);
@@ -66,6 +67,9 @@ function render ()
 
 	const brickoffs_x_pct = (angle % brickwidth_rad) / brickwidth_rad;
 	const brickoffs_x_srcpx = Math.floor(brickoffs_x_pct * brick.width);
+
+	ctx.fillStyle = '#333';
+	ctx.fillRect(towerstart_x_px, 0, towerwidth_px, canv.height);
 
 	// The two rows middle rows of bricks on screen have no vertical distortion.
 	let curr_x = 0;
@@ -142,12 +146,13 @@ function render ()
 		curr_x += brickwidth_foreshortened_px;
 	}
 
+	ctx.fillStyle = '#449';
 	const t_now = Date.now();
-	ctx.fillText(num_frames_rendered + ' frames rendered in ' + (t_now - t_start) + ' ms', 64, 64);
-	ctx.fillText('Avg. framerate ' + Math.floor(1000 / ((t_now - t_start) / (num_frames_rendered))) + ' FPS', 64, 76);
+	ctx.fillText(num_frames_rendered + ' frames rendered in ' + (t_now - t_start) + ' ms', 16, 24);
+	ctx.fillText('Avg. framerate ' + Math.floor(1000 / ((t_now - t_start) / (num_frames_rendered))) + ' FPS', 16, 36);
 	num_recent_dt = (num_frames_rendered < 480) ? num_frames_rendered : 480;
-	ctx.fillText('Last 480 frames ' +  Math.floor(1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) + ' FPS', 64, 88);
-	ctx.fillText('Current frame ' + dt + ' ms', 64, 100);
+	ctx.fillText('Last 480 frames ' +  Math.floor(1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) + ' FPS', 16, 48);
+	ctx.fillText('Current frame ' + dt + ' ms', 16, 60);
 	num_frames_rendered++;
 }
 
