@@ -173,8 +173,8 @@ function bricks (angle)
 			ctx.drawImage(ring,
 				src_offs_x_by_angle_px - Math.floor((brick_pair_num + 1) * brick.width), 0,
 				brick.width, ring.height,
-				Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
-				dst_y + j * brickheight_foreshortened_dstpx - 2,
+				Math.floor(0.5 * canv.width) + offset_dst_x_left,
+				dst_y + j * brickheight_foreshortened_dstpx,
 				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 
 			ctx.fillStyle = 'orange';
