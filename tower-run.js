@@ -25,9 +25,9 @@ canv.height = window.innerHeight;
 // TODO: Change canvas size when window is resized.
 
 // The width of a brick when viewed from the front is specified in radians.
-const brickwidth_rad = 2 * Math.PI / 360;
+const brickwidth_rad = 2 * Math.PI / 256;
 
-const angular_velocity = 50 * brickwidth_rad; // Unit: radians / second
+const angular_velocity = brickwidth_rad; // Unit: radians / second
 
 brick = document.createElement('canvas');
 bctx = brick.getContext('2d');
@@ -57,14 +57,14 @@ function render ()
 	const middle_x_px = Math.floor(0.5 * canv.width);
 	const middle_y_px = Math.floor(0.5 * canv.height);
 
-	const brickoffs_x_pct = angle / (2 * Math.PI);
+	const brickoffs_x_pct = (angle % brickwidth_rad) / brickwidth_rad;
 	const brickoffs_x_srcpx = Math.floor(brickoffs_x_pct * brick.width);
 
 	ctx.fillText(brickoffs_x_srcpx, 64, 64);
 
 	// The two rows middle rows of bricks on screen have no vertical distortion.
 	let curr_x = 0;
-	for (let i = 0 ; i < 10 ; i++)
+	for (let i = 0 ; i < 100 ; i++)
 	{
 		brickwidth_foreshortened_px = Math.floor(Math.cos((curr_x / towerradius_px) * 0.5 * Math.PI) * brickwidth_px);
 
@@ -112,8 +112,6 @@ function run ()
 	const dt = t_now - t_prev;
 
 	angle = (angle + angular_velocity * dt / 1000) % (2 * Math.PI);
-
-	console.log(dt, angle);
 
 	// TODO: Update game object positions.
 
