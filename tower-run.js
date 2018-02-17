@@ -172,7 +172,7 @@ function bricks (angle)
 
 			// Left half
 			ctx.drawImage(ring,
-				src_offs_x_by_angle_px - Math.floor((brick_pair_num + 1) * brick.width), 0,
+				src_offs_x_by_angle_px - Math.floor((brick_pair_num - 1) * brick.width), 0,
 				brick.width, ring.height,
 				towerstart_x_px + offset_dst_x_left,
 				dst_y + j * brickheight_foreshortened_dstpx,
@@ -274,7 +274,7 @@ function start ()
 	dt_recent.fill(0);
 	num_frames_rendered = 0;
 	stopped = false;
-	run();
+	render();
 }
 
 start();
