@@ -27,7 +27,7 @@ canv.height = window.innerHeight;
 // The width of a brick when viewed from the front is specified in radians.
 const brickwidth_rad = 2 * Math.PI / 256;
 
-let angular_velocity = 2.5 * brickwidth_rad; // Unit: radians / second
+let angular_velocity = 20 * brickwidth_rad; // Unit: radians / second
 let angular_acceleration = 0; // Unit: rads / s^2
 
 brick = document.createElement('canvas');
@@ -51,13 +51,78 @@ let t_prev = t_start;
 let dt = 0;
 let dt_recent = new Array(480);
 
+let towerradius_px;
+let towerstart_x_px;
+
+function render_gradient_if_visible (middle_pos_at_angle, color)
+{
+	let angle_offset_pos_dir = angle - middle_pos_at_angle;
+	let angle_offset_neg_dir = middle_pos_at_angle - angle;
+
+	angle_offset_pos_dir += angle_offset_pos_dir < 0 ? 2 * Math.PI : 0;
+	angle_offset_neg_dir += angle_offset_neg_dir < 0 ? 2 * Math.PI : 0;
+
+	//console.log(angle_offset_pos_dir, angle_offset_neg_dir);
+
+	let on_left_side, angle_offset;
+
+	if (angle_offset_pos_dir <= angle_offset_neg_dir)
+	{
+		on_left_side = true;
+		angle_offset = angle_offset_pos_dir;
+	}
+	else
+	{
+		on_left_side = false;
+		angle_offset = angle_offset_neg_dir;
+	}
+
+	if (angle_offset <= 0.5 * Math.PI)
+	{
+		let sign;
+
+		if (on_left_side)
+		{
+			sign = -1;
+		}
+		else
+		{
+			sign = 1;
+		}
+
+		const grad_middle_x_px = towerstart_x_px + towerradius_px + sign * Math.sin(angle_offset) * towerradius_px;
+		const grad_right_width_px = towerradius_px;
+		const grad_left_width_px  = towerradius_px;
+
+		const grad_left = ctx.createLinearGradient(grad_middle_x_px - grad_left_width_px, Math.floor(0.5 * canv.height),
+			grad_middle_x_px, Math.floor(0.5 * canv.height));
+		grad_left.addColorStop(0, 'transparent');
+		grad_left.addColorStop(1, color);
+
+		const grad_right = ctx.createLinearGradient(grad_middle_x_px, Math.floor(0.5 * canv.height),
+			grad_middle_x_px + grad_right_width_px, Math.floor(0.5 * canv.height));
+		grad_right.addColorStop(0, color);
+		grad_right.addColorStop(1, 'transparent');
+
+		ctx.fillStyle = grad_left;
+		ctx.fillRect(grad_middle_x_px - grad_left_width_px, 0, grad_left_width_px, canv.height);
+
+		ctx.fillStyle = grad_right;
+		ctx.fillRect(grad_middle_x_px, 0, grad_right_width_px, canv.height);
+
+		return true;
+	}
+
+	return false;
+}
+
 function render ()
 {
 	ctx.clearRect(0, 0, canv.width, canv.height);
 
 	const towerwidth_px = Math.floor(0.8 * canv.width);
-	const towerradius_px = Math.floor(0.5 * towerwidth_px);
-	const towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
+	towerradius_px = Math.floor(0.5 * towerwidth_px);
+	towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
 
 	const brickwidth_px = Math.floor(2 * Math.PI * towerradius_px * brickwidth_rad);
 	const brickheight_px = Math.floor(brickratio * brickwidth_px);
@@ -145,6 +210,15 @@ function render ()
 
 		curr_x += brickwidth_foreshortened_px;
 	}
+
+	/*
+	 * Highlight and shadow on tower itself.
+	 */
+
+	render_gradient_if_visible(0, 'rgba(255, 255, 255, 0.3)');
+	render_gradient_if_visible(Math.PI, 'rgba(0, 0, 0, 0.7)');
+
+	// End highlight and shadow.
 
 	ctx.fillStyle = '#449';
 	const t_now = Date.now();
