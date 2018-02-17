@@ -27,7 +27,8 @@ canv.height = window.innerHeight;
 // The width of a brick when viewed from the front is specified in radians.
 const brickwidth_rad = 2 * Math.PI / 256;
 
-const angular_velocity = brickwidth_rad; // Unit: radians / second
+let angular_velocity = brickwidth_rad; // Unit: radians / second
+let angular_acceleration = 0; // Unit: rads / s^2
 
 brick = document.createElement('canvas');
 bctx = brick.getContext('2d');
