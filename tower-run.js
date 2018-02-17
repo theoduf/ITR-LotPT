@@ -157,10 +157,15 @@ function bricks (angle)
 			Math.floor(0.5 * canv.width) + offset_dst_x_right, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
-		ctx.fillStyle = 'blue';
 		for (let j = -num_rings_ydir_half ; j < num_rings_ydir_half + 2 ; j++)
 		{
+			ctx.fillStyle = 'blue';
 			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_right - 2,
+				dst_y + j * brickheight_dstpx - 2,
+				4, 4);
+
+			ctx.fillStyle = 'orange';
+			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
 				dst_y + j * brickheight_dstpx - 2,
 				4, 4);
 		}
@@ -171,14 +176,6 @@ function bricks (angle)
 			brick.width, ring.height,
 			Math.floor(0.5 * canv.width) + offset_dst_x_left, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
-
-		ctx.fillStyle = 'orange';
-		for (let j = -num_rings_ydir_half ; j < num_rings_ydir_half + 2 ; j++)
-		{
-			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
-				dst_y + j * brickheight_dstpx - 2,
-				4, 4);
-		}
 	}
 }
 
