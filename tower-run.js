@@ -14,6 +14,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+const t_start = Date.now();
+
 const html = document.querySelector('html');
 
 const canv = document.getElementById('game');
@@ -23,222 +25,283 @@ const ctx = canv.getContext('2d');
 canv.width = window.innerWidth;
 canv.height = window.innerHeight;
 
-// TODO: Change canvas size when window is resized.
+/*
+ * Resolution independent size of tower using the width of a single brick as reference unit.
+ */
+
+const num_bricks_around = 64;
+const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
 
 // The width of a brick when viewed from the front is specified in radians.
-const num_bricks_around = 64;
 const brickwidth_rad = 2 * Math.PI / num_bricks_around;
 
-let angular_velocity = 8 * brickwidth_rad; // Unit: radians / second
-let angular_acceleration = 0; // Unit: rads / s^2
+let towerradius_pu = 0;
+for (let i = 0 ; i < num_bricks_visible_half ; i++)
+{
+	const w_frac_rad = Math.cos(((num_bricks_visible_half - i) / num_bricks_visible_half) * 0.5 * Math.PI);
+	const brickwidth_foreshortened_dstpu = w_frac_rad;
+	towerradius_pu += brickwidth_foreshortened_dstpu;
+}
 
-// Bricks
+/*
+ * Pixel sizes
+ * TODO: Update when window is resized.
+ */
 
-brick = document.createElement('canvas');
-bctx = brick.getContext('2d');
+// First approximation of tower radius in pixels.
+let towerradius_px = Math.ceil(0.6 * 0.5 * canv.width);
 
-brickratio = 0.8;
-brick.width = 64;
-brick.height = Math.floor(brickratio * brick.width);
+// Full pixel size of bricks
+const brickratio = 0.5;
+const brickwidth_fullpx = 2 * Math.ceil(0.5 * towerradius_px / towerradius_pu);
+const brickheight_fullpx = Math.ceil(brickwidth_fullpx * brickratio);
+
+// Final calculation of tower radius in pixels.
+towerradius_px = 0;
+for (let i = 0 ; i < num_bricks_visible_half ; i++)
+{
+	const w_frac_rad = Math.cos(((num_bricks_visible_half - i) / num_bricks_visible_half) * 0.5 * Math.PI);
+	const brickwidth_curr_foreshortened_dstpx = Math.ceil(brickwidth_fullpx * w_frac_rad);
+	towerradius_px += brickwidth_curr_foreshortened_dstpx;
+}
+
+const towerstart_x_px = Math.ceil(canv.width / 2) - towerradius_px;
+const towerend_x_px = Math.ceil(canv.width / 2) + towerradius_px;
+
+// Max number of rows of bricks visible on screen at once are at the edges of the tower.
+const h_frac_rad = Math.cos(0.25 * Math.PI);
+const brickheight_outermost_dstpx = Math.ceil(brickheight_fullpx * h_frac_rad);
+const num_rows_visible_outermost = Math.ceil(canv.height / brickheight_outermost_dstpx) + 2;
+
+/*
+ * Single brick
+ */
+
+const brick = document.createElement('canvas');
+const bctx = brick.getContext('2d');
+
+brick.width = brickwidth_fullpx;
+brick.height = brickheight_fullpx;
 
 bctx.fillStyle = '#999';
 bctx.fillRect(0, 0, brick.width, brick.height);
 bctx.strokeStyle = '#333';
-bctx.lineWidth = Math.floor(brick.width / 10);
-bctx.strokeRect(0.5, 0.5, brick.width, brick.height);
-
-// Rings of bricks
-
-const ring = document.createElement('canvas');
-//const ring = document.getElementById('ring');
-const rctx = ring.getContext('2d');
-
-ring.width = num_bricks_around * brick.width;
-ring.height = 2 * brick.height;
-
-rctx.fillStyle = '#333';
-rctx.fillRect(0, 0, ring.width, ring.height);
-
-rctx.drawImage(brick,
-	Math.ceil(0.5 * brick.width), 0,
-	brick.width, brick.height,
-	0, 0,
+bctx.lineWidth = 1 + Math.floor(brick.width / 25);
+bctx.strokeRect(Math.floor(0.5 * bctx.lineWidth),
+	Math.floor(0.5 * bctx.lineWidth),
 	brick.width, brick.height);
 
-for (let i = 0 ; i < num_bricks_around ; i++)
-{
-	/*
-	 * Top row.
-	 */
-
-	const curr_x_top = Math.floor(brick.width * (i + 0.5));
-	rctx.drawImage(brick,
-		0, 0,
-		brick.width, brick.height,
-		curr_x_top, 0,
-		brick.width, brick.height);
-
-	/*
-	 * Bottom row.
-	 */
-
-	rctx.drawImage(brick,
-		0, 0,
-		brick.width, brick.height,
-		brick.width * i, brick.height,
-		brick.width, brick.height);
-
-	/*
-	// Brick-numbers (debug)
-	rctx.fillStyle = 'red';
-	rctx.font = '24px serif';
-	rctx.fillText(i, brick.width * i + 24, 1.5 * brick.height + 6)
-	*/
-}
+//ctx.drawImage(brick, brickwidth_fullpx, brickheight_fullpx);
 
 /*
- * Highlight and shadow on the brick ring.
+ * Two rows of bricks with shadows and highlights.
  */
 
-const middle_x = Math.floor(0.5 * ring.width);
-const middle_y = Math.floor(0.5 * ring.height);
+const atomic_ring = document.createElement('canvas');
+const actx = atomic_ring.getContext('2d');
 
-const grad_high = ctx.createLinearGradient(0, middle_y, middle_x, middle_y);
+atomic_ring.width = num_bricks_around * brickwidth_fullpx;
+atomic_ring.height = 2 * brickheight_fullpx;
+
+actx.drawImage(brick, Math.ceil(0.5 * brickwidth_fullpx), 0,
+	brickwidth_fullpx, brickheight_fullpx,
+	0, 0, brickwidth_fullpx, brickheight_fullpx);
+
+const fontsize = Math.ceil(0.5 * brickwidth_fullpx);
+actx.font = fontsize + 'px serif';
+actx.fillStyle = 'red';
+for (let i = 0 ; i < num_bricks_around ; i++)
+{
+	// Top row.
+	const curr_x_top = Math.floor(brickwidth_fullpx * (i + 0.5));
+	actx.drawImage(brick,
+		0, 0,
+		brickwidth_fullpx, brickheight_fullpx,
+		curr_x_top, 0,
+		brickwidth_fullpx, brickheight_fullpx);
+
+	// Bottom row.
+	actx.drawImage(brick,
+		0, 0,
+		brickwidth_fullpx, brickheight_fullpx,
+		brickwidth_fullpx * i, brickheight_fullpx,
+		brickwidth_fullpx, brickheight_fullpx);
+
+	// Brick-numbers (debug)
+	actx.fillText(i,
+		brickwidth_fullpx * i + Math.ceil(0.2 * brickwidth_fullpx),
+		2 * brickheight_fullpx - Math.floor(0.2 * fontsize));
+}
+
+const a_middle_x = Math.floor(0.5 * atomic_ring.width);
+const a_middle_y = Math.floor(0.5 * atomic_ring.height);
+
+// Highlight
+const grad_high = actx.createLinearGradient(0, a_middle_y, a_middle_x, a_middle_y);
 grad_high.addColorStop(0, 'transparent');
 grad_high.addColorStop(0.5, 'rgba(255, 255, 255, 0.5)');
 grad_high.addColorStop(1, 'transparent');
-rctx.fillStyle = grad_high;
-rctx.fillRect(0, 0, middle_x, ring.height);
+actx.fillStyle = grad_high;
+actx.fillRect(0, 0, a_middle_x, atomic_ring.height);
 
-const grad_shad = ctx.createLinearGradient(middle_x, middle_y, ring.width, middle_y);
+// Shadow
+const grad_shad = actx.createLinearGradient(a_middle_x, a_middle_y,
+	atomic_ring.width, a_middle_y);
 grad_shad.addColorStop(0, 'transparent');
 grad_shad.addColorStop(0.5, 'rgba(0, 0, 0, 0.5)');
 grad_shad.addColorStop(1, 'transparent');
-rctx.fillStyle = grad_shad;
-rctx.fillRect(middle_x, 0, middle_x, ring.height);
+actx.fillStyle = grad_shad;
+actx.fillRect(a_middle_x, 0, a_middle_x, atomic_ring.height);
 
-// Game
+//ctx.drawImage(atomic_ring, 0, 0);
 
-let angle = 0;
+/*
+ * Slideable "megatexture".
+ */
 
-let num_frames_rendered = 0;
-let t_prev;
-let dt = 0;
-let dt_recent = new Array(480);
+const sliding_bricks = document.createElement('canvas');
+const sctx = sliding_bricks.getContext('2d');
 
-const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
+sliding_bricks.width = 2 * atomic_ring.width;
+sliding_bricks.height = atomic_ring.height * Math.floor(0.25 * num_rows_visible_outermost);
 
-const brickwidth_dstpx = 64;
-const brickheight_dstpx = Math.floor(brickwidth_dstpx * brickratio);
-
-// TODO: Update when window is resized.
-let towerradius_px = 0;
-for (let brick_pair_num = num_bricks_visible_half ; brick_pair_num > 0 ; brick_pair_num--)
+for (let i = 0 ; i < num_rows_visible_outermost ; i++)
 {
-	const w_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI);
-	const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx * w_frac_rad);
-	towerradius_px += brickwidth_foreshortened_dstpx;
+	sctx.drawImage(atomic_ring, 0, i * atomic_ring.height);
+	sctx.drawImage(atomic_ring, atomic_ring.width, i * atomic_ring.height);
 }
-const towerstart_x_px = Math.ceil(canv.width / 2) - towerradius_px;
-const towerend_x_px = Math.ceil(canv.width / 2) + towerradius_px;
 
-// Number of rings on each half side of middle ring.
-const h_frac_rad = Math.cos(0.25 * Math.PI);
-const sidemost_brickheight_foreshortened_dstpx = Math.ceil(brickheight_dstpx * h_frac_rad);
-const num_rings_ydir_half = Math.ceil(0.5 * canv.height / sidemost_brickheight_foreshortened_dstpx);
+//ctx.drawImage(sliding_bricks, towerstart_x_px, 0);
+//ctx.drawImage(sliding_bricks, 0, 0, sliding_bricks.width, sliding_bricks.height,
+//	towerstart_x_px, 0,
+//	sliding_bricks.width * (brickheight_outermost_dstpx / brickheight_fullpx),
+//	sliding_bricks.height * (brickheight_outermost_dstpx / brickheight_fullpx));
 
-function bricks (angle)
+/*
+ * Render tower.
+ */
+
+let y = 0; // Unit: Pixels
+let angle = 0; // Unit: radians
+
+function renderTower ()
 {
-	const offs_x_pct = angle / (2 * Math.PI);
-	const src_offs_x_by_angle_px = offs_x_pct * ring.width;
+	const t_render_tower_begin = Date.now();
 
-	const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx;
-
-	let offset_dst_x_right = 0;
-	let offset_dst_x_left = 0;
-
-	for (let brick_pair_num = num_bricks_visible_half ; brick_pair_num > 0 ; brick_pair_num--)
+	let offs_x_left_dstpx = 0;
+	let offs_x_right_dstpx = 0;
+	for (let i = 0 ; i < num_bricks_visible_half ; i++)
 	{
-		const w_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI);
-		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx * w_frac_rad);
+		const w_frac_rad = Math.cos(((num_bricks_visible_half - i) / num_bricks_visible_half) * 0.5 * Math.PI);
+		const brickwidth_curr_foreshortened_dstpx = Math.ceil(brickwidth_fullpx * w_frac_rad);
 
-		const h_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.25 * Math.PI);
-		const brickheight_foreshortened_dstpx = Math.ceil(brickheight_dstpx * h_frac_rad);
+		const h_frac_rad = Math.cos(((num_bricks_visible_half - i) / num_bricks_visible_half) * 0.25 * Math.PI);
+		const brickheight_curr_perspective_dstpx = Math.ceil(brickheight_fullpx * h_frac_rad);
 
+		const offs_x_srcpx = angle / (4 * Math.PI) * sliding_bricks.width;
+		const offs_y_srcpx = y % (2 * brickheight_fullpx);
+
+		offs_x_right_dstpx += brickwidth_curr_foreshortened_dstpx;
+
+		const sliceheight_curr_dstpx = brickheight_curr_perspective_dstpx * 0.5 * num_rows_visible_outermost;
+
+		const top_of_bottom_half_y_dstpx = Math.floor(canv.height / 2);
+		const bottom_of_top_half_y_dstpx = canv.height - top_of_bottom_half_y_dstpx;
+
+		/*
+		 * Top half.
+		 */
+
+		// Left side
+		ctx.drawImage(sliding_bricks,
+			i * brickwidth_fullpx + offs_x_srcpx, -offs_y_srcpx,
+			brickwidth_fullpx, sliding_bricks.height,
+			towerstart_x_px + offs_x_left_dstpx, -sliceheight_curr_dstpx + bottom_of_top_half_y_dstpx,
+			brickwidth_curr_foreshortened_dstpx, sliceheight_curr_dstpx);
+
+		// Right side
+		ctx.drawImage(sliding_bricks,
+			(2 * num_bricks_visible_half - i - 1) * brickwidth_fullpx + offs_x_srcpx, -offs_y_srcpx,
+			brickwidth_fullpx, sliding_bricks.height,
+			towerend_x_px - offs_x_right_dstpx, -sliceheight_curr_dstpx + bottom_of_top_half_y_dstpx,
+			brickwidth_curr_foreshortened_dstpx, sliceheight_curr_dstpx);
+
+		/*
+		 * Bottom half.
+		 */
+
+		// Left side
+		ctx.drawImage(sliding_bricks,
+			i * brickwidth_fullpx + offs_x_srcpx, 2 * brickheight_fullpx - offs_y_srcpx,
+			brickwidth_fullpx, sliding_bricks.height,
+			towerstart_x_px + offs_x_left_dstpx, top_of_bottom_half_y_dstpx,
+			brickwidth_curr_foreshortened_dstpx, sliceheight_curr_dstpx);
+
+		// Right side
+		ctx.drawImage(sliding_bricks,
+			(2 * num_bricks_visible_half - i - 1) * brickwidth_fullpx + offs_x_srcpx,
+			2 * brickheight_fullpx - offs_y_srcpx,
+			brickwidth_fullpx, sliding_bricks.height,
+			towerend_x_px - offs_x_right_dstpx, top_of_bottom_half_y_dstpx,
+			brickwidth_curr_foreshortened_dstpx, sliceheight_curr_dstpx);
+
+		/*
+		// Grid. Didn't bother to update the code for this right now because I don't need it very much.
 		const xcolor = Math.ceil((brick_pair_num / num_bricks_visible_half) * 255);
-
-		offset_dst_x_right -= brickwidth_foreshortened_dstpx;
-
-		for (let j = -num_rings_ydir_half ; j < num_rings_ydir_half + 2 ; j++)
+		for (...)
 		{
 			const ycolor = Math.ceil(((j + num_rings_ydir_half) / (2 * num_rings_ydir_half + 1)) * 255);
-			ctx.fillStyle = 'rgb(' + xcolor + ', ' + ycolor + ', 255)';
 
-			// Left half
-			ctx.drawImage(ring,
-				src_offs_x_by_angle_px - Math.floor((brick_pair_num - 1) * brick.width), 0,
-				brick.width, ring.height,
-				towerstart_x_px + offset_dst_x_left,
-				dst_y + j * brickheight_foreshortened_dstpx,
-				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
-
-			/*
 			// Grid left half (debug)
 			ctx.fillRect(towerstart_x_px + offset_dst_x_left - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
-			*/
 
-			// Right half
-			ctx.drawImage(ring,
-				src_offs_x_by_angle_px + Math.floor(brick_pair_num * brick.width), 0,
-				brick.width, ring.height,
-				towerend_x_px + offset_dst_x_right,
-				dst_y + j * brickheight_foreshortened_dstpx,
-				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
-
-			/*
 			// Grid right half (debug)
 			ctx.fillRect(towerend_x_px + offset_dst_x_right - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
-			*/
 		}
+		*/
 
-		offset_dst_x_left += brickwidth_foreshortened_dstpx;
+		offs_x_left_dstpx += brickwidth_curr_foreshortened_dstpx;
 	}
+
+	const t_render_tower_end = Date.now();
+
+	ctx.fillStyle = '#449';
+	ctx.fillText('Tower rendered in ' + (t_render_tower_end - t_render_tower_begin) + ' ms', 16, 24);
 }
+
+let angular_velocity = 3 * brickwidth_rad; // Unit: rads / second
+let angular_acceleration = 0; // Unit: rads / s^2
+
+let vertical_velocity_pu = 3; // Unit: pu / second
+let vertical_acceleration_pu = 0; // Unit: pu / s^2
+
+let num_frames_rendered = 0;
+let t_prev = null;
+let dt = 0;
+let dt_recent = new Array(480);
 
 function render ()
 {
 	ctx.clearRect(0, 0, canv.width, canv.height);
 
-	if (angle < 0.5 * Math.PI)
-	{
-		bricks(2 * Math.PI + angle);
-	}
-
-	bricks(angle);
-
-	if (angle > (3 / 4) * 2 * Math.PI)
-	{
-		bricks(angle - 2 * Math.PI);
-	}
+	renderTower();
 
 	if (t_prev !== null)
 	{
 		ctx.fillStyle = '#449';
-		const t_now = Date.now();
 		num_recent_dt = (num_frames_rendered < 480) ? num_frames_rendered : 480;
-		ctx.fillText('Last 480 frames ' +  Math.floor(1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) + ' FPS', 16, 24);
 		ctx.fillText('Current frame ' + dt + ' ms', 16, 36);
+		ctx.fillText('Last 480 frames ' + Math.round(100 * 1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) / 100 + ' FPS', 16, 48);
 	}
 
 	num_frames_rendered++;
 }
 
 let stopped = false;
-
 function run ()
 {
 	if (stopped)
@@ -257,21 +320,18 @@ function run ()
 	}
 
 	angle = (angle + angular_velocity * dt / 1000) % (2 * Math.PI);
+	y += vertical_velocity_pu * brickwidth_fullpx * dt / 1000;
 
 	// TODO: Update game object positions.
 
-	// TODO: Check positions.
+	// TODO: Check collisions.
 
 	render();
 
 	t_prev = t_now;
 
-	window.requestAnimationFrame(run);
+	requestAnimationFrame(run);
 }
-
-// TODO: Title screen.
-
-// TODO: Settings screen where keybindings can be configured.
 
 function stop ()
 {
