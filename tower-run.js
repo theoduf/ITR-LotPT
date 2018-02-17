@@ -81,12 +81,12 @@ function render ()
 		ctx.drawImage(brick,
 			- 1.5 * brick.width + brickoffs_x_srcpx, 0,
 			brick.width, brick.height,
-			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px - 3 * brickheight_px,
+			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px - brickheight_px,
 			brickwidth_foreshortened_px, brickheight_px);
 		ctx.drawImage(brick,
 			Math.floor(brickoffs_x_srcpx - 0.5 * brick.width), 0,
 			brick.width, brick.height,
-			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px - 2 * brickheight_px,
+			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px - brickheight_px,
 			brickwidth_foreshortened_px, brickheight_px);
 		ctx.drawImage(brick,
 			Math.floor(0.5 * brick.width + brickoffs_x_srcpx), 0,
@@ -94,15 +94,19 @@ function render ()
 			middle_x_px - (brickwidth_foreshortened_px + curr_x), middle_y_px - brickheight_px,
 			brickwidth_foreshortened_px, brickheight_px);
 
-		/*
 		// Place brick on right half of screen.
 		ctx.drawImage(brick,
-			brickoffs_x_srcpx, 0,
+			- 1.5 * brick.width + brickoffs_x_srcpx, 0,
 			brick.width, brick.height,
 			middle_x_px + curr_x, middle_y_px - brickheight_px,
 			brickwidth_foreshortened_px, brickheight_px);
 		ctx.drawImage(brick,
-			-brick.width + brickoffs_x_srcpx, 0,
+			Math.floor(brickoffs_x_srcpx - 0.5 * brick.width), 0,
+			brick.width, brick.height,
+			middle_x_px + curr_x, middle_y_px - brickheight_px,
+			brickwidth_foreshortened_px, brickheight_px);
+		ctx.drawImage(brick,
+			Math.floor(0.5 * brick.width + brickoffs_x_srcpx), 0,
 			brick.width, brick.height,
 			middle_x_px + curr_x, middle_y_px - brickheight_px,
 			brickwidth_foreshortened_px, brickheight_px);
