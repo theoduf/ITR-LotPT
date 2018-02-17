@@ -29,7 +29,7 @@ canv.height = window.innerHeight;
 const num_bricks_around = 64;
 const brickwidth_rad = 2 * Math.PI / num_bricks_around;
 
-let angular_velocity = 3 * brickwidth_rad; // Unit: radians / second
+let angular_velocity = 8 * brickwidth_rad; // Unit: radians / second
 let angular_acceleration = 0; // Unit: rads / s^2
 
 // Bricks
@@ -124,27 +124,15 @@ let t_prev = t_start;
 let dt = 0;
 let dt_recent = new Array(480);
 
-function render ()
+function bricks (angle)
 {
-	ctx.clearRect(0, 0, canv.width, canv.height);
-
-	const towerwidth_px = Math.floor(0.8 * canv.width);
-	const towerradius_px = Math.floor(0.5 * towerwidth_px);
-	const towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
-	const towerend_x_px = towerstart_x_px + towerwidth_px;
-
-	/*
-	ctx.fillStyle = '#333';
-	ctx.fillRect(towerstart_x_px, 0, towerwidth_px, canv.height);
-	*/
-
 	const brickwidth_dstpx = 64;
 	const brickheight_dstpx = Math.floor(brickwidth_dstpx * brickratio);
 
+	const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
+
 	const offs_x_pct = angle / (2 * Math.PI);
 	const src_offs_x_by_angle_px = offs_x_pct * ring.width;
-
-	const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
 
 	let dstpos_x_px = 0;
 
@@ -171,6 +159,28 @@ function render ()
 			Math.floor(0.5 * canv.width) - dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 	}
+}
+
+function render ()
+{
+	ctx.clearRect(0, 0, canv.width, canv.height);
+
+	const towerwidth_px = Math.floor(0.8 * canv.width);
+	const towerradius_px = Math.floor(0.5 * towerwidth_px);
+	const towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
+	const towerend_x_px = towerstart_x_px + towerwidth_px;
+
+	if (angle < 0.5 * Math.PI)
+	{
+		bricks(2 * Math.PI + angle);
+	}
+
+	bricks(angle);
+
+	if (angle > (3 / 4) * 2 * Math.PI)
+	{
+		bricks(angle - 2 * Math.PI);
+	}
 
 	ctx.fillStyle = '#449';
 	const t_now = Date.now();
@@ -181,6 +191,8 @@ function render ()
 	ctx.fillText('Current frame ' + dt + ' ms', 16, 60);
 	num_frames_rendered++;
 }
+
+let stopped = false;
 
 function run ()
 {
@@ -198,7 +210,10 @@ function run ()
 
 	render();
 
-	window.requestAnimationFrame(run);
+	if (!stopped)
+	{
+		window.requestAnimationFrame(run);
+	}
 
 	t_prev = t_now;
 }
@@ -208,3 +223,14 @@ function run ()
 // TODO: Settings screen where keybindings can be configured.
 
 window.requestAnimationFrame(run);
+
+function stop ()
+{
+	stopped = true;
+}
+
+function start ()
+{
+	stopped = false;
+	run();
+}
