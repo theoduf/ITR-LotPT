@@ -144,6 +144,8 @@ function bricks (angle)
 	let offset_dst_x_right = -brickwidth_dstpx;
 	let offset_dst_x_left = 0;
 
+	// TODO MAYBE: Only draw the top half and then mirror it upside down.
+
 	for (let brick_pair_num = 0 ; brick_pair_num < num_bricks_visible_half ; brick_pair_num++)
 	{
 		const w_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI);
