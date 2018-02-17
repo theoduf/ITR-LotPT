@@ -88,11 +88,9 @@ for (let i = 0 ; i < num_bricks_around ; i++)
 		brick.width * i, brick.height,
 		brick.width, brick.height);
 
-	/*
 	rctx.fillStyle = 'red';
 	rctx.font = '24px serif';
 	rctx.fillText(i, brick.width * i + 24, 1.5 * brick.height + 6)
-	*/
 }
 
 /*
@@ -125,13 +123,24 @@ let t_prev;
 let dt = 0;
 let dt_recent = new Array(480);
 
+const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
+
+const brickwidth_dstpx = 64;
+const brickheight_dstpx = Math.floor(brickwidth_dstpx * brickratio);
+
+// TODO: Update when window is resized.
+let towerradius_px = 0;
+for (let brick_pair_num = num_bricks_visible_half ; brick_pair_num > 0 ; brick_pair_num--)
+{
+	const w_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI);
+	const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx * w_frac_rad);
+	towerradius_px += brickwidth_foreshortened_dstpx;
+}
+const towerstart_x_px = Math.ceil(canv.width / 2) - towerradius_px;
+const towerend_x_px = Math.ceil(canv.width / 2) + towerradius_px;
+
 function bricks (angle)
 {
-	const brickwidth_dstpx = 64;
-	const brickheight_dstpx = Math.floor(brickwidth_dstpx * brickratio);
-
-	const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
-
 	const offs_x_pct = angle / (2 * Math.PI);
 	const src_offs_x_by_angle_px = offs_x_pct * ring.width;
 
@@ -141,10 +150,10 @@ function bricks (angle)
 
 	const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx;
 
-	let offset_dst_x_right = -brickwidth_dstpx;
+	let offset_dst_x_right = 0;
 	let offset_dst_x_left = 0;
 
-	for (let brick_pair_num = 0 ; brick_pair_num < num_bricks_visible_half ; brick_pair_num++)
+	for (let brick_pair_num = num_bricks_visible_half ; brick_pair_num > 0 ; brick_pair_num--)
 	{
 		const w_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI);
 		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx * w_frac_rad);
@@ -154,51 +163,45 @@ function bricks (angle)
 
 		const xcolor = Math.ceil((brick_pair_num / num_bricks_visible_half) * 255);
 
-		offset_dst_x_right += brickwidth_foreshortened_dstpx;
-		offset_dst_x_left -= brickwidth_foreshortened_dstpx;
+		offset_dst_x_right -= brickwidth_foreshortened_dstpx;
 
 		for (let j = -num_rings_ydir_half ; j < num_rings_ydir_half + 2 ; j++)
 		{
 			const ycolor = Math.ceil(((j + num_rings_ydir_half) / (2 * num_rings_ydir_half + 1)) * 255);
 			ctx.fillStyle = 'rgb(' + xcolor + ', ' + ycolor + ', 255)';
 
-			// Right half
-			/*
-			ctx.drawImage(ring,
-				src_offs_x_by_angle_px + Math.floor(brick_pair_num * brick.width), 0,
-				brick.width, ring.height,
-				Math.floor(0.5 * canv.width) + offset_dst_x_right,
-				dst_y + j * brickheight_foreshortened_dstpx,
-				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
-			*/
-
-			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_right - 2,
-				dst_y + j * brickheight_foreshortened_dstpx - 2,
-				4, 4);
-
 			// Left half
 			ctx.drawImage(ring,
 				src_offs_x_by_angle_px - Math.floor((brick_pair_num + 1) * brick.width), 0,
 				brick.width, ring.height,
-				Math.floor(0.5 * canv.width) + offset_dst_x_left,
+				towerstart_x_px + offset_dst_x_left,
 				dst_y + j * brickheight_foreshortened_dstpx,
 				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 
-			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
+			ctx.fillRect(towerstart_x_px + offset_dst_x_left - 2,
+				dst_y + j * brickheight_foreshortened_dstpx - 2,
+				4, 4);
+
+			// Right half
+			ctx.drawImage(ring,
+				src_offs_x_by_angle_px + Math.floor(brick_pair_num * brick.width), 0,
+				brick.width, ring.height,
+				towerend_x_px + offset_dst_x_right,
+				dst_y + j * brickheight_foreshortened_dstpx,
+				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
+
+			ctx.fillRect(towerend_x_px + offset_dst_x_right - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
 		}
+
+		offset_dst_x_left += brickwidth_foreshortened_dstpx;
 	}
 }
 
 function render ()
 {
 	ctx.clearRect(0, 0, canv.width, canv.height);
-
-	const towerwidth_px = Math.floor(0.8 * canv.width);
-	const towerradius_px = Math.floor(0.5 * towerwidth_px);
-	const towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
-	const towerend_x_px = towerstart_x_px + towerwidth_px;
 
 	if (angle < 0.5 * Math.PI)
 	{
