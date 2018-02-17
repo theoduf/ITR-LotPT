@@ -118,9 +118,8 @@ rctx.fillRect(middle_x, 0, middle_x, ring.height);
 
 let angle = 0;
 
-const t_start = Date.now();
 let num_frames_rendered = 0;
-let t_prev = t_start;
+let t_prev;
 let dt = 0;
 let dt_recent = new Array(480);
 
@@ -182,11 +181,15 @@ function render ()
 		bricks(angle - 2 * Math.PI);
 	}
 
-	ctx.fillStyle = '#449';
-	const t_now = Date.now();
-	num_recent_dt = (num_frames_rendered < 480) ? num_frames_rendered : 480;
-	ctx.fillText('Last 480 frames ' +  Math.floor(1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) + ' FPS', 16, 24);
-	ctx.fillText('Current frame ' + dt + ' ms', 16, 36);
+	if (t_prev !== null)
+	{
+		ctx.fillStyle = '#449';
+		const t_now = Date.now();
+		num_recent_dt = (num_frames_rendered < 480) ? num_frames_rendered : 480;
+		ctx.fillText('Last 480 frames ' +  Math.floor(1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) + ' FPS', 16, 24);
+		ctx.fillText('Current frame ' + dt + ' ms', 16, 36);
+	}
+
 	num_frames_rendered++;
 }
 
@@ -200,10 +203,14 @@ function run ()
 	}
 
 	const t_now = Date.now();
-	dt = t_now - t_prev;
 
-	dt_recent.shift();
-	dt_recent.push(dt);
+	if (t_prev !== null)
+	{
+		dt = t_now - t_prev;
+
+		dt_recent.shift();
+		dt_recent.push(dt);
+	}
 
 	angle = (angle + angular_velocity * dt / 1000) % (2 * Math.PI);
 
@@ -229,7 +236,7 @@ function stop ()
 
 function start ()
 {
-	t_prev = Date.now();
+	t_prev = null;
 	dt_recent.fill(0);
 	num_frames_rendered = 0;
 	stopped = false;
