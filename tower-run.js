@@ -27,7 +27,7 @@ canv.height = window.innerHeight;
 // The width of a brick when viewed from the front is specified in radians.
 const brickwidth_rad = 2 * Math.PI / 256;
 
-let angular_velocity = brickwidth_rad; // Unit: radians / second
+let angular_velocity = 2.5 * brickwidth_rad; // Unit: radians / second
 let angular_acceleration = 0; // Unit: rads / s^2
 
 brick = document.createElement('canvas');
@@ -45,6 +45,12 @@ bctx.strokeRect(0.5, 0.5, brick.width, brick.height);
 
 let angle = 0;
 
+const t_start = Date.now();
+let num_frames_rendered = 0;
+let t_prev = t_start;
+let dt = 0;
+let dt_recent = new Array(480);
+
 function render ()
 {
 	ctx.clearRect(0, 0, canv.width, canv.height);
@@ -60,8 +66,6 @@ function render ()
 
 	const brickoffs_x_pct = (angle % brickwidth_rad) / brickwidth_rad;
 	const brickoffs_x_srcpx = Math.floor(brickoffs_x_pct * brick.width);
-
-	ctx.fillText(brickoffs_x_srcpx, 64, 64);
 
 	// The two rows middle rows of bricks on screen have no vertical distortion.
 	let curr_x = 0;
@@ -103,14 +107,23 @@ function render ()
 
 		curr_x += brickwidth_foreshortened_px;
 	}
-}
 
-let t_prev = Date.now();
+	const t_now = Date.now();
+	ctx.fillText(num_frames_rendered + ' frames rendered in ' + (t_now - t_start) + ' ms', 64, 64);
+	ctx.fillText('Avg. framerate ' + Math.floor(1000 / ((t_now - t_start) / (num_frames_rendered))) + ' FPS', 64, 76);
+	num_recent_dt = (num_frames_rendered < 480) ? num_frames_rendered : 480;
+	ctx.fillText('Last 480 frames ' +  Math.floor(1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) + ' FPS', 64, 88);
+	ctx.fillText('Current frame ' + dt + ' ms', 64, 100);
+	num_frames_rendered++;
+}
 
 function run ()
 {
 	const t_now = Date.now();
-	const dt = t_now - t_prev;
+	dt = t_now - t_prev;
+
+	dt_recent.shift();
+	dt_recent.push(dt);
 
 	angle = (angle + angular_velocity * dt / 1000) % (2 * Math.PI);
 
