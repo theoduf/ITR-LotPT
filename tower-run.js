@@ -16,8 +16,8 @@
 
 const html = document.querySelector('html');
 
-//const canv = document.getElementById('game');
-const canv = document.createElement('canvas');
+const canv = document.getElementById('game');
+//const canv = document.createElement('canvas');
 const ctx = canv.getContext('2d');
 
 canv.width = window.innerWidth;
@@ -26,10 +26,10 @@ canv.height = window.innerHeight;
 // TODO: Change canvas size when window is resized.
 
 // The width of a brick when viewed from the front is specified in radians.
-const num_bricks_around = 256;
+const num_bricks_around = 128;
 const brickwidth_rad = 2 * Math.PI / num_bricks_around;
 
-let angular_velocity = 20 * brickwidth_rad; // Unit: radians / second
+let angular_velocity = 8 * brickwidth_rad; // Unit: radians / second
 let angular_acceleration = 0; // Unit: rads / s^2
 
 // Bricks
@@ -37,7 +37,7 @@ let angular_acceleration = 0; // Unit: rads / s^2
 brick = document.createElement('canvas');
 bctx = brick.getContext('2d');
 
-brickratio = 0.5;
+brickratio = 0.8;
 brick.width = 64;
 brick.height = Math.floor(brickratio * brick.width);
 
@@ -49,8 +49,8 @@ bctx.strokeRect(0.5, 0.5, brick.width, brick.height);
 
 // Rings of bricks
 
-//const ring = document.createElement('canvas');
-const ring = document.getElementById('ring');
+const ring = document.createElement('canvas');
+//const ring = document.getElementById('ring');
 const rctx = ring.getContext('2d');
 
 ring.width = num_bricks_around * brick.width;
@@ -97,14 +97,16 @@ const middle_y = Math.floor(0.5 * ring.height);
 
 const grad_high = ctx.createLinearGradient(0, middle_y, middle_x, middle_y);
 grad_high.addColorStop(0, 'transparent');
-grad_high.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+//grad_high.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+grad_high.addColorStop(0.5, 'red');
 grad_high.addColorStop(1, 'transparent');
 rctx.fillStyle = grad_high;
 rctx.fillRect(0, 0, middle_x, ring.height);
 
 const grad_shad = ctx.createLinearGradient(middle_x, middle_y, ring.width, middle_y);
 grad_shad.addColorStop(0, 'transparent');
-grad_shad.addColorStop(0.5, 'rgba(0, 0, 0, 0.4)');
+//grad_shad.addColorStop(0.5, 'rgba(0, 0, 0, 0.4)');
+grad_shad.addColorStop(0.5, 'green');
 grad_shad.addColorStop(1, 'transparent');
 rctx.fillStyle = grad_shad;
 rctx.fillRect(middle_x, 0, middle_x, ring.height);
@@ -128,16 +130,29 @@ function render ()
 	const towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
 	const towerend_x_px = towerstart_x_px + towerwidth_px;
 
-	const brickwidth_px = Math.floor(2 * Math.PI * towerradius_px * brickwidth_rad);
-	const brickheight_px = Math.floor(brickratio * brickwidth_px);
+	const brickwidth_dstpx = 24;
+	const brickheight_dstpx = brickwidth_dstpx * brickratio;
 
-	const middle_x_px = Math.floor(0.5 * canv.width);
-	const middle_y_px = Math.floor(0.5 * canv.height);
+	const offs_x_pct = angle / (2 * Math.PI);
+	const offs_x_srcpx = offs_x_pct * ring.width;
 
-	const brickoffs_x_pct = (angle % brickwidth_rad) / brickwidth_rad;
-	const brickoffs_x_srcpx = Math.floor(brickoffs_x_pct * brick.width);
+	const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
 
-	// End highlight and shadow.
+	let dstpos_x_px = 0;
+
+	for (let brick_pair_num = 0 ; brick_pair_num < num_bricks_visible_half ; brick_pair_num++)
+	{
+		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx *
+			Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI));
+
+		ctx.drawImage(ring,
+			Math.floor(offs_x_srcpx + brick_pair_num * brick.width), 0,
+			brick.width, 2 * brick.height,
+			towerstart_x_px + towerradius_px + dstpos_x_px, Math.floor(0.5 * canv.height) - brickheight_dstpx,
+			brickwidth_foreshortened_dstpx, brickheight_dstpx);
+
+		dstpos_x_px += brickwidth_foreshortened_dstpx;
+	}
 
 	ctx.fillStyle = '#449';
 	const t_now = Date.now();
@@ -174,4 +189,4 @@ function run ()
 
 // TODO: Settings screen where keybindings can be configured.
 
-//window.requestAnimationFrame(run);
+window.requestAnimationFrame(run);
