@@ -26,8 +26,8 @@ canv.height = window.innerHeight;
 // TODO: Change canvas size when window is resized.
 
 // The width of a brick when viewed from the front is specified in radians.
-const num_bricks_around = 128;
-const brickwidth_rad = 5 * Math.PI / num_bricks_around;
+const num_bricks_around = 64;
+const brickwidth_rad = 0.25 * Math.PI / num_bricks_around;
 
 let angular_velocity = 8 * brickwidth_rad; // Unit: radians / second
 let angular_acceleration = 0; // Unit: rads / s^2
@@ -128,8 +128,13 @@ function render ()
 	const towerstart_x_px = Math.floor((canv.width - towerwidth_px) / 2);
 	const towerend_x_px = towerstart_x_px + towerwidth_px;
 
-	const brickwidth_dstpx = 24;
-	const brickheight_dstpx = brickwidth_dstpx * brickratio;
+	/*
+	ctx.fillStyle = '#333';
+	ctx.fillRect(towerstart_x_px, 0, towerwidth_px, canv.height);
+	*/
+
+	const brickwidth_dstpx = 64;
+	const brickheight_dstpx = Math.floor(brickwidth_dstpx * brickratio);
 
 	const offs_x_pct = angle / (2 * Math.PI);
 	const src_offs_x_by_angle_px = offs_x_pct * ring.width;
@@ -156,10 +161,10 @@ function render ()
 
 		// Left half
 		ctx.drawImage(ring,
-			src_offs_x_by_angle_px - src_offset_x_px, 0,
-			1.25 * brick.width, ring.height,
+			Math.floor(src_offs_x_by_angle_px - src_offset_x_px), 0,
+			brick.width, ring.height,
 			dst_offset_center_x_px - dstpos_x_px, dst_y,
-			1.25 * brickwidth_foreshortened_dstpx, brickheight_dstpx);
+			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
 		dstpos_x_px += brickwidth_foreshortened_dstpx;
 	}
