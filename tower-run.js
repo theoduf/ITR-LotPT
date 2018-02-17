@@ -27,7 +27,7 @@ canv.height = window.innerHeight;
 
 // The width of a brick when viewed from the front is specified in radians.
 const num_bricks_around = 128;
-const brickwidth_rad = 2 * Math.PI / num_bricks_around;
+const brickwidth_rad = 5 * Math.PI / num_bricks_around;
 
 let angular_velocity = 8 * brickwidth_rad; // Unit: radians / second
 let angular_acceleration = 0; // Unit: rads / s^2
@@ -97,16 +97,14 @@ const middle_y = Math.floor(0.5 * ring.height);
 
 const grad_high = ctx.createLinearGradient(0, middle_y, middle_x, middle_y);
 grad_high.addColorStop(0, 'transparent');
-//grad_high.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
-grad_high.addColorStop(0.5, 'red');
+grad_high.addColorStop(0.5, 'rgba(255, 255, 255, 0.5)');
 grad_high.addColorStop(1, 'transparent');
 rctx.fillStyle = grad_high;
 rctx.fillRect(0, 0, middle_x, ring.height);
 
 const grad_shad = ctx.createLinearGradient(middle_x, middle_y, ring.width, middle_y);
 grad_shad.addColorStop(0, 'transparent');
-//grad_shad.addColorStop(0.5, 'rgba(0, 0, 0, 0.4)');
-grad_shad.addColorStop(0.5, 'green');
+grad_shad.addColorStop(0.5, 'rgba(0, 0, 0, 0.5)');
 grad_shad.addColorStop(1, 'transparent');
 rctx.fillStyle = grad_shad;
 rctx.fillRect(middle_x, 0, middle_x, ring.height);
