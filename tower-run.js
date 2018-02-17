@@ -157,9 +157,9 @@ function render ()
 		// Left half
 		ctx.drawImage(ring,
 			src_offs_x_by_angle_px - src_offset_x_px, 0,
-			brick.width, ring.height,
+			1.25 * brick.width, ring.height,
 			dst_offset_center_x_px - dstpos_x_px, dst_y,
-			brickwidth_foreshortened_dstpx, brickheight_dstpx);
+			1.25 * brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
 		dstpos_x_px += brickwidth_foreshortened_dstpx;
 	}
