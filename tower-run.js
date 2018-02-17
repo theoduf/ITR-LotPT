@@ -133,43 +133,49 @@ function bricks (angle)
 	const offs_x_pct = angle / (2 * Math.PI);
 	const src_offs_x_by_angle_px = offs_x_pct * ring.width;
 
-	let dstpos_x_px = 0;
+	// Number of rings on each half side of middle ring.
+	// TODO: Calculate so that it covers the full height of the monitor.
+	const num_rings_ydir_half = 7;
+
+	const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx;
+
+	let offset_dst_x_right = -brickwidth_dstpx;
+	let offset_dst_x_left = 0;
 
 	for (let brick_pair_num = 0 ; brick_pair_num < num_bricks_visible_half ; brick_pair_num++)
 	{
 		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx *
 			Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI));
 
-		const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx;
+		offset_dst_x_right += brickwidth_foreshortened_dstpx;
+		offset_dst_x_left -= brickwidth_foreshortened_dstpx;
 
 		// Right half
 		ctx.drawImage(ring,
 			src_offs_x_by_angle_px + Math.floor(brick_pair_num * brick.width), 0,
 			brick.width, ring.height,
-			Math.floor(0.5 * canv.width) + dstpos_x_px, dst_y,
+			Math.floor(0.5 * canv.width) + offset_dst_x_right, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
 		ctx.fillStyle = 'blue';
-		for (let j = -7 ; j < 9 ; j++)
+		for (let j = -num_rings_ydir_half ; j < num_rings_ydir_half + 2 ; j++)
 		{
-			ctx.fillRect(Math.floor(0.5 * canv.width) + dstpos_x_px - 2,
+			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_right - 2,
 				dst_y + j * brickheight_dstpx - 2,
 				4, 4);
 		}
-
-		dstpos_x_px += brickwidth_foreshortened_dstpx;
 
 		// Left half
 		ctx.drawImage(ring,
 			src_offs_x_by_angle_px - Math.floor((brick_pair_num + 1) * brick.width), 0,
 			brick.width, ring.height,
-			Math.floor(0.5 * canv.width) - dstpos_x_px, dst_y,
+			Math.floor(0.5 * canv.width) + offset_dst_x_left, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
 		ctx.fillStyle = 'orange';
-		for (let j = -7 ; j < 9 ; j++)
+		for (let j = -num_rings_ydir_half ; j < num_rings_ydir_half + 2 ; j++)
 		{
-			ctx.fillRect(Math.floor(0.5 * canv.width) - dstpos_x_px - 2,
+			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
 				dst_y + j * brickheight_dstpx - 2,
 				4, 4);
 		}
