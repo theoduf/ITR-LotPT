@@ -56,6 +56,9 @@ const rctx = ring.getContext('2d');
 ring.width = num_bricks_around * brick.width;
 ring.height = 2 * brick.height;
 
+rctx.fillStyle = '#333';
+rctx.fillRect(0, 0, ring.width, ring.height);
+
 rctx.drawImage(brick,
 	Math.ceil(0.5 * brick.width), 0,
 	brick.width, brick.height,
@@ -64,9 +67,6 @@ rctx.drawImage(brick,
 
 for (let i = 0 ; i < num_bricks_around ; i++)
 {
-	ctx.fillStyle = '#333';
-	ctx.fillRect(0, 0, ring.width, ring.height);
-
 	/*
 	 * Top row.
 	 */
@@ -184,11 +184,9 @@ function render ()
 
 	ctx.fillStyle = '#449';
 	const t_now = Date.now();
-	ctx.fillText(num_frames_rendered + ' frames rendered in ' + (t_now - t_start) + ' ms', 16, 24);
-	ctx.fillText('Avg. framerate ' + Math.floor(1000 / ((t_now - t_start) / (num_frames_rendered))) + ' FPS', 16, 36);
 	num_recent_dt = (num_frames_rendered < 480) ? num_frames_rendered : 480;
-	ctx.fillText('Last 480 frames ' +  Math.floor(1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) + ' FPS', 16, 48);
-	ctx.fillText('Current frame ' + dt + ' ms', 16, 60);
+	ctx.fillText('Last 480 frames ' +  Math.floor(1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) + ' FPS', 16, 24);
+	ctx.fillText('Current frame ' + dt + ' ms', 16, 36);
 	num_frames_rendered++;
 }
 
@@ -196,6 +194,11 @@ let stopped = false;
 
 function run ()
 {
+	if (stopped)
+	{
+		return;
+	}
+
 	const t_now = Date.now();
 	dt = t_now - t_prev;
 
@@ -210,19 +213,14 @@ function run ()
 
 	render();
 
-	if (!stopped)
-	{
-		window.requestAnimationFrame(run);
-	}
-
 	t_prev = t_now;
+
+	window.requestAnimationFrame(run);
 }
 
 // TODO: Title screen.
 
 // TODO: Settings screen where keybindings can be configured.
-
-window.requestAnimationFrame(run);
 
 function stop ()
 {
@@ -231,6 +229,11 @@ function stop ()
 
 function start ()
 {
+	t_prev = Date.now();
+	dt_recent.fill(0);
+	num_frames_rendered = 0;
 	stopped = false;
 	run();
 }
+
+start();
