@@ -145,6 +145,7 @@ function bricks (angle)
 	for (let brick_pair_num = 0 ; brick_pair_num < num_bricks_visible_half ; brick_pair_num++)
 	{
 		const w_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI);
+		console.log(w_frac_rad);
 		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx * w_frac_rad);
 
 		const h_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.25 * Math.PI);
@@ -153,32 +154,34 @@ function bricks (angle)
 		offset_dst_x_right += brickwidth_foreshortened_dstpx;
 		offset_dst_x_left -= brickwidth_foreshortened_dstpx;
 
-		// Right half
-		ctx.drawImage(ring,
-			src_offs_x_by_angle_px + Math.floor(brick_pair_num * brick.width), 0,
-			brick.width, ring.height,
-			Math.floor(0.5 * canv.width) + offset_dst_x_right, dst_y,
-			brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
-
 		for (let j = -num_rings_ydir_half ; j < num_rings_ydir_half + 2 ; j++)
 		{
+			// Right half
+			ctx.drawImage(ring,
+				src_offs_x_by_angle_px + Math.floor(brick_pair_num * brick.width), 0,
+				brick.width, ring.height,
+				Math.floor(0.5 * canv.width) + offset_dst_x_right,
+				dst_y + j * brickheight_foreshortened_dstpx,
+				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
+
 			ctx.fillStyle = 'blue';
 			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_right - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
+
+			// Left half
+			ctx.drawImage(ring,
+				src_offs_x_by_angle_px - Math.floor((brick_pair_num + 1) * brick.width), 0,
+				brick.width, ring.height,
+				Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
+				dst_y + j * brickheight_foreshortened_dstpx - 2,
+				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 
 			ctx.fillStyle = 'orange';
 			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
 		}
-
-		// Left half
-		ctx.drawImage(ring,
-			src_offs_x_by_angle_px - Math.floor((brick_pair_num + 1) * brick.width), 0,
-			brick.width, ring.height,
-			Math.floor(0.5 * canv.width) + offset_dst_x_left, dst_y,
-			brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 	}
 }
 
