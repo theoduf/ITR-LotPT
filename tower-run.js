@@ -152,25 +152,29 @@ function bricks (angle)
 		const h_frac_rad = Math.cos((brick_pair_num / num_bricks_visible_half) * 0.25 * Math.PI);
 		const brickheight_foreshortened_dstpx = Math.ceil(brickheight_dstpx * h_frac_rad);
 
+		const xcolor = Math.ceil((brick_pair_num / num_bricks_visible_half) * 255);
+
 		offset_dst_x_right += brickwidth_foreshortened_dstpx;
 		offset_dst_x_left -= brickwidth_foreshortened_dstpx;
 
 		for (let j = -num_rings_ydir_half ; j < num_rings_ydir_half + 2 ; j++)
 		{
+			const ycolor = Math.ceil(((j + num_rings_ydir_half) / (2 * num_rings_ydir_half + 1)) * 255);
+			ctx.fillStyle = 'rgb(' + xcolor + ', ' + ycolor + ', 255)';
+
 			// Right half
+			/*
 			ctx.drawImage(ring,
 				src_offs_x_by_angle_px + Math.floor(brick_pair_num * brick.width), 0,
 				brick.width, ring.height,
 				Math.floor(0.5 * canv.width) + offset_dst_x_right,
 				dst_y + j * brickheight_foreshortened_dstpx,
 				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
+			*/
 
-			/*
-			ctx.fillStyle = 'blue';
 			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_right - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
-				4, 4);a
-			*/
+				4, 4);
 
 			// Left half
 			ctx.drawImage(ring,
@@ -180,12 +184,9 @@ function bricks (angle)
 				dst_y + j * brickheight_foreshortened_dstpx,
 				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 
-			/*
-			ctx.fillStyle = 'orange';
 			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
-			*/
 		}
 	}
 }
