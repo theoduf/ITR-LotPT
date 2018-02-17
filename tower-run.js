@@ -29,7 +29,7 @@ canv.height = window.innerHeight;
 const num_bricks_around = 64;
 const brickwidth_rad = 2 * Math.PI / num_bricks_around;
 
-let angular_velocity = brickwidth_rad; // Unit: radians / second
+let angular_velocity = 3 * brickwidth_rad; // Unit: radians / second
 let angular_acceleration = 0; // Unit: rads / s^2
 
 // Bricks
