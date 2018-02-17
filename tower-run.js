@@ -139,14 +139,15 @@ for (let brick_pair_num = num_bricks_visible_half ; brick_pair_num > 0 ; brick_p
 const towerstart_x_px = Math.ceil(canv.width / 2) - towerradius_px;
 const towerend_x_px = Math.ceil(canv.width / 2) + towerradius_px;
 
+// Number of rings on each half side of middle ring.
+const h_frac_rad = Math.cos(0.25 * Math.PI);
+const sidemost_brickheight_foreshortened_dstpx = Math.ceil(brickheight_dstpx * h_frac_rad);
+const num_rings_ydir_half = Math.ceil(0.5 * canv.height / sidemost_brickheight_foreshortened_dstpx);
+
 function bricks (angle)
 {
 	const offs_x_pct = angle / (2 * Math.PI);
 	const src_offs_x_by_angle_px = offs_x_pct * ring.width;
-
-	// Number of rings on each half side of middle ring.
-	// TODO: Calculate so that it covers the full height of the monitor.
-	const num_rings_ydir_half = 7;
 
 	const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx;
 
