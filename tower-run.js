@@ -88,9 +88,11 @@ for (let i = 0 ; i < num_bricks_around ; i++)
 		brick.width * i, brick.height,
 		brick.width, brick.height);
 
+	/*
 	rctx.fillStyle = 'red';
 	rctx.font = '24px serif';
 	rctx.fillText(i, brick.width * i + 24, 1.5 * brick.height + 6)
+	*/
 }
 
 /*
@@ -164,10 +166,12 @@ function bricks (angle)
 				dst_y + j * brickheight_foreshortened_dstpx,
 				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 
+			/*
 			ctx.fillStyle = 'blue';
 			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_right - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
-				4, 4);
+				4, 4);a
+			*/
 
 			// Left half
 			ctx.drawImage(ring,
@@ -177,10 +181,12 @@ function bricks (angle)
 				dst_y + j * brickheight_foreshortened_dstpx,
 				brickwidth_foreshortened_dstpx, brickheight_foreshortened_dstpx);
 
+			/*
 			ctx.fillStyle = 'orange';
 			ctx.fillRect(Math.floor(0.5 * canv.width) + offset_dst_x_left - 2,
 				dst_y + j * brickheight_foreshortened_dstpx - 2,
 				4, 4);
+			*/
 		}
 	}
 }
