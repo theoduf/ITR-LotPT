@@ -99,14 +99,14 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 		const grad_left = ctx.createLinearGradient(grad_middle_x_px - grad_left_width_px, Math.floor(0.5 * canv.height),
 			grad_middle_x_px, Math.floor(0.5 * canv.height));
 		grad_left.addColorStop(0, 'transparent');
-		grad_left.addColorStop(1, 'red');
+		grad_left.addColorStop(1, color);
 
 		ctx.fillStyle = grad_left;
 		ctx.fillRect(towerstart_x_px, 0, grad_middle_x_px - towerstart_x_px, canv.height);
 
 		const grad_right = ctx.createLinearGradient(grad_middle_x_px, Math.floor(0.5 * canv.height),
 			grad_middle_x_px + grad_right_width_px, Math.floor(0.5 * canv.height));
-		grad_right.addColorStop(0, 'green');
+		grad_right.addColorStop(0, color);
 		grad_right.addColorStop(1, 'transparent');
 
 		ctx.fillStyle = grad_right;
@@ -121,7 +121,7 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 
 		const grad_right = ctx.createLinearGradient(grad_middle_x_px, Math.floor(0.5 * canv.height),
 			grad_middle_x_px + grad_right_width_px, Math.floor(0.5 * canv.height));
-		grad_right.addColorStop(0, 'blue');
+		grad_right.addColorStop(0, color);
 		grad_right.addColorStop(1, 'transparent');
 
 		ctx.fillStyle = grad_right;
@@ -138,7 +138,7 @@ function render_gradient_if_visible (middle_pos_at_angle, color)
 			grad_middle_x_px - grad_left_width_px, Math.floor(0.5 * canv.height),
 			grad_middle_x_px, Math.floor(0.5 * canv.height));
 		grad_left.addColorStop(0, 'transparent');
-		grad_left.addColorStop(1, 'yellow');
+		grad_left.addColorStop(1, color);
 
 		ctx.fillStyle = grad_left;
 		ctx.fillRect(grad_middle_x_px - grad_left_width_px, 0, grad_left_width_px, canv.height);
@@ -246,7 +246,7 @@ function render ()
 	 */
 
 	render_gradient_if_visible(0, 'rgba(255, 255, 255, 0.3)');
-	//render_gradient_if_visible(Math.PI, 'rgba(0, 0, 0, 0.7)');
+	render_gradient_if_visible(Math.PI, 'rgba(0, 0, 0, 0.7)');
 
 	// End highlight and shadow.
 
