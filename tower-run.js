@@ -78,10 +78,6 @@ for (let i = 0 ; i < num_bricks_around ; i++)
 		curr_x_top, 0,
 		brick.width, brick.height);
 
-	//rctx.fillStyle = 'red';
-	//rctx.font = '24px serif';
-	//rctx.fillText(i, curr_x_top + 24, Math.ceil(brick.height / 2) + 6)
-
 	/*
 	 * Bottom row.
 	 */
@@ -91,6 +87,10 @@ for (let i = 0 ; i < num_bricks_around ; i++)
 		brick.width, brick.height,
 		brick.width * i, brick.height,
 		brick.width, brick.height);
+
+	rctx.fillStyle = 'red';
+	rctx.font = '24px serif';
+	rctx.fillText(i, brick.width * i + 24, 1.5 * brick.height + 6)
 }
 
 /*
@@ -153,7 +153,7 @@ function render ()
 		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx *
 			Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI));
 
-		const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx
+		const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx;
 
 		// Right half
 		ctx.drawImage(ring,
