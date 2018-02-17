@@ -71,11 +71,16 @@ for (let i = 0 ; i < num_bricks_around ; i++)
 	 * Top row.
 	 */
 
+	const curr_x_top = Math.floor(brick.width * (i + 0.5));
 	rctx.drawImage(brick,
 		0, 0,
 		brick.width, brick.height,
-		Math.floor(brick.width * (i + 0.5)), 0,
+		curr_x_top, 0,
 		brick.width, brick.height);
+
+	rctx.fillStyle = 'red';
+	rctx.font = '24px serif';
+	rctx.fillText(i, curr_x_top + 24, Math.ceil(brick.height / 2) + 6)
 
 	/*
 	 * Bottom row.
