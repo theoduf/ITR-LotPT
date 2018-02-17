@@ -160,8 +160,12 @@ function render ()
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
 		// Left half
+		ctx.fillStyle = 'red';
+		ctx.fillRect(
+			dst_offset_center_x_px - dstpos_x_px, dst_y,
+			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 		ctx.drawImage(ring,
-			Math.floor(src_offs_x_by_angle_px - src_offset_x_px), 0,
+			src_offs_x_by_angle_px - src_offset_x_px, 0,
 			brick.width, ring.height,
 			dst_offset_center_x_px - dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
