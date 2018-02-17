@@ -153,24 +153,22 @@ function render ()
 		const brickwidth_foreshortened_dstpx = Math.ceil(brickwidth_dstpx *
 			Math.cos((brick_pair_num / num_bricks_visible_half) * 0.5 * Math.PI));
 
-		const src_offset_x_px = Math.floor(brick_pair_num * brick.width);
-		const dst_offset_center_x_px = towerstart_x_px + towerradius_px;
 		const dst_y = Math.floor(0.5 * canv.height) - brickheight_dstpx
 
 		// Right half
 		ctx.drawImage(ring,
-			src_offs_x_by_angle_px + src_offset_x_px, 0,
+			src_offs_x_by_angle_px + Math.floor(brick_pair_num * brick.width), 0,
 			brick.width, ring.height,
-			dst_offset_center_x_px + dstpos_x_px, dst_y,
+			Math.floor(0.5 * canv.width) + dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 
 		dstpos_x_px += brickwidth_foreshortened_dstpx;
 
 		// Left half
 		ctx.drawImage(ring,
-			src_offs_x_by_angle_px - src_offset_x_px, 0,
+			src_offs_x_by_angle_px - Math.floor((brick_pair_num + 1) * brick.width), 0,
 			brick.width, ring.height,
-			dst_offset_center_x_px - dstpos_x_px, dst_y,
+			Math.floor(0.5 * canv.width) - dstpos_x_px, dst_y,
 			brickwidth_foreshortened_dstpx, brickheight_dstpx);
 	}
 
