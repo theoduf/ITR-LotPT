@@ -70,4 +70,5 @@ See the file [assets/LICENSE.md](assets/LICENSE.md) for the CC0 license text.
 
 ### Copyright of third-party CC0 assets
 
-All third-party assets currently used are copyright of [Kenney](http://kenney.nl/).
+All third-party assets present in the [assets/thirdparty](assets/thirdparty)
+directory are copyright of [Kenney](http://kenney.nl/).
