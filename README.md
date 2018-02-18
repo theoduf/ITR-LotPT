@@ -25,7 +25,7 @@ Tower Run draws inspiration from a number of video games, most notably:
   aim to try and make Tower Run as enjoyable and inspiring as this and other
   Mario games had been to me growing up.
 
-* The original [Crash Bandicoot (1996)](https://en.wikipedia.org/wiki/Crash_Bandicoot_%28video_game%29)
+* The original [*Crash Bandicoot* (1996)](https://en.wikipedia.org/wiki/Crash_Bandicoot_%28video_game%29)
   for the Sony Playstation. This game along with the above mentioned
   Super Mario 64 would come to shape the meaning of 3d platform gaming
   for not just an entire generation but for the industry as a whole
