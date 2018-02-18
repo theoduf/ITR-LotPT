@@ -1,9 +1,9 @@
 # Tower Run
 
 Tower Run is an open source browser based web game written in JavaScript
-and HTML5 where the goal of the game is to survive for the longest amount
-of time, defeating the enemies that you encounter, collecting powerups
-and treasures along the way.
+utilizing the HTML5 canvas. The goal of the game is to survive for the
+longest amount of time, defeating the enemies that you encounter, collecting
+powerups and treasures along the way.
 
 You can play the game at https://ctsrc.github.io/tower-run/, or rather,
 you will be able to play it there once the game is in a playable state.
