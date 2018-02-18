@@ -48,7 +48,7 @@ for (let i = 0 ; i < num_bricks_visible_half ; i++)
  */
 
 // First approximation of tower radius in pixels.
-let towerradius_px = Math.ceil(0.5 * 0.5 * canv.width);
+let towerradius_px = Math.ceil(0.43 * 0.5 * canv.width);
 
 // Full pixel size of bricks
 const brickratio = 0.5;
