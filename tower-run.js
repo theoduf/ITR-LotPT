@@ -154,7 +154,9 @@ grad_shad.addColorStop(1, 'transparent');
 actx.fillStyle = grad_shad;
 actx.fillRect(a_middle_x, 0, a_middle_x, atomic_ring.height);
 
-//ctx.drawImage(atomic_ring, 0, 0);
+// Debug
+ctx.drawImage(atomic_ring, 0, 0, atomic_ring.width, atomic_ring.height,
+	0, 0, canv.width, atomic_ring.height);
 
 /*
  * Slideable "megatexture".
@@ -177,6 +179,40 @@ for (let i = 0 ; i < num_rows_visible_outermost ; i++)
 //	towerstart_x_px, 0,
 //	sliding_bricks.width * (brickheight_outermost_dstpx / brickheight_fullpx),
 //	sliding_bricks.height * (brickheight_outermost_dstpx / brickheight_fullpx));
+// Debug
+ctx.drawImage(sliding_bricks, 0, 0, sliding_bricks.width, sliding_bricks.height,
+	0, atomic_ring.height, canv.width, sliding_bricks.height);
+
+/*
+ * Distant background, equivalent of a skybox.
+ */
+
+const farbg = document.createElement('canvas');
+const fctx = farbg.getContext('2d');
+
+farbg.width = 2 * atomic_ring.width;
+farbg.height = canv.height;
+
+let sun = new Image();
+sun.onload = () =>
+{
+	const sun_diam_srcpx = sun.width;
+	const sun_radius_srcpx = Math.ceil(0.5 * sun_diam_srcpx);
+
+	const sun_diam_dstpx = canv.height;
+	const sun_radius_dstpx = Math.ceil(0.5 * sun_diam_dstpx);
+
+	fctx.drawImage(sun, 0, sun_radius_srcpx, sun_diam_srcpx, sun_radius_srcpx,
+		Math.floor(0.75 * atomic_ring.width) - sun_radius_dstpx, 0, sun_diam_dstpx, sun_radius_dstpx);
+
+	fctx.drawImage(sun, 0, sun_radius_srcpx, sun_diam_srcpx, sun_radius_srcpx,
+		Math.floor(1.75 * atomic_ring.width) - sun_radius_dstpx, 0, sun_diam_dstpx, sun_radius_dstpx);
+
+	// Debug
+	ctx.drawImage(farbg, 0, 0, farbg.width, farbg.height,
+		0, 0, canv.width, farbg.height);
+}
+sun.src = 'assets/thirdparty/images/sun.svg';
 
 /*
  * Render tower.
@@ -289,6 +325,13 @@ function render ()
 {
 	ctx.clearRect(0, 0, canv.width, canv.height);
 
+	const offs_x_farbg_srcpx = ((angle / (4 * Math.PI))) * farbg.width;
+
+	ctx.drawImage(farbg, offs_x_farbg_srcpx, 0, canv.width, canv.height,
+		0, 0, canv.width, canv.height);
+	console.log(offs_x_farbg_srcpx, 0, canv.width, canv.height,
+		0, 0, canv.width, canv.height);
+
 	renderTower();
 
 	if (t_prev !== null)
@@ -348,4 +391,4 @@ function start ()
 	run();
 }
 
-start();
+//start();
