@@ -43,7 +43,7 @@ Tower Run draws inspiration from a number of video games, most notably:
   [Andy Gavin](https://twitter.com/asgavin) has published
   [dozens of posts on the making of video games on his website](http://all-things-andy-gavin.com/video-games/),
   among which are a series of posts about the making of Crash Bandicoot.
-  You should go to [his sorted archive of historfic video game posts](http://all-things-andy-gavin.com/video-games-archive/)
+  You should go to [his sorted archive of historic video game posts](http://all-things-andy-gavin.com/video-games-archive/)
   and read all of the ones about Crash Bandicoot.
 
 * [*Temple Run* (2011)](https://en.wikipedia.org/wiki/Temple_Run), a more recent
