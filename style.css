@@ -1,4 +1,15 @@
-html, body { height: 100%; background: #f00; }
-* { margin: 0; padding: 0; }
-#game { width: 100%; height: 100%; background: #eef; }
-#ring { background: #efe; }
+*
+{
+  margin: 0;
+  padding: 0;
+}
+html, body
+{
+  height: 100%;
+}
+#game
+{
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#bee0ff, #0084ff);
+}
