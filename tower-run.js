@@ -103,12 +103,9 @@ const actx = atomic_ring.getContext('2d');
 atomic_ring.width = num_bricks_around * brickwidth_fullpx;
 atomic_ring.height = 2 * brickheight_fullpx;
 
-// Debug
-/*
 actx.drawImage(brick, Math.ceil(0.5 * brickwidth_fullpx), 0,
 	brickwidth_fullpx, brickheight_fullpx,
 	0, 0, brickwidth_fullpx, brickheight_fullpx);
-*/
 
 const fontsize = Math.ceil(0.5 * brickwidth_fullpx);
 actx.font = fontsize + 'px serif';
