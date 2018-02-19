@@ -90,6 +90,7 @@ bctx.strokeRect(Math.floor(0.5 * bctx.lineWidth),
 	Math.floor(0.5 * bctx.lineWidth),
 	brick.width, brick.height);
 
+// Debug
 //ctx.drawImage(brick, brickwidth_fullpx, brickheight_fullpx);
 
 /*
@@ -102,9 +103,12 @@ const actx = atomic_ring.getContext('2d');
 atomic_ring.width = num_bricks_around * brickwidth_fullpx;
 atomic_ring.height = 2 * brickheight_fullpx;
 
+// Debug
+/*
 actx.drawImage(brick, Math.ceil(0.5 * brickwidth_fullpx), 0,
 	brickwidth_fullpx, brickheight_fullpx,
 	0, 0, brickwidth_fullpx, brickheight_fullpx);
+*/
 
 const fontsize = Math.ceil(0.5 * brickwidth_fullpx);
 actx.font = fontsize + 'px serif';
@@ -155,8 +159,10 @@ actx.fillStyle = grad_shad;
 actx.fillRect(a_middle_x, 0, a_middle_x, atomic_ring.height);
 
 // Debug
+/*
 ctx.drawImage(atomic_ring, 0, 0, atomic_ring.width, atomic_ring.height,
 	0, 0, canv.width, atomic_ring.height);
+*/
 
 /*
  * Slideable "megatexture".
@@ -174,14 +180,11 @@ for (let i = 0 ; i < num_rows_visible_outermost ; i++)
 	sctx.drawImage(atomic_ring, atomic_ring.width, i * atomic_ring.height);
 }
 
-//ctx.drawImage(sliding_bricks, towerstart_x_px, 0);
-//ctx.drawImage(sliding_bricks, 0, 0, sliding_bricks.width, sliding_bricks.height,
-//	towerstart_x_px, 0,
-//	sliding_bricks.width * (brickheight_outermost_dstpx / brickheight_fullpx),
-//	sliding_bricks.height * (brickheight_outermost_dstpx / brickheight_fullpx));
 // Debug
+/*
 ctx.drawImage(sliding_bricks, 0, 0, sliding_bricks.width, sliding_bricks.height,
 	0, atomic_ring.height, canv.width, sliding_bricks.height);
+*/
 
 /*
  * Distant background, equivalent of a skybox.
