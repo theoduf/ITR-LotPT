@@ -200,17 +200,25 @@ sun.onload = () =>
 {
 	const sun_diam_srcpx = sun.width;
 	const sun_radius_srcpx = Math.ceil(0.5 * sun_diam_srcpx);
+	const sun_offs_y_srcpx = Math.ceil(0.42 * sun_diam_srcpx);
 
-	const sun_diam_dstpx = Math.floor(0.5 * canv.width);
+	const sun_diam_dstpx = Math.floor(0.35 * canv.width);
 	const sun_radius_dstpx = Math.ceil(0.5 * sun_diam_dstpx);
+	const sun_offs_y_dstpx = Math.ceil(0.42 * sun_diam_dstpx);
 
 	// XXX: Sun goes in opposite direction so we place it 75% away from the *right* edge of each "skybox copy".
 
-	fctx.drawImage(sun, 0, sun_radius_srcpx, sun_diam_srcpx, sun_radius_srcpx,
-		Math.floor(0.25 * 2 * canv.width) - sun_radius_dstpx, 0, sun_diam_dstpx, sun_radius_dstpx);
+	fctx.drawImage(sun,
+		0, sun_offs_y_srcpx,
+		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
+		Math.floor(0.25 * 2 * canv.width) - sun_radius_dstpx, 0,
+		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
 
-	fctx.drawImage(sun, 0, sun_radius_srcpx, sun_diam_srcpx, sun_radius_srcpx,
-		Math.floor(1.25 * 2 * canv.width) - sun_radius_dstpx, 0, sun_diam_dstpx, sun_radius_dstpx);
+	fctx.drawImage(sun,
+		0, sun_offs_y_srcpx,
+		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
+		Math.floor(1.25 * 2 * canv.width) - sun_radius_dstpx, 0,
+		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
 
 	// Debug
 	ctx.drawImage(farbg, 0, 0, farbg.width, farbg.height,
