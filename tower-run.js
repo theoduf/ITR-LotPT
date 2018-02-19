@@ -190,7 +190,9 @@ ctx.drawImage(sliding_bricks, 0, 0, sliding_bricks.width, sliding_bricks.height,
 const farbg = document.createElement('canvas');
 const fctx = farbg.getContext('2d');
 
-farbg.width = 2 * atomic_ring.width;
+// Skybox covers 360 degrees, our view is showing 180 degrees.
+// Additionally, like with the sliding bricks we draw two copies next to each other so we can slide over.
+farbg.width = 4 * canv.width;
 farbg.height = canv.height;
 
 let sun = new Image();
@@ -199,18 +201,24 @@ sun.onload = () =>
 	const sun_diam_srcpx = sun.width;
 	const sun_radius_srcpx = Math.ceil(0.5 * sun_diam_srcpx);
 
-	const sun_diam_dstpx = canv.height;
+	const sun_diam_dstpx = Math.floor(0.5 * canv.width);
 	const sun_radius_dstpx = Math.ceil(0.5 * sun_diam_dstpx);
 
-	fctx.drawImage(sun, 0, sun_radius_srcpx, sun_diam_srcpx, sun_radius_srcpx,
-		Math.floor(0.75 * atomic_ring.width) - sun_radius_dstpx, 0, sun_diam_dstpx, sun_radius_dstpx);
+	//console.log(sun_diam_dstpx, sun_radius_dstpx);
+
+	// XXX: Sun goes in opposite direction so we place it 75% away from the *right* edge of each "skybox copy".
 
 	fctx.drawImage(sun, 0, sun_radius_srcpx, sun_diam_srcpx, sun_radius_srcpx,
-		Math.floor(1.75 * atomic_ring.width) - sun_radius_dstpx, 0, sun_diam_dstpx, sun_radius_dstpx);
+		Math.floor(0.25 * 2 * canv.width) - sun_radius_dstpx, 0, sun_diam_dstpx, sun_radius_dstpx);
+
+	fctx.drawImage(sun, 0, sun_radius_srcpx, sun_diam_srcpx, sun_radius_srcpx,
+		Math.floor(1.25 * 2 * canv.width) - sun_radius_dstpx, 0, sun_diam_dstpx, sun_radius_dstpx);
 
 	// Debug
 	ctx.drawImage(farbg, 0, 0, farbg.width, farbg.height,
 		0, 0, canv.width, farbg.height);
+
+	//render();
 }
 sun.src = 'assets/thirdparty/images/sun.svg';
 
@@ -325,12 +333,13 @@ function render ()
 {
 	ctx.clearRect(0, 0, canv.width, canv.height);
 
-	const offs_x_farbg_srcpx = ((angle / (4 * Math.PI))) * farbg.width;
+	const offs_x_farbg_srcpx = (angle / (4 * Math.PI)) * farbg.width;
+	//console.log(offs_x_farbg_srcpx);
 
-	ctx.drawImage(farbg, offs_x_farbg_srcpx, 0, canv.width, canv.height,
+	ctx.drawImage(farbg, farbg.width - canv.width - offs_x_farbg_srcpx, 0, canv.width, canv.height,
 		0, 0, canv.width, canv.height);
-	console.log(offs_x_farbg_srcpx, 0, canv.width, canv.height,
-		0, 0, canv.width, canv.height);
+
+	//console.log(farbg.width, canv.width, offs_x_farbg_srcpx);
 
 	renderTower();
 
@@ -391,4 +400,4 @@ function start ()
 	run();
 }
 
-//start();
+start();
