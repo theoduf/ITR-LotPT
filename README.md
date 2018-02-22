@@ -1,17 +1,17 @@
-# Tower Run
+# Infinite Tower Run
 
-Tower Run is an open source browser based web game written in JavaScript
+Infinite Tower Run is an open source browser based web game written in JavaScript
 utilizing the HTML5 canvas. The goal of the game is to survive for the
 longest amount of time, defeating the enemies that you encounter, collecting
 powerups and treasures along the way.
 
-You can play the game at https://ctsrc.github.io/TowerRun/, or rather,
+You can play the game at https://www.infinite-tower.run/, or rather,
 you will be able to play it there once the game is in a playable state.
-Tower Run is currently under active development.
+Infinite Tower Run is currently under active development.
 
 ## Acknowledgements
 
-Tower Run draws inspiration from a number of video games, most notably:
+Infinite Tower Run draws inspiration from a number of video games, most notably:
 
 * The 3D Rotating Tower in
   [*Mickey Mania: The Timeless Adventures of Mickey Mouse* (1994)](https://en.wikipedia.org/wiki/Mickey_Mania).
@@ -21,12 +21,12 @@ Tower Run draws inspiration from a number of video games, most notably:
   founder and Mickey Mania designer [Jon Burton](https://twitter.com/JonTt)
   explains how he and the rest of the TT crew created their 3D rotating tower
   on the SEGA Genesis. This video inspired me to create my own implementation
-  of a rotating tower, and Tower Run is the result of that.
+  of a rotating tower, and Infinite Tower Run is the result of that.
 
 * [*Super Mario 64* (1996)](https://en.wikipedia.org/wiki/Super_Mario_64).
   Once I had my rotating tower, I found that the look of my creation reminded
   me of this one of the first 3d platformer video games. I decided that I would
-  aim to try and make Tower Run as enjoyable and inspiring as this and other
+  aim to try and make Infinite Tower Run as enjoyable and inspiring as this and other
   Mario games had been to me growing up.
 
 * The original [*Crash Bandicoot* (1996)](https://en.wikipedia.org/wiki/Crash_Bandicoot_%28video_game%29)
@@ -57,7 +57,7 @@ of this game, but this list is getting about long enough already.
 
 ## Copyright and license
 
-The source code, markup and stylesheets of Tower Run are
+The source code, markup and stylesheets of Infinite Tower Run are
 copyright &copy; 2018 Erik Nordstrøm, and are provided under the terms of
 the ISC license. See the file [LICENSE](LICENSE) for the ISC license text.
 
