@@ -1,5 +1,7 @@
 # Infinite Tower Run
 
+<a href="http://www.indiedb.com/games/infinite-tower-run" title="View Infinite Tower Run on Indie DB" target="_blank"><img src="http://button.indiedb.com/popularity/medium/games/65797.png" alt="Popularity of Infinite Tower Run on Indie DB" /></a>
+
 Infinite Tower Run is an open source browser based web game written in JavaScript
 utilizing the HTML5 canvas. The goal of the game is to survive for the
 longest amount of time, defeating the enemies that you encounter, collecting
