@@ -78,3 +78,7 @@ See the file [assets/LICENSE.md](assets/LICENSE.md) for the CC0 license text.
 
 All third-party assets present in the [assets/thirdparty](assets/thirdparty)
 directory are copyright of [Kenney](http://kenney.nl/).
+
+## Trademark notice
+
+Infinite Tower Run is a trademark of Erik Nordstrøm.
