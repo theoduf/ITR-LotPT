@@ -14,6 +14,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+function assert (cond)
+{
+	if (!cond)
+	{
+		throw "Assertion failed!";
+	}
+}
+
 const t_start = Date.now();
 
 const html = document.querySelector('html');
@@ -24,164 +32,11 @@ const ctx = canv.getContext('2d');
 canv.width = window.innerWidth;
 canv.height = window.innerHeight;
 
-/*
- * Resolution independent size of tower using the width of a single brick as reference unit.
- */
+const tcanv = document.createElement('canvas');
+const gl = tcanv.getContext('webgl');
 
-const num_bricks_around = 64;
-const num_bricks_visible_half = Math.floor(0.25 * num_bricks_around);
-
-// The width of a brick when viewed from the front is specified in radians.
-const brickwidth_rad = 2 * Math.PI / num_bricks_around;
-
-let towerradius_pu = 0;
-for (let i = 0 ; i < num_bricks_visible_half ; i++)
-{
-	const w_frac_rad = Math.cos(((num_bricks_visible_half - i) / num_bricks_visible_half) * 0.5 * Math.PI);
-	const brickwidth_foreshortened_dstpu = w_frac_rad;
-	towerradius_pu += brickwidth_foreshortened_dstpu;
-}
-
-/*
- * Pixel sizes
- * TODO: Update when window is resized.
- */
-
-// First approximation of tower radius in pixels.
-let towerradius_px = Math.ceil(0.43 * 0.5 * canv.width);
-
-// Full pixel size of bricks
-const brickratio = 0.5;
-const brickwidth_fullpx = 2 * Math.ceil(0.5 * towerradius_px / towerradius_pu);
-const brickheight_fullpx = Math.ceil(brickwidth_fullpx * brickratio);
-
-// Final calculation of tower radius in pixels.
-towerradius_px = 0;
-for (let i = 0 ; i < num_bricks_visible_half ; i++)
-{
-	const w_frac_rad = Math.cos(((num_bricks_visible_half - i) / num_bricks_visible_half) * 0.5 * Math.PI);
-	const brickwidth_curr_foreshortened_dstpx = Math.ceil(brickwidth_fullpx * w_frac_rad);
-	towerradius_px += brickwidth_curr_foreshortened_dstpx;
-}
-
-const towerstart_x_px = Math.ceil(canv.width / 2) - towerradius_px;
-const towerend_x_px = Math.ceil(canv.width / 2) + towerradius_px;
-
-// Max number of rows of bricks visible on screen at once are at the edges of the tower.
-const h_frac_rad = Math.cos(0.25 * Math.PI);
-const brickheight_outermost_dstpx = Math.ceil(brickheight_fullpx * h_frac_rad);
-const num_rows_visible_outermost = Math.ceil(canv.height / brickheight_outermost_dstpx) + 2;
-
-/*
- * Single brick
- */
-
-const brick = document.createElement('canvas');
-const bctx = brick.getContext('2d');
-
-brick.width = brickwidth_fullpx;
-brick.height = brickheight_fullpx;
-
-bctx.fillStyle = '#999';
-bctx.fillRect(0, 0, brick.width, brick.height);
-bctx.strokeStyle = '#333';
-bctx.lineWidth = 1 + Math.floor(brick.width / 25);
-bctx.strokeRect(Math.floor(0.5 * bctx.lineWidth),
-	Math.floor(0.5 * bctx.lineWidth),
-	brick.width, brick.height);
-
-// Debug
-//ctx.drawImage(brick, brickwidth_fullpx, brickheight_fullpx);
-
-/*
- * Two rows of bricks with shadows and highlights.
- */
-
-const atomic_ring = document.createElement('canvas');
-const actx = atomic_ring.getContext('2d');
-
-atomic_ring.width = num_bricks_around * brickwidth_fullpx;
-atomic_ring.height = 2 * brickheight_fullpx;
-
-actx.drawImage(brick, Math.ceil(0.5 * brickwidth_fullpx), 0,
-	brickwidth_fullpx, brickheight_fullpx,
-	0, 0, brickwidth_fullpx, brickheight_fullpx);
-
-const fontsize = Math.ceil(0.5 * brickwidth_fullpx);
-actx.font = fontsize + 'px serif';
-actx.fillStyle = 'red';
-for (let i = 0 ; i < num_bricks_around ; i++)
-{
-	// Top row.
-	const curr_x_top = Math.floor(brickwidth_fullpx * (i + 0.5));
-	actx.drawImage(brick,
-		0, 0,
-		brickwidth_fullpx, brickheight_fullpx,
-		curr_x_top, 0,
-		brickwidth_fullpx, brickheight_fullpx);
-
-	// Bottom row.
-	actx.drawImage(brick,
-		0, 0,
-		brickwidth_fullpx, brickheight_fullpx,
-		brickwidth_fullpx * i, brickheight_fullpx,
-		brickwidth_fullpx, brickheight_fullpx);
-
-	// Brick-numbers (debug)
-	/*
-	actx.fillText(i,
-		brickwidth_fullpx * i + Math.ceil(0.2 * brickwidth_fullpx),
-		2 * brickheight_fullpx - Math.floor(0.2 * fontsize));
-	*/
-}
-
-const a_middle_x = Math.floor(0.5 * atomic_ring.width);
-const a_middle_y = Math.floor(0.5 * atomic_ring.height);
-
-// Highlight
-const grad_high = actx.createLinearGradient(0, a_middle_y, a_middle_x, a_middle_y);
-grad_high.addColorStop(0, 'transparent');
-grad_high.addColorStop(0.5, 'rgba(255, 255, 255, 0.5)');
-grad_high.addColorStop(1, 'transparent');
-actx.fillStyle = grad_high;
-actx.fillRect(0, 0, a_middle_x, atomic_ring.height);
-
-// Shadow
-const grad_shad = actx.createLinearGradient(a_middle_x, a_middle_y,
-	atomic_ring.width, a_middle_y);
-grad_shad.addColorStop(0, 'transparent');
-grad_shad.addColorStop(0.5, 'rgba(0, 0, 0, 0.5)');
-grad_shad.addColorStop(1, 'transparent');
-actx.fillStyle = grad_shad;
-actx.fillRect(a_middle_x, 0, a_middle_x, atomic_ring.height);
-
-// Debug
-/*
-ctx.drawImage(atomic_ring, 0, 0, atomic_ring.width, atomic_ring.height,
-	0, 0, canv.width, atomic_ring.height);
-*/
-
-/*
- * Slideable "megatexture".
- */
-
-const sliding_bricks = document.createElement('canvas');
-const sctx = sliding_bricks.getContext('2d');
-
-sliding_bricks.width = 2 * atomic_ring.width;
-sliding_bricks.height = atomic_ring.height * Math.floor(0.25 * num_rows_visible_outermost);
-
-for (let i = 0 ; i < num_rows_visible_outermost ; i++)
-{
-	sctx.drawImage(atomic_ring, 0, i * atomic_ring.height);
-	sctx.drawImage(atomic_ring, atomic_ring.width, i * atomic_ring.height);
-}
-
-// Debug
-/*
-ctx.drawImage(sliding_bricks, 0, 0, sliding_bricks.width, sliding_bricks.height,
-	0, atomic_ring.height, canv.width, sliding_bricks.height);
-*/
+tcanv.width = window.innerWidth;
+tcanv.height = window.innerHeight;
 
 /*
  * Distant background, equivalent of a skybox.
@@ -219,14 +74,135 @@ sun.onload = () =>
 		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
 		Math.floor(1.25 * 2 * canv.width) - sun_radius_dstpx, 0,
 		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
-
-	// Debug
-	//ctx.drawImage(farbg, 0, 0, farbg.width, farbg.height,
-	//	0, 0, canv.width, farbg.height);
-
-	//render();
 }
 sun.src = 'assets/thirdparty/images/sun.svg';
+
+/*
+ * Data for on-screen objects.
+ */
+
+// TOWER
+
+const brickheight_pu = 1; // Brick height is the base unit.
+const brickwidth_pu = 2;  // Brick width must be an integer multiple of brickheight.
+
+const num_bricks_visible_quarter_ring = 16;
+const num_bricks_visible_half_ring = 2 * num_bricks_visible_quarter_ring;
+const num_bricks_tower_ring = 2 * num_bricks_visible_half_ring;
+
+const tower_diameter_relative_to_screen_width = 0.5;
+
+const flatland_extent_x_pu = Math.floor(
+	num_bricks_visible_half_ring / (brickwidth_pu * tower_diameter_relative_to_screen_width));
+let flatland_extent_y_pu; // Screen-ratio dependent.
+
+let num_bricks_visible_tower_vertical;
+
+const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring + 2;
+let flatland_tower_positive_extent_y_pu;
+
+let towerverts_quads_flatland_pu_coords;
+
+function recalculateWorldObjectData ()
+{
+	flatland_extent_y_pu = flatland_extent_x_pu * window.innerHeight / window.innerWidth;
+
+	num_bricks_visible_tower_vertical = Math.ceil(flatland_extent_y_pu / brickheight_pu);
+
+	// XXX: We put the same number of bricks above and below origin.
+	flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
+
+	towerverts_quads_flatland_pu_coords = new Uint8Array(
+		  4 // Four verts in a quad
+		* 3 // Three coords in a vert
+		* flatland_tower_positive_extent_x_pu // Extent of positive x-axis
+		* 2 // Both positive and negative x-direction
+		* flatland_tower_positive_extent_y_pu // Extent of positive y-axis
+		* 2 /* Both positive and negative y-direction */
+		/ (brickwidth_pu * brickheight_pu));
+
+	function gen_verts_for_brick(idx_topleft, bricknum_x, bricknum_y, xsign, ysign)
+	{
+		const x_topleft = xsign * (flatland_tower_positive_extent_x_pu - bricknum_x * brickwidth_pu);
+		const y_topleft = ysign * (flatland_tower_positive_extent_y_pu - bricknum_y * brickheight_pu);
+
+		towerverts_quads_flatland_pu_coords[idx_topleft + 0] = true;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 1] = true;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 2] = true;
+
+		towerverts_quads_flatland_pu_coords[idx_topleft + 3] = true;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 4] = true;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 5] = true;
+
+		towerverts_quads_flatland_pu_coords[idx_topleft + 6] = true;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 7] = true;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 8] = true;
+
+		towerverts_quads_flatland_pu_coords[idx_topleft + 9] = true;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 10] = true;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 11] = true;
+	}
+
+	let odd = true;
+	let k = 0;
+	for (let bricknum_y = 0 ;
+		bricknum_y < flatland_tower_positive_extent_y_pu / brickheight_pu ;
+		bricknum_y++)
+	{
+		for (let bricknum_x = 0 ;
+			bricknum_x < flatland_tower_positive_extent_x_pu / brickwidth_pu ;
+			bricknum_x++)
+		{
+			/*
+			 * Array holds coordinates of verts of quads row by row top to bottom.
+			 */
+
+			const iq = Array(4); // index into towerverts_quads_flatland_pu_coords for quadrant n
+
+			// 2nd quadrant (top left)
+			i1 = // Index into the array for the current quadgon in 2nd quadrant
+				  bricknum_y // Row number inside of 2nd quadrant
+			        * flatland_tower_positive_extent_x_pu / brickwidth_pu // Each row inside of 2nd quadrant has this many quads
+				* 2 // additionally we have the 1st quadrant.
+				* 4 * 3 // Then we have the number of verts in a quad and number of coords in a vert.
+				+ bricknum_x // Finally how far into the current row of the quadrant
+				* 4 * 3; // taking into account the number of verts and coords in this row as well.
+
+			gen_verts_for_brick(i1, bricknum_y, bricknum_y, -1, 1);
+
+			// 1st quadrant (top right)
+			i0 = i1 + flatland_tower_positive_extent_x_pu / brickwidth_pu
+				// It's the same index as i1 except one quadrant row further in
+				* 4 * 3; // account for verts and coords for the quadrant row.
+
+			gen_verts_for_brick(i0, bricknum_y, bricknum_y, 1, 1);
+
+			// 3rd quadrant (bottom left)
+			i2 = i1 + towerverts_quads_flatland_pu_coords.length / 2;
+				// Same offset as i1 except halfway throught the array further in.
+
+			gen_verts_for_brick(i2, bricknum_y, bricknum_y, -1, -1);
+
+			// 3rd quadrant (bottom left)
+			i3 = i0 + towerverts_quads_flatland_pu_coords.length / 2;
+				// Likewise with 4th quadrant in relation to first quadrant.
+
+			gen_verts_for_brick(i3, bricknum_y, bricknum_y, 1, -1);
+
+			console.log(i1, i0, i2, i3);
+			k += 4 * 4 * 3;
+		}
+	}
+
+	console.log(k, towerverts_quads_flatland_pu_coords.length);
+	assert(k === towerverts_quads_flatland_pu_coords.length);
+	console.log(towerverts_quads_flatland_pu_coords);
+	assert(towerverts_quads_flatland_pu_coords.every(x => x));
+}
+
+recalculateWorldObjectData();
+
+// TODO: Recalculate on resize after timeout.
 
 /*
  * Render tower.
@@ -290,8 +266,8 @@ function renderTower ()
 	ctx.fillText('Tower rendered in ' + (t_render_tower_end - t_render_tower_begin) + ' ms', 16, 24);
 }
 
-let angular_velocity = 3 * brickwidth_rad; // Unit: rads / second
-let angular_acceleration = 0; // Unit: rads / s^2
+let angular_velocity_pu = 3; // Unit: pu / second
+let angular_acceleration_pu = 0; // Unit: pu / s^2
 
 let vertical_velocity_pu = 3; // Unit: pu / second
 let vertical_acceleration_pu = 0; // Unit: pu / s^2
@@ -349,8 +325,8 @@ function run ()
 		dt_recent.push(dt);
 	}
 
-	angle = (angle + angular_velocity * dt / 1000) % (2 * Math.PI);
-	y += vertical_velocity_pu * brickwidth_fullpx * dt / 1000;
+	angle = (angle + angular_velocity_pu * dt / 1000) % (2 * Math.PI);
+	y += vertical_velocity_pu * dt / 1000;
 
 	// TODO: Update game object positions.
 
@@ -377,4 +353,6 @@ function start ()
 	run();
 }
 
-start();
+//start();
+
+render();
