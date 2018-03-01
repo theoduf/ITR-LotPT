@@ -221,8 +221,8 @@ sun.onload = () =>
 		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
 
 	// Debug
-	ctx.drawImage(farbg, 0, 0, farbg.width, farbg.height,
-		0, 0, canv.width, farbg.height);
+	//ctx.drawImage(farbg, 0, 0, farbg.width, farbg.height,
+	//	0, 0, canv.width, farbg.height);
 
 	//render();
 }
@@ -403,4 +403,64 @@ function start ()
 	run();
 }
 
-start();
+//start();
+
+//render();
+
+const middlex = canv.width / 2;
+const middley = canv.height / 2;
+
+ctx.strokeStyle = "#ffff00";
+ctx.beginPath();
+ctx.moveTo(middlex, 0);
+ctx.lineTo(middlex, canv.height);
+ctx.moveTo(0, middley);
+ctx.lineTo(canv.width, middley);
+ctx.stroke();
+
+const x_max = 25, y_max = 25;
+const vertical_distortion = 0.05;
+const horizontal_distortion = 0.65;
+
+const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
+const angle_max_x_distortion = Math.acos(1 - horizontal_distortion);
+function distortionXY (x, y)
+{
+	const distortion_x = Math.cos(angle_max_x_distortion * x / x_max);// / (1 - horizontal_distortion);
+	const distortion_y = Math.cos(angle_max_y_distortion * y / y_max);// / (1 - vertical_distortion);
+
+	return distortion_x + distortion_y;
+}
+
+let distorted_x_prev = 0, distorted_y_prev = 0;
+
+let vals = [];
+
+ctx.strokeStyle = "#00ffff";
+ctx.beginPath();
+for (let y = 0 ; y < y_max ; y++)
+{
+	ctx.moveTo(middlex, middley - middley * y / y_max);
+	console.log('ctx.moveTo(', middlex, ', ', middley - middley * y / y_max, ')');
+
+	ctx.fillStyle = "rgb(0, 0, " + 255 * y / y_max + ")";
+
+	for (let x = 0 ; x < x_max ; x++)
+	{
+		const s = distortionXY(x, y);
+
+		const distorted_x = middlex + s * x * 10;
+		const distorted_y = middley - s * y * 10;
+
+		ctx.fillRect(distorted_x - 1, distorted_y - 1, 2, 2);
+
+		distorted_x_prev = distorted_x;
+		distorted_y_prev = distorted_y;
+
+		ctx.lineTo(distorted_x_prev, distorted_y_prev);
+		console.log('ctx.lineTo(', distorted_x_prev, ', ', distorted_y_prev, ')');
+	}
+}
+ctx.stroke();
+
+console.table(vals);
