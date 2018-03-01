@@ -235,88 +235,54 @@ sun.src = 'assets/thirdparty/images/sun.svg';
 let y = 0; // Unit: Pixels
 let angle = 0; // Unit: radians
 
+const middlex = canv.width / 2;
+const middley = canv.height / 2;
+
+const x_max = 25, y_max = 25;
+const vertical_distortion = 0.05;
+const horizontal_distortion = 0.65;
+
+const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
+const angle_max_x_distortion = Math.acos(1 - horizontal_distortion);
+
+function distortionXY (x, y)
+{
+	const distortion_x = Math.cos(angle_max_x_distortion * x / x_max);// / (1 - horizontal_distortion);
+	const distortion_y = Math.cos(angle_max_y_distortion * y / y_max);// / (1 - vertical_distortion);
+
+	return distortion_x + distortion_y;
+}
+
 function renderTower ()
 {
 	const t_render_tower_begin = Date.now();
 
-	let offs_x_left_dstpx = 0;
-	let offs_x_right_dstpx = 0;
-	for (let i = 0 ; i < num_bricks_visible_half ; i++)
+	let distorted_x_prev = 0, distorted_y_prev = 0;
+
+	ctx.strokeStyle = "#00ffff";
+	ctx.beginPath();
+	for (let y = 0 ; y < y_max ; y++)
 	{
-		const w_frac_rad = Math.cos(((num_bricks_visible_half - i) / num_bricks_visible_half) * 0.5 * Math.PI);
-		const brickwidth_curr_foreshortened_dstpx = Math.ceil(brickwidth_fullpx * w_frac_rad);
+		ctx.moveTo(middlex, middley - middley * y / y_max);
 
-		const h_frac_rad = Math.cos(((num_bricks_visible_half - i) / num_bricks_visible_half) * 0.25 * Math.PI);
-		const brickheight_curr_perspective_dstpx = Math.ceil(brickheight_fullpx * h_frac_rad);
+		ctx.fillStyle = "rgb(0, 0, " + 255 * y / y_max + ")";
 
-		const offs_x_srcpx = angle / (4 * Math.PI) * sliding_bricks.width;
-		const offs_y_srcpx = y % (2 * brickheight_fullpx);
-
-		offs_x_right_dstpx += brickwidth_curr_foreshortened_dstpx;
-
-		const sliceheight_curr_dstpx = brickheight_curr_perspective_dstpx * 0.5 * num_rows_visible_outermost;
-
-		const top_of_bottom_half_y_dstpx = Math.floor(canv.height / 2);
-		const bottom_of_top_half_y_dstpx = canv.height - top_of_bottom_half_y_dstpx;
-
-		/*
-		 * Top half.
-		 */
-
-		// Left side
-		ctx.drawImage(sliding_bricks,
-			i * brickwidth_fullpx + offs_x_srcpx, -offs_y_srcpx,
-			brickwidth_fullpx, sliding_bricks.height,
-			towerstart_x_px + offs_x_left_dstpx, -sliceheight_curr_dstpx + bottom_of_top_half_y_dstpx,
-			brickwidth_curr_foreshortened_dstpx, sliceheight_curr_dstpx);
-
-		// Right side
-		ctx.drawImage(sliding_bricks,
-			(2 * num_bricks_visible_half - i - 1) * brickwidth_fullpx + offs_x_srcpx, -offs_y_srcpx,
-			brickwidth_fullpx, sliding_bricks.height,
-			towerend_x_px - offs_x_right_dstpx, -sliceheight_curr_dstpx + bottom_of_top_half_y_dstpx,
-			brickwidth_curr_foreshortened_dstpx, sliceheight_curr_dstpx);
-
-		/*
-		 * Bottom half.
-		 */
-
-		// Left side
-		ctx.drawImage(sliding_bricks,
-			i * brickwidth_fullpx + offs_x_srcpx, 2 * brickheight_fullpx - offs_y_srcpx,
-			brickwidth_fullpx, sliding_bricks.height,
-			towerstart_x_px + offs_x_left_dstpx, top_of_bottom_half_y_dstpx,
-			brickwidth_curr_foreshortened_dstpx, sliceheight_curr_dstpx);
-
-		// Right side
-		ctx.drawImage(sliding_bricks,
-			(2 * num_bricks_visible_half - i - 1) * brickwidth_fullpx + offs_x_srcpx,
-			2 * brickheight_fullpx - offs_y_srcpx,
-			brickwidth_fullpx, sliding_bricks.height,
-			towerend_x_px - offs_x_right_dstpx, top_of_bottom_half_y_dstpx,
-			brickwidth_curr_foreshortened_dstpx, sliceheight_curr_dstpx);
-
-		/*
-		// Grid. Didn't bother to update the code for this right now because I don't need it very much.
-		const xcolor = Math.ceil((brick_pair_num / num_bricks_visible_half) * 255);
-		for (...)
+		for (let x = 0 ; x < x_max ; x++)
 		{
-			const ycolor = Math.ceil(((j + num_rings_ydir_half) / (2 * num_rings_ydir_half + 1)) * 255);
+			const s = distortionXY(x, y);
 
-			// Grid left half (debug)
-			ctx.fillRect(towerstart_x_px + offset_dst_x_left - 2,
-				dst_y + j * brickheight_foreshortened_dstpx - 2,
-				4, 4);
+			const distorted_x = middlex + s * x * 10;
+			const distorted_y = middley - s * y * 10;
 
-			// Grid right half (debug)
-			ctx.fillRect(towerend_x_px + offset_dst_x_right - 2,
-				dst_y + j * brickheight_foreshortened_dstpx - 2,
-				4, 4);
+			ctx.fillRect(distorted_x - 1, distorted_y - 1, 2, 2);
+
+			distorted_x_prev = distorted_x;
+			distorted_y_prev = distorted_y;
+
+			ctx.lineTo(distorted_x_prev, distorted_y_prev);
 		}
-		*/
-
-		offs_x_left_dstpx += brickwidth_curr_foreshortened_dstpx;
 	}
+	ctx.stroke();
 
 	const t_render_tower_end = Date.now();
 
@@ -343,6 +309,14 @@ function render ()
 
 	ctx.drawImage(farbg, farbg.width - canv.width - offs_x_farbg_srcpx, 0, canv.width, canv.height,
 		0, 0, canv.width, canv.height);
+
+	ctx.strokeStyle = "#ffff00";
+	ctx.beginPath();
+	ctx.moveTo(middlex, 0);
+	ctx.lineTo(middlex, canv.height);
+	ctx.moveTo(0, middley);
+	ctx.lineTo(canv.width, middley);
+	ctx.stroke();
 
 	renderTower();
 
@@ -403,64 +377,4 @@ function start ()
 	run();
 }
 
-//start();
-
-//render();
-
-const middlex = canv.width / 2;
-const middley = canv.height / 2;
-
-ctx.strokeStyle = "#ffff00";
-ctx.beginPath();
-ctx.moveTo(middlex, 0);
-ctx.lineTo(middlex, canv.height);
-ctx.moveTo(0, middley);
-ctx.lineTo(canv.width, middley);
-ctx.stroke();
-
-const x_max = 25, y_max = 25;
-const vertical_distortion = 0.05;
-const horizontal_distortion = 0.65;
-
-const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
-const angle_max_x_distortion = Math.acos(1 - horizontal_distortion);
-function distortionXY (x, y)
-{
-	const distortion_x = Math.cos(angle_max_x_distortion * x / x_max);// / (1 - horizontal_distortion);
-	const distortion_y = Math.cos(angle_max_y_distortion * y / y_max);// / (1 - vertical_distortion);
-
-	return distortion_x + distortion_y;
-}
-
-let distorted_x_prev = 0, distorted_y_prev = 0;
-
-let vals = [];
-
-ctx.strokeStyle = "#00ffff";
-ctx.beginPath();
-for (let y = 0 ; y < y_max ; y++)
-{
-	ctx.moveTo(middlex, middley - middley * y / y_max);
-	console.log('ctx.moveTo(', middlex, ', ', middley - middley * y / y_max, ')');
-
-	ctx.fillStyle = "rgb(0, 0, " + 255 * y / y_max + ")";
-
-	for (let x = 0 ; x < x_max ; x++)
-	{
-		const s = distortionXY(x, y);
-
-		const distorted_x = middlex + s * x * 10;
-		const distorted_y = middley - s * y * 10;
-
-		ctx.fillRect(distorted_x - 1, distorted_y - 1, 2, 2);
-
-		distorted_x_prev = distorted_x;
-		distorted_y_prev = distorted_y;
-
-		ctx.lineTo(distorted_x_prev, distorted_y_prev);
-		console.log('ctx.lineTo(', distorted_x_prev, ', ', distorted_y_prev, ')');
-	}
-}
-ctx.stroke();
-
-console.table(vals);
+start();
