@@ -200,44 +200,52 @@ function distortionXY (x, y)
 
 function renderMesh (verts)
 {
-	console.log(verts);
-	ctx.strokeStyle = "#00ffff";
-	ctx.beginPath();
+	let hurr = [];
+
+	ctx.strokeStyle = "#ff0000";
 	for (let i = 0 ; i < verts.length ; i += 12)
 	{
-		const tp0 = { 'x': verts[i], 'y': verts[i + 1] };
-		console.log('tp0 = { \'x\':', verts[i], '\'y\':', verts[i + 1], '}');
-		const s0 = distortionXY(tp0.x, tp0.y);
-		const p0 = { 'x': middlex + s0 * unitpx * tp0.x, 'y': middley + s0 * unitpx * tp0.y };
-		ctx.moveTo(p0.x, p0.y);
-		console.log('ctx.moveTo(', p0.x, ',', p0.y, ')');
+		console.log(i);
+		/*
+		if (i == 12)
+		{*/
+			ctx.beginPath();
 
-		const tp1 = { 'x': verts[i + 3], 'y': verts[i + 4] };
-		console.log('tp1 = { \'x\':', verts[i + 3], '\'y\':', verts[i + 4], '}');
-		const s1 = distortionXY(tp1.x, tp1.y);
-		const p1 = { 'x': middlex + s1 * unitpx * tp1.x, 'y': middley + s1 * unitpx * tp1.y };
-		ctx.lineTo(p1.x, p1.y);
-		console.log('ctx.lineTo(', p1.x, ',', p1.y, ')');
+			const tp0 = { 'x': verts[i], 'y': verts[i + 1] };
+			const s0 = distortionXY(tp0.x, tp0.y);
+			const p0 = { 'x': middlex + s0 * unitpx * tp0.x, 'y': middley + s0 * unitpx * tp0.y };
+			ctx.moveTo(p0.x, p0.y);
 
-		const tp2 = { 'x': verts[i + 6], 'y': verts[i + 7] };
-		console.log('tp2 = { \'x\':', verts[i + 6], '\'y\':', verts[i + 7], '}');
-		const s2 = distortionXY(tp2.x, tp2.y);
-		const p2 = { 'x': middlex + s2 * unitpx * tp2.x, 'y': middley + s2 * unitpx * tp2.y };
-		ctx.lineTo(p2.x, p2.y);
-		console.log('ctx.lineTo(', p2.x, ',', p2.y, ')');
+			const tp1 = { 'x': verts[i + 3], 'y': verts[i + 4] };
+			const s1 = distortionXY(tp1.x, tp1.y);
+			const p1 = { 'x': middlex + s1 * unitpx * tp1.x, 'y': middley + s1 * unitpx * tp1.y };
+			ctx.lineTo(p1.x, p1.y);
 
-		const tp3 = { 'x': verts[i + 9], 'y': verts[i + 10] };
-		console.log('tp3 = { \'x\':', verts[i + 9], '\'y\':', verts[i + 10], '}');
-		const s3 = distortionXY(tp3.x, tp3.y);
-		const p3 = { 'x': middlex + s3 * unitpx * tp3.x, 'y': middley + s3 * unitpx * tp3.y };
-		ctx.lineTo(p3.x, p3.y);
-		console.log('ctx.lineTo(', p3.x, ',', p3.y, ')');
+			const tp2 = { 'x': verts[i + 6], 'y': verts[i + 7] };
+			const s2 = distortionXY(tp2.x, tp2.y);
+			const p2 = { 'x': middlex + s2 * unitpx * tp2.x, 'y': middley + s2 * unitpx * tp2.y };
+			ctx.lineTo(p2.x, p2.y);
 
-		console.log('tp0 = { \'x\':', verts[i], '\'y\':', verts[i + 1], '}');
-		ctx.lineTo(p0.x, p0.y);
-		console.log('ctx.lineTo(', p0.x, ',', p0.y, ')');
+			const tp3 = { 'x': verts[i + 9], 'y': verts[i + 10] };
+			const s3 = distortionXY(tp3.x, tp3.y);
+			const p3 = { 'x': middlex + s3 * unitpx * tp3.x, 'y': middley + s3 * unitpx * tp3.y };
+			ctx.lineTo(p3.x, p3.y);
+
+			ctx.lineTo(p0.x, p0.y);
+
+			ctx.stroke();
+
+			hurr.push(
+			{
+				'i': i, 's0': s0, 's1': s1, 's2': s2, 's3': s3,
+				'tp0.x': tp0.x, 'tp0.y': tp0.y,
+				'tp1.x': tp1.x, 'tp1.y': tp1.y,
+				'tp2.x': tp2.x, 'tp2.y': tp2.y,
+				'tp3.x': tp3.x, 'tp3.y': tp3.y
+			});
+		//}
 	}
-	ctx.stroke();
+	console.table(hurr);
 	pause();
 }
 
