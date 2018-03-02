@@ -61,7 +61,7 @@ let flatland_extent_y_pu; // Screen-ratio dependent.
 
 let num_bricks_visible_tower_vertical;
 
-let towerverts_quads_flatland_pu_coords;
+let quadmesh_tower_flatland_pu;
 
 function recalculateWorldObjectData ()
 {
@@ -73,7 +73,7 @@ function recalculateWorldObjectData ()
 	const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring;
 	const flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
 
-	towerverts_quads_flatland_pu_coords = new Float32Array(
+	quadmesh_tower_flatland_pu = new Float32Array(
 		  4 // Four verts in a quad
 		* 3 // Three coords in a vert
 		* flatland_tower_positive_extent_x_pu // Extent of positive x-axis
@@ -90,21 +90,21 @@ function recalculateWorldObjectData ()
 		const x0 = col + offs_x0;
 		const y0 = row + offs_y0;
 
-		towerverts_quads_flatland_pu_coords[idx] = x0;
-		towerverts_quads_flatland_pu_coords[idx +  1] = y0;
-		//towerverts_quads_flatland_pu_coords[idx +  2] = 0;
+		quadmesh_tower_flatland_pu[idx] = x0;
+		quadmesh_tower_flatland_pu[idx +  1] = y0;
+		//quadmesh_tower_flatland_pu[idx +  2] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx +  3] = x0;
-		towerverts_quads_flatland_pu_coords[idx +  4] = y0 + ysign * brickheight_pu;
-		//towerverts_quads_flatland_pu_coords[idx +  5] = 0;
+		quadmesh_tower_flatland_pu[idx +  3] = x0;
+		quadmesh_tower_flatland_pu[idx +  4] = y0 + ysign * brickheight_pu;
+		//quadmesh_tower_flatland_pu[idx +  5] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx +  6] = x0 + xsign * brickwidth_pu;
-		towerverts_quads_flatland_pu_coords[idx +  7] = y0 + ysign * brickheight_pu;
-		//towerverts_quads_flatland_pu_coords[idx +  8] = 0;
+		quadmesh_tower_flatland_pu[idx +  6] = x0 + xsign * brickwidth_pu;
+		quadmesh_tower_flatland_pu[idx +  7] = y0 + ysign * brickheight_pu;
+		//quadmesh_tower_flatland_pu[idx +  8] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx +  9] = x0 + xsign * brickwidth_pu;
-		towerverts_quads_flatland_pu_coords[idx + 10] = y0;
-		//towerverts_quads_flatland_pu_coords[idx + 11] = 0;
+		quadmesh_tower_flatland_pu[idx +  9] = x0 + xsign * brickwidth_pu;
+		quadmesh_tower_flatland_pu[idx + 10] = y0;
+		//quadmesh_tower_flatland_pu[idx + 11] = 0;
 	}
 
 	let odd = true;
@@ -170,34 +170,34 @@ function distortionXY (x, y)
 	return (distortion_x + distortion_y) / (vertical_distortion + horizontal_distortion);
 }
 
-function renderMeshEdges (verts)
+function renderMeshEdges (vertex_points)
 {
 	//let k = 0;
 
 	ctx.strokeStyle = '#00ffff';
-	for (let i = 0 ; i < verts.length ; i += 12)
+	for (let i = 0 ; i < vertex_points.length ; i += 12)
 	{
 		ctx.beginPath();
 
-		const tp0 = { 'x': verts[i], 'y': verts[i + 1] };
+		const tp0 = { 'x': vertex_points[i], 'y': vertex_points[i + 1] };
 		const s0 = distortionXY(tp0.x, tp0.y);
 		const p0 = { 'x': Math.floor(middlex + /*s0 * */ unitpx * tp0.x),
 			'y': Math.floor(middley - /*s0 * */ unitpx * tp0.y) };
 		ctx.moveTo(p0.x, p0.y);
 
-		const tp1 = { 'x': verts[i + 3], 'y': verts[i + 4] };
+		const tp1 = { 'x': vertex_points[i + 3], 'y': vertex_points[i + 4] };
 		const s1 = distortionXY(tp1.x, tp1.y);
 		const p1 = { 'x': Math.floor(middlex + /*s1 * */ unitpx * tp1.x),
 			'y': Math.floor(middley - /*s1 * */ unitpx * tp1.y) };
 		ctx.lineTo(p1.x, p1.y);
 
-		const tp2 = { 'x': verts[i + 6], 'y': verts[i + 7] };
+		const tp2 = { 'x': vertex_points[i + 6], 'y': vertex_points[i + 7] };
 		const s2 = distortionXY(tp2.x, tp2.y);
 		const p2 = { 'x': Math.floor(middlex + /*s2 * */ unitpx * tp2.x),
 			'y': Math.floor(middley - /*s2 * */ unitpx * tp2.y) };
 		ctx.lineTo(p2.x, p2.y);
 
-		const tp3 = { 'x': verts[i + 9], 'y': verts[i + 10] };
+		const tp3 = { 'x': vertex_points[i + 9], 'y': vertex_points[i + 10] };
 		const s3 = distortionXY(tp3.x, tp3.y);
 		const p3 = { 'x': Math.floor(middlex + /*s3 * */ unitpx * tp3.x),
 			'y': Math.floor(middley - /*s3 * */ unitpx * tp3.y) };
@@ -212,27 +212,27 @@ function renderMeshEdges (verts)
 	}
 }
 
-function renderMeshVerts (verts)
+function renderMeshVerts (vertex_points)
 {
 	ctx.fillStyle = '#ff0000';
-	for (let i = 0 ; i < verts.length ; i += 12)
+	for (let i = 0 ; i < vertex_points.length ; i += 12)
 	{
-		const tp0 = { 'x': verts[i], 'y': verts[i + 1] };
+		const tp0 = { 'x': vertex_points[i], 'y': vertex_points[i + 1] };
 		const s0 = distortionXY(tp0.x, tp0.y);
 		const p0 = { 'x': Math.floor(middlex + /*s0 * */ unitpx * tp0.x),
 			'y': Math.floor(middley - /*s0 * */ unitpx * tp0.y) };
 
-		const tp1 = { 'x': verts[i + 3], 'y': verts[i + 4] };
+		const tp1 = { 'x': vertex_points[i + 3], 'y': vertex_points[i + 4] };
 		const s1 = distortionXY(tp1.x, tp1.y);
 		const p1 = { 'x': Math.floor(middlex + /*s1 * */ unitpx * tp1.x),
 			'y': Math.floor(middley - /*s1 * */ unitpx * tp1.y) };
 
-		const tp2 = { 'x': verts[i + 6], 'y': verts[i + 7] };
+		const tp2 = { 'x': vertex_points[i + 6], 'y': vertex_points[i + 7] };
 		const s2 = distortionXY(tp2.x, tp2.y);
 		const p2 = { 'x': Math.floor(middlex + /*s2 * */ unitpx * tp2.x),
 			'y': Math.floor(middley - /*s2 * */ unitpx * tp2.y) };
 
-		const tp3 = { 'x': verts[i + 9], 'y': verts[i + 10] };
+		const tp3 = { 'x': vertex_points[i + 9], 'y': vertex_points[i + 10] };
 		const s3 = distortionXY(tp3.x, tp3.y);
 		const p3 = { 'x': Math.floor(middlex + /*s3 * */ unitpx * tp3.x),
 			'y': Math.floor(middley - /*s3 * */ unitpx * tp3.y) };
@@ -247,7 +247,7 @@ function renderTower ()
 
 	let distorted_x_prev = 0, distorted_y_prev = 0;
 
-	renderMeshEdges(towerverts_quads_flatland_pu_coords);
+	renderMeshEdges(quadmesh_tower_flatland_pu);
 
 	ctx.strokeStyle = '#ffff00';
 	ctx.beginPath();
@@ -257,7 +257,7 @@ function renderTower ()
 	ctx.lineTo(canv.width, middley);
 	ctx.stroke();
 
-	renderMeshVerts(towerverts_quads_flatland_pu_coords);
+	renderMeshVerts(quadmesh_tower_flatland_pu);
 
 	const t_render_tower_end = Date.now();
 
