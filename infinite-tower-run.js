@@ -186,13 +186,21 @@ function calculateWorldObjectData ()
 			col_left_half = -(flatland_tower_positive_extent_x_pu - bricknum_x * brickwidth_pu);
 			col_right_half = bricknum_x * brickwidth_pu;
 
-			array_store_points_of_brick_verts(col_left_half, brickwidth_pu, row_top_half, -brickheight_pu, -1, 1);
+			array_store_points_of_brick_verts(col_left_half,
+				(bricknum_y % 2) ? brickwidth_pu : 0.5 * brickwidth_pu,
+				row_top_half, -brickheight_pu, -1, 1);
 
-			array_store_points_of_brick_verts(col_right_half, 0, row_top_half, -brickheight_pu, 1, 1);
+			array_store_points_of_brick_verts(col_right_half,
+				(bricknum_y % 2) ? 0 : -0.5 * brickwidth_pu,
+				row_top_half, -brickheight_pu, 1, 1);
 
-			array_store_points_of_brick_verts(col_left_half, brickwidth_pu, row_btm_half, 0, -1, -1);
+			array_store_points_of_brick_verts(col_left_half,
+				(bricknum_y % 2) ? brickwidth_pu : 0.5 * brickwidth_pu,
+				row_btm_half, 0, -1, -1);
 
-			array_store_points_of_brick_verts(col_right_half, 0, row_btm_half, 0, 1, -1);
+			array_store_points_of_brick_verts(col_right_half,
+				(bricknum_y % 2) ? 0 : -0.5 * brickwidth_pu,
+				row_btm_half, 0, 1, -1);
 		}
 	}
 
@@ -210,6 +218,7 @@ function renderMeshEdges2D (vertex3d_points_xyz)
 {
 	//let k = 0;
 
+	ctx.fillStyle = '#449';
 	ctx.strokeStyle = '#00ffff';
 	for (let i = 0 ; i < vertex3d_points_xyz.length ; i += 12)
 	{
@@ -234,6 +243,7 @@ function renderMeshEdges2D (vertex3d_points_xyz)
 		ctx.lineTo(p0.x, p0.y);
 
 		ctx.stroke();
+		ctx.fill();
 
 		//ctx.fillText(k, p0.x + (p2.x - p0.x) / 2, p0.y + (p2.y - p0.y) / 2);
 		//k++;
@@ -258,6 +268,7 @@ function renderTower ()
 
 	renderMeshEdges2D(quadmesh_tower_distorted_pu);
 
+	/*
 	ctx.strokeStyle = '#ffff00';
 	ctx.beginPath();
 	ctx.moveTo(middlex, 0);
@@ -265,8 +276,9 @@ function renderTower ()
 	ctx.moveTo(0, middley);
 	ctx.lineTo(canv.width, middley);
 	ctx.stroke();
+	*/
 
-	renderMeshVerts2D(quadmesh_tower_distorted_pu);
+	//renderMeshVerts2D(quadmesh_tower_distorted_pu);
 
 	const t_render_tower_end = Date.now();
 
