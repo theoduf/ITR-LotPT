@@ -359,9 +359,7 @@ let start;
 let pause;
 let quitToMainMenu;
 
-let resizetimer;
-let orientationtimer;
-function adaptToDims()
+function sizeCanvases ()
 {
 	let width, height;
 
@@ -384,8 +382,15 @@ function adaptToDims()
 
 	// Skybox covers 360 degrees, our view is showing 180 degrees.
 	// Additionally, like with the sliding bricks we draw two copies next to each other so we can slide over.
-	farbg.width = 4 * canv.width;
-	farbg.height = canv.height;
+	farbg.width = 4 * width;
+	farbg.height = height;
+}
+
+let resizetimer;
+let orientationtimer;
+function adaptToDims ()
+{
+	sizeCanvases();
 
 	const sun_diam_srcpx = sun.width;
 	const sun_radius_srcpx = Math.ceil(0.5 * sun_diam_srcpx);
@@ -526,6 +531,9 @@ window.addEventListener('load', () =>
 {
 	let num_resources_to_load = 1;
 	let num_resources_loaded = 0;
+
+	sizeCanvases();
+	canv.hidden = false;
 
 	function update_resource_loading_progress_bar_until_ready ()
 	{
