@@ -225,8 +225,6 @@ function renderMesh (verts)
 		ctx.lineTo(p3.x, p3.y);
 
 		ctx.lineTo(p0.x, p0.y);
-
-		console.log(s0, s1, s2, s3);
 	}
 	ctx.stroke();
 }
