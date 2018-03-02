@@ -61,9 +61,6 @@ let flatland_extent_y_pu; // Screen-ratio dependent.
 
 let num_bricks_visible_tower_vertical;
 
-const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring + 2;
-let flatland_tower_positive_extent_y_pu;
-
 let towerverts_quads_flatland_pu_coords;
 
 function recalculateWorldObjectData ()
@@ -73,7 +70,8 @@ function recalculateWorldObjectData ()
 	num_bricks_visible_tower_vertical = Math.ceil(flatland_extent_y_pu / brickheight_pu);
 
 	// XXX: We put the same number of bricks above and below origin.
-	flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
+	const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring + 2;
+	const flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
 
 	towerverts_quads_flatland_pu_coords = new Float32Array(
 		  4 // Four verts in a quad
