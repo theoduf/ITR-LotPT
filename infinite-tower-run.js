@@ -170,9 +170,9 @@ function distortionXY (x, y)
 	return (distortion_x + distortion_y) / (vertical_distortion + horizontal_distortion);
 }
 
-function renderMesh (verts)
+function renderMeshEdges (verts)
 {
-	let k = 0;
+	//let k = 0;
 
 	ctx.strokeStyle = '#00ffff';
 	for (let i = 0 ; i < verts.length ; i += 12)
@@ -207,17 +207,38 @@ function renderMesh (verts)
 
 		ctx.stroke();
 
-		ctx.fillText(k, p0.x + (p2.x - p0.x) / 2, p0.y + (p2.y - p0.y) / 2);
-		k++;
+		//ctx.fillText(k, p0.x + (p2.x - p0.x) / 2, p0.y + (p2.y - p0.y) / 2);
+		//k++;
 	}
+}
 
-	const tp0 = { 'x': verts[0], 'y': verts[1] };
-	const s0 = distortionXY(tp0.x, tp0.y);
-	const p0 = { 'x': Math.floor(middlex + /*s0 * */ unitpx * tp0.x),
-		'y': Math.floor(middley - /*s0 * */ unitpx * tp0.y) };
-
+function renderMeshVerts (verts)
+{
 	ctx.fillStyle = '#ff0000';
-	ctx.fillRect(p0.x - 1, p0.y - 1, 2, 2);
+	for (let i = 0 ; i < verts.length ; i += 12)
+	{
+		const tp0 = { 'x': verts[i], 'y': verts[i + 1] };
+		const s0 = distortionXY(tp0.x, tp0.y);
+		const p0 = { 'x': Math.floor(middlex + /*s0 * */ unitpx * tp0.x),
+			'y': Math.floor(middley - /*s0 * */ unitpx * tp0.y) };
+
+		const tp1 = { 'x': verts[i + 3], 'y': verts[i + 4] };
+		const s1 = distortionXY(tp1.x, tp1.y);
+		const p1 = { 'x': Math.floor(middlex + /*s1 * */ unitpx * tp1.x),
+			'y': Math.floor(middley - /*s1 * */ unitpx * tp1.y) };
+
+		const tp2 = { 'x': verts[i + 6], 'y': verts[i + 7] };
+		const s2 = distortionXY(tp2.x, tp2.y);
+		const p2 = { 'x': Math.floor(middlex + /*s2 * */ unitpx * tp2.x),
+			'y': Math.floor(middley - /*s2 * */ unitpx * tp2.y) };
+
+		const tp3 = { 'x': verts[i + 9], 'y': verts[i + 10] };
+		const s3 = distortionXY(tp3.x, tp3.y);
+		const p3 = { 'x': Math.floor(middlex + /*s3 * */ unitpx * tp3.x),
+			'y': Math.floor(middley - /*s3 * */ unitpx * tp3.y) };
+
+		ctx.fillRect(p0.x - 1, p0.y - 1, 2, 2);
+	}
 }
 
 function renderTower ()
@@ -226,7 +247,17 @@ function renderTower ()
 
 	let distorted_x_prev = 0, distorted_y_prev = 0;
 
-	renderMesh(towerverts_quads_flatland_pu_coords);
+	renderMeshEdges(towerverts_quads_flatland_pu_coords);
+
+	ctx.strokeStyle = '#ffff00';
+	ctx.beginPath();
+	ctx.moveTo(middlex, 0);
+	ctx.lineTo(middlex, canv.height);
+	ctx.moveTo(0, middley);
+	ctx.lineTo(canv.width, middley);
+	ctx.stroke();
+
+	renderMeshVerts(towerverts_quads_flatland_pu_coords);
 
 	const t_render_tower_end = Date.now();
 
@@ -245,11 +276,6 @@ let t_prev;
 let dt;
 const dt_recent = new Array(240);
 
-function renderDot ()
-{
-	//const planex = 0.5 * 
-}
-
 let renderInFlight;
 function render ()
 {
@@ -263,16 +289,6 @@ function render ()
 		0, 0, canv.width, canv.height);
 
 	renderTower();
-
-	renderDot();
-
-	ctx.strokeStyle = '#ffff00';
-	ctx.beginPath();
-	ctx.moveTo(middlex, 0);
-	ctx.lineTo(middlex, canv.height);
-	ctx.moveTo(0, middley);
-	ctx.lineTo(canv.width, middley);
-	ctx.stroke();
 
 	ctx.fillStyle = '#449';
 	ctx.fillText('Current frame ' + dt + ' ms', 16, 36);
