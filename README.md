@@ -1,19 +1,19 @@
-# Infinite Tower Run
+# Infinite Tower Run: Legend of the Purple Tower
 
 <a href="http://www.indiedb.com/games/infinite-tower-run" title="View Infinite Tower Run on Indie DB" target="_blank"><img src="http://button.indiedb.com/popularity/medium/games/65797.png" alt="Popularity of Infinite Tower Run on Indie DB" /></a>
 
-Infinite Tower Run is an open source browser based web game written in JavaScript
-utilizing the HTML5 canvas. The goal of the game is to survive for the
-longest amount of time, defeating the enemies that you encounter, collecting
-powerups and treasures along the way.
+Infinite Tower Run: Legend of the Purple Tower is an open source browser based
+web game written in JavaScript utilizing the HTML5 canvas. The goal of the game
+is to survive for the longest amount of time, defeating the enemies that you
+encounter, collecting powerups and treasures along the way.
 
 You can play the game at https://www.infinite-tower.run/, or rather,
 you will be able to play it there once the game is in a playable state.
-Infinite Tower Run is currently under active development.
+ITR: LotPT is currently under active development.
 
 ## Acknowledgements
 
-Infinite Tower Run draws inspiration from a number of video games, most notably:
+ITR: LotPT draws inspiration from a number of video games, most notably:
 
 * The 3D Rotating Tower in
   [*Mickey Mania: The Timeless Adventures of Mickey Mouse* (1994)](https://en.wikipedia.org/wiki/Mickey_Mania).
@@ -23,12 +23,12 @@ Infinite Tower Run draws inspiration from a number of video games, most notably:
   founder and Mickey Mania designer [Jon Burton](https://twitter.com/JonTt)
   explains how he and the rest of the TT crew created their 3D rotating tower
   on the SEGA Genesis. This video inspired me to create my own implementation
-  of a rotating tower, and Infinite Tower Run is the result of that.
+  of a rotating tower, and ITR is the result of that.
 
 * [*Super Mario 64* (1996)](https://en.wikipedia.org/wiki/Super_Mario_64).
   Once I had my rotating tower, I found that the look of my creation reminded
   me of this one of the first 3d platformer video games. I decided that I would
-  aim to try and make Infinite Tower Run as enjoyable and inspiring as this and other
+  aim to try and make ITR as enjoyable and inspiring as this and other
   Mario games had been to me growing up.
 
 * The original [*Crash Bandicoot* (1996)](https://en.wikipedia.org/wiki/Crash_Bandicoot_%28video_game%29)
@@ -59,9 +59,10 @@ of this game, but this list is getting about long enough already.
 
 ## Copyright and license
 
-The source code, markup and stylesheets of Infinite Tower Run are
-copyright &copy; 2018 Erik Nordstrøm, and are provided under the terms of
-the ISC license. See the file [LICENSE](LICENSE) for the ISC license text.
+The source code, markup and stylesheets of Infinite Tower Run: Legend of the
+Purple Tower are copyright &copy; 2018 Erik Nordstrøm, and are provided under
+the terms of the ISC license. See the file [LICENSE](LICENSE) for the
+ISC license text.
 
 Assets found under the [assets/firstparty](assets/firstparty) directory are
 copyright &copy; 2018 Erik Nordstrøm, and are provided under the terms of
@@ -81,4 +82,6 @@ directory are copyright of [Kenney](http://kenney.nl/).
 
 ## Trademark notice
 
-Infinite Tower Run is a trademark of Erik Nordstrøm.
+*Infinite Tower Run*, *Legend of the Purple Tower* and
+*Infinite Tower Run: Legend of the Purple Tower* are all
+trademarks of Erik Nordstrøm.
