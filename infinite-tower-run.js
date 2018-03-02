@@ -51,7 +51,6 @@ const brickwidth_pu = 2;  // Brick width must be an integer multiple of brick he
 
 const num_bricks_visible_quarter_ring = 16;
 const num_bricks_visible_half_ring = 2 * num_bricks_visible_quarter_ring;
-const num_bricks_tower_ring = 2 * num_bricks_visible_half_ring;
 
 const tower_diameter_relative_to_screen_width = 0.5;
 
