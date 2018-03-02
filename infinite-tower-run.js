@@ -41,6 +41,21 @@ const farbg = document.createElement('canvas');
 const fctx = farbg.getContext('2d');
 
 /*
+ * Screen data.
+ */
+
+let unitpx;
+let middlex;
+let middley;
+
+function recalculateScreenData ()
+{
+	unitpx = tower_diameter_relative_to_screen_width * canv.width / num_bricks_visible_half_ring ;
+	middlex = canv.width / 2;
+	middley = canv.height / 2;
+}
+
+/*
  * Data for on-screen objects.
  */
 
@@ -49,32 +64,35 @@ const fctx = farbg.getContext('2d');
 const brickheight_pu = 1; // Brick height is the base unit.
 const brickwidth_pu = 2;  // Brick width must be an integer multiple of brick height.
 
-const num_bricks_visible_quarter_ring = 16;
+const num_bricks_visible_quarter_ring = 12;
 const num_bricks_visible_half_ring = 2 * num_bricks_visible_quarter_ring;
 
 const tower_diameter_relative_to_screen_width = 0.5;
 
 const flatland_extent_x_pu = Math.floor(
 	num_bricks_visible_half_ring / (tower_diameter_relative_to_screen_width));
-let flatland_extent_y_pu; // Screen-ratio dependent.
-
-let num_bricks_visible_tower_vertical;
+const flatland_extent_y_pu = flatland_extent_x_pu * 10 / 16;
 
 let quadmesh_tower_flatland_pu;
 
 function recalculateWorldObjectData ()
 {
-	flatland_extent_y_pu = flatland_extent_x_pu * canv.height / canv.width;
+	recalculateScreenData();
 
-	num_bricks_visible_tower_vertical = Math.ceil(flatland_extent_y_pu / brickheight_pu);
-
-	// XXX: We put the same number of bricks above and below origin.
 	const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring;
-	const flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
 
-	max_distortion_product =
-		Math.cos(angle_max_x_distortion * flatland_tower_positive_extent_x_pu / flatland_extent_x_pu)
-		* Math.cos(angle_max_y_distortion * flatland_tower_positive_extent_y_pu / flatland_extent_y_pu);
+	let flatland_tower_positive_extent_y_pu = 1;
+
+	do
+	{
+		max_distortion_product =
+			Math.cos(angle_max_x_distortion * flatland_tower_positive_extent_x_pu / flatland_extent_x_pu)
+			* Math.cos(angle_max_y_distortion * flatland_tower_positive_extent_y_pu / flatland_extent_y_pu);
+
+		flatland_tower_positive_extent_y_pu++;
+	}
+	while (0 < middlex -
+			distortMesh2D([flatland_tower_positive_extent_x_pu, flatland_tower_positive_extent_y_pu, 0])[1] * unitpx)
 
 	quadmesh_tower_flatland_pu = new Float32Array(
 		  4 // Four verts in a quad
@@ -138,28 +156,13 @@ function recalculateWorldObjectData ()
 }
 
 /*
- * Screen data.
- */
-
-let unitpx;
-let middlex;
-let middley;
-
-function recalculateScreenData ()
-{
-	unitpx = tower_diameter_relative_to_screen_width * window.innerWidth / num_bricks_visible_half_ring ;
-	middlex = canv.width / 2;
-	middley = canv.height / 2;
-}
-
-/*
  * Render tower.
  */
 
 let y; // Unit: Pixels
 let angle; // Unit: radians
 
-const vertical_distortion = 0.05;
+const vertical_distortion = 0.015;
 const horizontal_distortion = 1;
 
 const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
@@ -414,7 +417,6 @@ function adaptToDims ()
 		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
 
 	recalculateWorldObjectData();
-	recalculateScreenData();
 }
 
 function handleBlur ()
@@ -532,6 +534,10 @@ window.addEventListener('load', () =>
 	let num_resources_loaded = 0;
 
 	sizeCanvases();
+
+	ctx.fillStyle = '#000';
+	ctx.fillRect(0, 0, canv.width, canv.height);
+
 	canv.hidden = false;
 
 	function update_resource_loading_progress_bar_until_ready ()
