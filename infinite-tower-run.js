@@ -65,7 +65,7 @@ let quadmesh_tower_flatland_pu;
 
 function recalculateWorldObjectData ()
 {
-	flatland_extent_y_pu = flatland_extent_x_pu * window.innerHeight / window.innerWidth;
+	flatland_extent_y_pu = flatland_extent_x_pu * canv.height / canv.width;
 
 	num_bricks_visible_tower_vertical = Math.ceil(flatland_extent_y_pu / brickheight_pu);
 
@@ -363,11 +363,24 @@ let resizetimer;
 let orientationtimer;
 function adaptToDims()
 {
-	canv.width = window.innerWidth;
-	canv.height = window.innerHeight;
+	let width, height;
 
-	tcanv.width = window.innerWidth;
-	tcanv.height = window.innerHeight;
+	if (window.innerWidth > 16 * window.innerHeight / 10)
+	{
+		height = window.innerHeight;
+		width = height * 16 / 10;
+	}
+	else
+	{
+		width = window.innerWidth;
+		height = width * 10 / 16;
+	}
+
+	canv.width = width;
+	canv.height = height;
+
+	tcanv.width = width;
+	tcanv.height = height;
 
 	// Skybox covers 360 degrees, our view is showing 180 degrees.
 	// Additionally, like with the sliding bricks we draw two copies next to each other so we can slide over.
@@ -461,7 +474,7 @@ function startNewGame ()
 		ctx.fillRect(0, 0, canv.width, canv.height);
 
 		ctx.fillStyle = '#ffffff';
-		const s = 0.05 * window.innerHeight;
+		const s = 0.05 * canv.height;
 		ctx.fillRect(s, s, s, 2.5 * s);
 		ctx.fillRect(2.5 * s, s, s, 2.5 * s);
 	}
