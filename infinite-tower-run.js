@@ -70,8 +70,8 @@ function recalculateWorldObjectData ()
 	num_bricks_visible_tower_vertical = Math.ceil(flatland_extent_y_pu / brickheight_pu);
 
 	// XXX: We put the same number of bricks above and below origin.
-	const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring + 2;
-	const flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
+	const flatland_tower_positive_extent_x_pu = 2; //num_bricks_visible_half_ring + 2;
+	const flatland_tower_positive_extent_y_pu = 1; //Math.ceil(num_bricks_visible_tower_vertical / 2);
 
 	towerverts_quads_flatland_pu_coords = new Float32Array(
 		  4 // Four verts in a quad
@@ -104,6 +104,8 @@ function recalculateWorldObjectData ()
 		towerverts_quads_flatland_pu_coords[idx_topleft + 10] = ytop;
 		//towerverts_quads_flatland_pu_coords[idx_topleft + 11] = 0;
 	}
+
+	console.log(towerverts_quads_flatland_pu_coords);
 
 	let odd = true;
 	let k = 0;
@@ -198,33 +200,45 @@ function distortionXY (x, y)
 
 function renderMesh (verts)
 {
+	console.log(verts);
 	ctx.strokeStyle = "#00ffff";
 	ctx.beginPath();
 	for (let i = 0 ; i < verts.length ; i += 12)
 	{
 		const tp0 = { 'x': verts[i], 'y': verts[i + 1] };
+		console.log('tp0 = { \'x\':', verts[i], '\'y\':', verts[i + 1], '}');
 		const s0 = distortionXY(tp0.x, tp0.y);
 		const p0 = { 'x': middlex + s0 * unitpx * tp0.x, 'y': middley + s0 * unitpx * tp0.y };
 		ctx.moveTo(p0.x, p0.y);
+		console.log('ctx.moveTo(', p0.x, ',', p0.y, ')');
 
 		const tp1 = { 'x': verts[i + 3], 'y': verts[i + 4] };
+		console.log('tp1 = { \'x\':', verts[i + 3], '\'y\':', verts[i + 4], '}');
 		const s1 = distortionXY(tp1.x, tp1.y);
 		const p1 = { 'x': middlex + s1 * unitpx * tp1.x, 'y': middley + s1 * unitpx * tp1.y };
 		ctx.lineTo(p1.x, p1.y);
+		console.log('ctx.lineTo(', p1.x, ',', p1.y, ')');
 
 		const tp2 = { 'x': verts[i + 6], 'y': verts[i + 7] };
+		console.log('tp2 = { \'x\':', verts[i + 6], '\'y\':', verts[i + 7], '}');
 		const s2 = distortionXY(tp2.x, tp2.y);
 		const p2 = { 'x': middlex + s2 * unitpx * tp2.x, 'y': middley + s2 * unitpx * tp2.y };
 		ctx.lineTo(p2.x, p2.y);
+		console.log('ctx.lineTo(', p2.x, ',', p2.y, ')');
 
 		const tp3 = { 'x': verts[i + 9], 'y': verts[i + 10] };
+		console.log('tp3 = { \'x\':', verts[i + 9], '\'y\':', verts[i + 10], '}');
 		const s3 = distortionXY(tp3.x, tp3.y);
 		const p3 = { 'x': middlex + s3 * unitpx * tp3.x, 'y': middley + s3 * unitpx * tp3.y };
 		ctx.lineTo(p3.x, p3.y);
+		console.log('ctx.lineTo(', p3.x, ',', p3.y, ')');
 
+		console.log('tp0 = { \'x\':', verts[i], '\'y\':', verts[i + 1], '}');
 		ctx.lineTo(p0.x, p0.y);
+		console.log('ctx.lineTo(', p0.x, ',', p0.y, ')');
 	}
 	ctx.stroke();
+	pause();
 }
 
 function renderTower ()
