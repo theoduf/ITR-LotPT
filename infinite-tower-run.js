@@ -170,34 +170,34 @@ function distortionXY (x, y)
 	return (distortion_x + distortion_y) / (vertical_distortion + horizontal_distortion);
 }
 
-function renderMeshEdges2D (vertex_points)
+function renderMeshEdges2D (vertex3d_points_xyz)
 {
 	//let k = 0;
 
 	ctx.strokeStyle = '#00ffff';
-	for (let i = 0 ; i < vertex_points.length ; i += 12)
+	for (let i = 0 ; i < vertex3d_points_xyz.length ; i += 12)
 	{
 		ctx.beginPath();
 
-		const tp0 = { 'x': vertex_points[i], 'y': vertex_points[i + 1] };
+		const tp0 = { 'x': vertex3d_points_xyz[i], 'y': vertex3d_points_xyz[i + 1] };
 		const s0 = distortionXY(tp0.x, tp0.y);
 		const p0 = { 'x': Math.floor(middlex + /*s0 * */ unitpx * tp0.x),
 			'y': Math.floor(middley - /*s0 * */ unitpx * tp0.y) };
 		ctx.moveTo(p0.x, p0.y);
 
-		const tp1 = { 'x': vertex_points[i + 3], 'y': vertex_points[i + 4] };
+		const tp1 = { 'x': vertex3d_points_xyz[i + 3], 'y': vertex3d_points_xyz[i + 4] };
 		const s1 = distortionXY(tp1.x, tp1.y);
 		const p1 = { 'x': Math.floor(middlex + /*s1 * */ unitpx * tp1.x),
 			'y': Math.floor(middley - /*s1 * */ unitpx * tp1.y) };
 		ctx.lineTo(p1.x, p1.y);
 
-		const tp2 = { 'x': vertex_points[i + 6], 'y': vertex_points[i + 7] };
+		const tp2 = { 'x': vertex3d_points_xyz[i + 6], 'y': vertex3d_points_xyz[i + 7] };
 		const s2 = distortionXY(tp2.x, tp2.y);
 		const p2 = { 'x': Math.floor(middlex + /*s2 * */ unitpx * tp2.x),
 			'y': Math.floor(middley - /*s2 * */ unitpx * tp2.y) };
 		ctx.lineTo(p2.x, p2.y);
 
-		const tp3 = { 'x': vertex_points[i + 9], 'y': vertex_points[i + 10] };
+		const tp3 = { 'x': vertex3d_points_xyz[i + 9], 'y': vertex3d_points_xyz[i + 10] };
 		const s3 = distortionXY(tp3.x, tp3.y);
 		const p3 = { 'x': Math.floor(middlex + /*s3 * */ unitpx * tp3.x),
 			'y': Math.floor(middley - /*s3 * */ unitpx * tp3.y) };
@@ -212,27 +212,27 @@ function renderMeshEdges2D (vertex_points)
 	}
 }
 
-function renderMeshVerts2D (vertex_points)
+function renderMeshVerts2D (vertex3d_points_xyz)
 {
 	ctx.fillStyle = '#ff0000';
-	for (let i = 0 ; i < vertex_points.length ; i += 12)
+	for (let i = 0 ; i < vertex3d_points_xyz.length ; i += 12)
 	{
-		const tp0 = { 'x': vertex_points[i], 'y': vertex_points[i + 1] };
+		const tp0 = { 'x': vertex3d_points_xyz[i], 'y': vertex3d_points_xyz[i + 1] };
 		const s0 = distortionXY(tp0.x, tp0.y);
 		const p0 = { 'x': Math.floor(middlex + /*s0 * */ unitpx * tp0.x),
 			'y': Math.floor(middley - /*s0 * */ unitpx * tp0.y) };
 
-		const tp1 = { 'x': vertex_points[i + 3], 'y': vertex_points[i + 4] };
+		const tp1 = { 'x': vertex3d_points_xyz[i + 3], 'y': vertex3d_points_xyz[i + 4] };
 		const s1 = distortionXY(tp1.x, tp1.y);
 		const p1 = { 'x': Math.floor(middlex + /*s1 * */ unitpx * tp1.x),
 			'y': Math.floor(middley - /*s1 * */ unitpx * tp1.y) };
 
-		const tp2 = { 'x': vertex_points[i + 6], 'y': vertex_points[i + 7] };
+		const tp2 = { 'x': vertex3d_points_xyz[i + 6], 'y': vertex3d_points_xyz[i + 7] };
 		const s2 = distortionXY(tp2.x, tp2.y);
 		const p2 = { 'x': Math.floor(middlex + /*s2 * */ unitpx * tp2.x),
 			'y': Math.floor(middley - /*s2 * */ unitpx * tp2.y) };
 
-		const tp3 = { 'x': vertex_points[i + 9], 'y': vertex_points[i + 10] };
+		const tp3 = { 'x': vertex3d_points_xyz[i + 9], 'y': vertex3d_points_xyz[i + 10] };
 		const s3 = distortionXY(tp3.x, tp3.y);
 		const p3 = { 'x': Math.floor(middlex + /*s3 * */ unitpx * tp3.x),
 			'y': Math.floor(middley - /*s3 * */ unitpx * tp3.y) };
