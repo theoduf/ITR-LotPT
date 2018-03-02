@@ -360,6 +360,7 @@ let pause;
 let quitToMainMenu;
 
 let resizetimer;
+let orientationtimer;
 function adaptToDims()
 {
 	canv.width = window.innerWidth;
@@ -522,6 +523,13 @@ window.addEventListener('load', () =>
 				clearTimeout(resizetimer);
 
 				resizetimer = setTimeout(adaptToDims, 30);
+			});
+
+			window.addEventListener('orientationchange', () =>
+			{
+				clearTimeout(orientationtimer);
+
+				orientationtimer = setTimeout(adaptToDims, 30);
 			});
 
 			adaptToDims();
