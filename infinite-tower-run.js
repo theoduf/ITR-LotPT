@@ -29,53 +29,16 @@ const html = document.querySelector('html');
 const canv = document.getElementById('game');
 const ctx = canv.getContext('2d');
 
-canv.width = window.innerWidth;
-canv.height = window.innerHeight;
-
 const tcanv = document.createElement('canvas');
 const gl = tcanv.getContext('webgl');
-
-tcanv.width = window.innerWidth;
-tcanv.height = window.innerHeight;
 
 /*
  * Distant background, equivalent of a skybox.
  */
 
+let sun;
 const farbg = document.createElement('canvas');
 const fctx = farbg.getContext('2d');
-
-// Skybox covers 360 degrees, our view is showing 180 degrees.
-// Additionally, like with the sliding bricks we draw two copies next to each other so we can slide over.
-farbg.width = 4 * canv.width;
-farbg.height = canv.height;
-
-let sun = new Image();
-sun.onload = () =>
-{
-	const sun_diam_srcpx = sun.width;
-	const sun_radius_srcpx = Math.ceil(0.5 * sun_diam_srcpx);
-	const sun_offs_y_srcpx = Math.ceil(0.42 * sun_diam_srcpx);
-
-	const sun_diam_dstpx = Math.floor(0.35 * canv.width);
-	const sun_radius_dstpx = Math.ceil(0.5 * sun_diam_dstpx);
-	const sun_offs_y_dstpx = Math.ceil(0.42 * sun_diam_dstpx);
-
-	// XXX: Sun goes in opposite direction so we place it 75% away from the *right* edge of each "skybox copy".
-
-	fctx.drawImage(sun,
-		0, sun_offs_y_srcpx,
-		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
-		Math.floor(0.25 * 2 * canv.width) - sun_radius_dstpx, 0,
-		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
-
-	fctx.drawImage(sun,
-		0, sun_offs_y_srcpx,
-		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
-		Math.floor(1.25 * 2 * canv.width) - sun_radius_dstpx, 0,
-		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
-}
-sun.src = 'assets/thirdparty/images/sun.svg';
 
 /*
  * Data for on-screen objects.
@@ -199,10 +162,6 @@ function recalculateWorldObjectData ()
 	}
 }
 
-recalculateWorldObjectData();
-
-// TODO: Recalculate on resize after timeout.
-
 /*
  * Screen data.
  */
@@ -218,16 +177,12 @@ function recalculateScreenData ()
 	middley = canv.height / 2;
 }
 
-recalculateScreenData();
-
-// TODO: Recalculate on resize after timeout.
-
 /*
  * Render tower.
  */
 
-let y = 0; // Unit: Pixels
-let angle = 0; // Unit: radians
+let y; // Unit: Pixels
+let angle; // Unit: radians
 
 const x_max = 25, y_max = 25;
 const vertical_distortion = 0.05;
@@ -300,19 +255,22 @@ function renderTower ()
 	ctx.fillText('Tower rendered in ' + (t_render_tower_end - t_render_tower_begin) + ' ms', 16, 24);
 }
 
-let angular_velocity_pu = 3; // Unit: pu / second
-let angular_acceleration_pu = 0; // Unit: pu / s^2
+let angular_velocity_pu; // Unit: pu / second
+let angular_acceleration_pu; // Unit: pu / s^2
 
-let vertical_velocity_pu = 3; // Unit: pu / second
-let vertical_acceleration_pu = 0; // Unit: pu / s^2
+let vertical_velocity_pu; // Unit: pu / second
+let vertical_acceleration_pu; // Unit: pu / s^2
 
-let num_frames_rendered = 0;
-let t_prev = null;
-let dt = 0;
+let num_frames_rendered;
+let t_prev;
+let dt;
 const dt_recent = new Array(240);
 
+let renderInFlight;
 function render ()
 {
+	renderInFlight = true;
+
 	ctx.clearRect(0, 0, canv.width, canv.height);
 
 	const offs_x_farbg_srcpx = (angle / (4 * Math.PI)) * farbg.width;
@@ -345,12 +303,17 @@ function render ()
 	}
 
 	num_frames_rendered++;
+
+	renderInFlight = false;
 }
 
-let paused = true;
+let stopped;
+let paused;
+let manually_paused;
+
 function run ()
 {
-	if (paused)
+	if (paused || stopped)
 	{
 		return;
 	}
@@ -379,11 +342,117 @@ function run ()
 	requestAnimationFrame(run);
 }
 
-function pause ()
+/*
+ * Options. TODO: Configure from user interface. Save values in localStorage.
+ */
+
+let option_disable_autopause = false;
+let option_enable_autoresume_always = false; // If true then resume on focus even when manually paused.
+
+/*
+ * Starting, pausing and stopping game.
+ */
+
+let start;
+let pause;
+let quitToMainMenu;
+
+let resizetimer;
+function adaptToDims()
 {
-	if (!paused)
+	canv.width = window.innerWidth;
+	canv.height = window.innerHeight;
+
+	tcanv.width = window.innerWidth;
+	tcanv.height = window.innerHeight;
+
+	// Skybox covers 360 degrees, our view is showing 180 degrees.
+	// Additionally, like with the sliding bricks we draw two copies next to each other so we can slide over.
+	farbg.width = 4 * canv.width;
+	farbg.height = canv.height;
+
+	const sun_diam_srcpx = sun.width;
+	const sun_radius_srcpx = Math.ceil(0.5 * sun_diam_srcpx);
+	const sun_offs_y_srcpx = Math.ceil(0.42 * sun_diam_srcpx);
+
+	const sun_diam_dstpx = Math.floor(0.35 * canv.width);
+	const sun_radius_dstpx = Math.ceil(0.5 * sun_diam_dstpx);
+	const sun_offs_y_dstpx = Math.ceil(0.42 * sun_diam_dstpx);
+
+	// XXX: Sun goes in opposite direction so we place it 75% away from the *right* edge of each "skybox copy".
+
+	fctx.drawImage(sun,
+		0, sun_offs_y_srcpx,
+		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
+		Math.floor(0.25 * 2 * canv.width) - sun_radius_dstpx, 0,
+		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
+
+	fctx.drawImage(sun,
+		0, sun_offs_y_srcpx,
+		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
+		Math.floor(1.25 * 2 * canv.width) - sun_radius_dstpx, 0,
+		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
+
+	recalculateWorldObjectData();
+	recalculateScreenData();
+}
+
+function handleBlur ()
+{
+	if (!manually_paused && !option_disable_autopause)
+	{
+		pause();
+	}
+}
+
+function handleFocus ()
+{
+	if (!manually_paused || option_enable_autoresume_always)
+	{
+		start();
+	}
+}
+
+function initGlobalState ()
+{
+	window.removeEventListener('blur', handleBlur);
+	window.removeEventListener('focus', handleFocus);
+
+	stopped = true;
+	paused = false;
+	manually_paused = false;
+
+	quitToMainMenu = null;
+	start = null;
+	pause = null;
+
+	num_frames_rendered = 0;
+	t_prev = null;
+	dt = 0;
+
+	vertical_velocity_pu = 3;
+	vertical_acceleration_pu = 0;
+
+	angular_velocity_pu = 3;
+	angular_acceleration_pu = 0;
+
+	y = 0;
+	angle = Math.PI / 2;
+}
+
+function startNewGame ()
+{
+	initGlobalState();
+
+	pause = () =>
 	{
 		paused = true;
+
+		if (renderInFlight)
+		{
+			requestAnimationFrame(pause);
+			return;
+		}
 
 		ctx.fillStyle = 'rgba(64, 64, 128, 0.45)';
 		ctx.fillRect(0, 0, canv.width, canv.height);
@@ -392,24 +461,77 @@ function pause ()
 		const s = 0.05 * window.innerHeight;
 		ctx.fillRect(s, s, s, 2.5 * s);
 		ctx.fillRect(2.5 * s, s, s, 2.5 * s);
-
-		ctx.fillStyle = '#449';
-		ctx.fillText('Tower rendered in ' + (t_render_tower_end - t_render_tower_begin) + ' ms', 16, 24);
 	}
-}
 
-function start ()
-{
-	if (paused)
+	start = () =>
 	{
-		t_prev = null;
-		num_frames_rendered = 0;
-		paused = false;
-		run();
+		if (paused)
+		{
+			t_prev = null;
+			num_frames_rendered = 0;
+			paused = false;
+			stopped = false;
+			run();
+		}
 	}
+
+	quitToMainMenu = () =>
+	{
+		stopped = true;
+
+		if (renderInFlight)
+		{
+			requestAnimationFrame(quitToMainMenu);
+			return;
+		}
+
+		// TODO: Save so game can be resumed if user quit accidentaly.
+
+		mainMenu();
+	}
+
+	window.addEventListener('blur', handleBlur);
+	window.addEventListener('focus', handleFocus);
+
+	stopped = false;
+	run();
 }
 
-window.onfocus = start;
-window.onblur = pause;
+function mainMenu ()
+{
+	initGlobalState();
 
-window.onload = start;
+	// TODO: ...
+
+	startNewGame();
+}
+
+window.addEventListener('load', () =>
+{
+	let num_resources_to_load = 1;
+	let num_resources_loaded = 0;
+
+	function update_resource_loading_progress_bar_until_ready ()
+	{
+		if (++num_resources_loaded === num_resources_to_load)
+		{
+			window.addEventListener('resize', () =>
+			{
+				clearTimeout(resizetimer);
+
+				resizetimer = setTimeout(adaptToDims, 30);
+			});
+
+			adaptToDims();
+			mainMenu();
+		}
+		else
+		{
+			// TODO: Draw infinite progress bar.
+		}
+	}
+
+	sun = new Image();
+	sun.onload = update_resource_loading_progress_bar_until_ready;
+	sun.src = 'assets/thirdparty/images/sun.svg';
+});
