@@ -347,10 +347,10 @@ function render ()
 	num_frames_rendered++;
 }
 
-let stopped = false;
+let paused = true;
 function run ()
 {
-	if (stopped)
+	if (paused)
 	{
 		return;
 	}
@@ -379,20 +379,37 @@ function run ()
 	requestAnimationFrame(run);
 }
 
-function stop ()
+function pause ()
 {
-	stopped = true;
+	if (!paused)
+	{
+		paused = true;
+
+		ctx.fillStyle = 'rgba(64, 64, 128, 0.45)';
+		ctx.fillRect(0, 0, canv.width, canv.height);
+
+		ctx.fillStyle = '#ffffff';
+		const s = 0.05 * window.innerHeight;
+		ctx.fillRect(s, s, s, 2.5 * s);
+		ctx.fillRect(2.5 * s, s, s, 2.5 * s);
+
+		ctx.fillStyle = '#449';
+		ctx.fillText('Tower rendered in ' + (t_render_tower_end - t_render_tower_begin) + ' ms', 16, 24);
+	}
 }
 
 function start ()
 {
-	t_prev = null;
-	num_frames_rendered = 0;
-	stopped = false;
-	run();
+	if (paused)
+	{
+		t_prev = null;
+		num_frames_rendered = 0;
+		paused = false;
+		run();
+	}
 }
 
-start();
-
 window.onfocus = start;
-window.onblur = stop;
+window.onblur = pause;
+
+window.onload = start;
