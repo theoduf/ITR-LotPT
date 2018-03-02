@@ -184,19 +184,18 @@ function recalculateScreenData ()
 let y; // Unit: Pixels
 let angle; // Unit: radians
 
-const x_max = 25, y_max = 25;
-const vertical_distortion = 0.05;
-const horizontal_distortion = 0.65;
+const vertical_distortion = 0;
+const horizontal_distortion = 0;
 
 const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
 const angle_max_x_distortion = Math.acos(1 - horizontal_distortion);
 
 function distortionXY (x, y)
 {
-	const distortion_x = Math.cos(angle_max_x_distortion * x / x_max);// / (1 - horizontal_distortion);
-	const distortion_y = Math.cos(angle_max_y_distortion * y / y_max);// / (1 - vertical_distortion);
+	const distortion_x = Math.cos(angle_max_x_distortion * x / flatland_extent_x_pu);
+	const distortion_y = Math.cos(angle_max_y_distortion * y / flatland_extent_y_pu);
 
-	return distortion_x + distortion_y;
+	return (distortion_x + distortion_y) / 2.2; // 2
 }
 
 function renderMesh (verts)
@@ -205,40 +204,31 @@ function renderMesh (verts)
 	ctx.beginPath();
 	for (let i = 0 ; i < verts.length ; i += 12)
 	{
-		const p0 = { 'x': middlex + unitpx * verts[i], 'y': middley + unitpx * verts[i +  1] };
+		const tp0 = { 'x': verts[i], 'y': verts[i + 1] };
+		const s0 = distortionXY(tp0.x, tp0.y);
+		const p0 = { 'x': middlex + s0 * unitpx * tp0.x, 'y': middley + s0 * unitpx * tp0.y };
 		ctx.moveTo(p0.x, p0.y);
 
-		const p1 = { 'x': middlex + unitpx * verts[i + 3], 'y': middley + unitpx * verts[i +  4] };
+		const tp1 = { 'x': verts[i + 3], 'y': verts[i + 4] };
+		const s1 = distortionXY(tp1.x, tp1.y);
+		const p1 = { 'x': middlex + s1 * unitpx * tp1.x, 'y': middley + s1 * unitpx * tp1.y };
 		ctx.lineTo(p1.x, p1.y);
 
-		const p2 = { 'x': middlex + unitpx * verts[i + 6], 'y': middley + unitpx * verts[i +  7] };
+		const tp2 = { 'x': verts[i + 6], 'y': verts[i + 7] };
+		const s2 = distortionXY(tp2.x, tp2.y);
+		const p2 = { 'x': middlex + s2 * unitpx * tp2.x, 'y': middley + s2 * unitpx * tp2.y };
 		ctx.lineTo(p2.x, p2.y);
 
-		const p3 = { 'x': middlex + unitpx * verts[i + 9], 'y': middley + unitpx * verts[i + 10] };
+		const tp3 = { 'x': verts[i + 9], 'y': verts[i + 10] };
+		const s3 = distortionXY(tp3.x, tp3.y);
+		const p3 = { 'x': middlex + s3 * unitpx * tp3.x, 'y': middley + s3 * unitpx * tp3.y };
 		ctx.lineTo(p3.x, p3.y);
 
 		ctx.lineTo(p0.x, p0.y);
+
+		console.log(s0, s1, s2, s3);
 	}
 	ctx.stroke();
-
-	/*(
-	ctx.fillStyle = "rgb(0, 0, " + 255 * y / y_max + ")";
-
-	for (let x = 0 ; x < x_max ; x++)
-	{
-		const s = distortionXY(x, y);
-
-		const distorted_x = middlex + s * x * 10;
-		const distorted_y = middley - s * y * 10;
-
-		ctx.fillRect(distorted_x - 1, distorted_y - 1, 2, 2);
-
-		distorted_x_prev = distorted_x;
-		distorted_y_prev = distorted_y;
-
-		ctx.lineTo(distorted_x_prev, distorted_y_prev);
-	}
-	*/
 }
 
 function renderTower ()
