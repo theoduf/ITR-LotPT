@@ -41,6 +41,45 @@ const farbg = document.createElement('canvas');
 const fctx = farbg.getContext('2d');
 
 /*
+ * Distortion
+ */
+
+const vertical_distortion = 0.015;
+const horizontal_distortion = 1;
+
+const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
+const angle_max_x_distortion = Math.acos(1 - horizontal_distortion);
+
+let max_distortion_product;
+
+function distortionXY (x, y)
+{
+	const distortion_x = Math.cos(angle_max_x_distortion * x / flatland_extent_x_pu);
+	const distortion_y = Math.cos(angle_max_y_distortion * y / flatland_extent_y_pu);
+
+	return (distortion_x * distortion_y) * max_distortion_product;
+}
+
+function distortMesh2D (vertex3d_points_xyz)
+{
+	const distorted_vertex3d_points_xyz = new Float32Array(vertex3d_points_xyz.length);
+
+	for (let i = 0 ; i < vertex3d_points_xyz.length ; i += 3)
+	{
+		const x = vertex3d_points_xyz[i];
+		const y = vertex3d_points_xyz[i + 1];
+
+		const s = distortionXY(x, y);
+
+		distorted_vertex3d_points_xyz[i] = s * x;
+		distorted_vertex3d_points_xyz[i + 1] = s * y;
+		//distorted_vertex3d_points_xyz[i + 2] = vertex3d_points_xyz[i + 2];
+	}
+
+	return distorted_vertex3d_points_xyz;
+}
+
+/*
  * Screen data.
  */
 
@@ -64,7 +103,7 @@ function recalculateScreenData ()
 const brickheight_pu = 1; // Brick height is the base unit.
 const brickwidth_pu = 2;  // Brick width must be an integer multiple of brick height.
 
-const num_bricks_visible_quarter_ring = 12;
+const num_bricks_visible_quarter_ring = 8;
 const num_bricks_visible_half_ring = 2 * num_bricks_visible_quarter_ring;
 
 const tower_diameter_relative_to_screen_width = 0.5;
@@ -74,8 +113,9 @@ const flatland_extent_x_pu = Math.floor(
 const flatland_extent_y_pu = flatland_extent_x_pu * 10 / 16;
 
 let quadmesh_tower_flatland_pu;
+let quadmesh_tower_distorted_pu;
 
-function recalculateWorldObjectData ()
+function calculateWorldObjectData ()
 {
 	recalculateScreenData();
 
@@ -153,6 +193,8 @@ function recalculateWorldObjectData ()
 			array_store_points_of_brick_verts(col_right_half, 0, row_btm_half, 0, 1, -1);
 		}
 	}
+
+	quadmesh_tower_distorted_pu = distortMesh2D(quadmesh_tower_flatland_pu);
 }
 
 /*
@@ -161,41 +203,6 @@ function recalculateWorldObjectData ()
 
 let y; // Unit: Pixels
 let angle; // Unit: radians
-
-const vertical_distortion = 0.015;
-const horizontal_distortion = 1;
-
-const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
-const angle_max_x_distortion = Math.acos(1 - horizontal_distortion);
-
-let max_distortion_product;
-
-function distortionXY (x, y)
-{
-	const distortion_x = Math.cos(angle_max_x_distortion * x / flatland_extent_x_pu);
-	const distortion_y = Math.cos(angle_max_y_distortion * y / flatland_extent_y_pu);
-
-	return (distortion_x * distortion_y) * max_distortion_product;
-}
-
-function distortMesh2D (vertex3d_points_xyz)
-{
-	const distorted_vertex3d_points_xyz = new Float32Array(vertex3d_points_xyz.length);
-
-	for (let i = 0 ; i < vertex3d_points_xyz.length ; i += 3)
-	{
-		const x = vertex3d_points_xyz[i];
-		const y = vertex3d_points_xyz[i + 1];
-
-		const s = distortionXY(x, y);
-
-		distorted_vertex3d_points_xyz[i] = s * x;
-		distorted_vertex3d_points_xyz[i + 1] = s * y;
-		//distorted_vertex3d_points_xyz[i + 2] = vertex3d_points_xyz[i + 2];
-	}
-
-	return distorted_vertex3d_points_xyz;
-}
 
 function renderMeshEdges2D (vertex3d_points_xyz)
 {
@@ -247,9 +254,7 @@ function renderTower ()
 {
 	const t_render_tower_begin = Date.now();
 
-	distorted_mesh = distortMesh2D(quadmesh_tower_flatland_pu);
-
-	renderMeshEdges2D(distorted_mesh);
+	renderMeshEdges2D(quadmesh_tower_distorted_pu);
 
 	ctx.strokeStyle = '#ffff00';
 	ctx.beginPath();
@@ -259,7 +264,7 @@ function renderTower ()
 	ctx.lineTo(canv.width, middley);
 	ctx.stroke();
 
-	renderMeshVerts2D(distorted_mesh);
+	renderMeshVerts2D(quadmesh_tower_distorted_pu);
 
 	const t_render_tower_end = Date.now();
 
@@ -416,7 +421,7 @@ function adaptToDims ()
 		Math.floor(1.25 * 2 * canv.width) - sun_radius_dstpx, 0,
 		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
 
-	recalculateWorldObjectData();
+	recalculateScreenData();
 	resetFPSCounter();
 }
 
@@ -549,6 +554,8 @@ window.addEventListener('load', () =>
 	{
 		if (++num_resources_loaded === num_resources_to_load)
 		{
+			calculateWorldObjectData();
+
 			window.addEventListener('resize', () =>
 			{
 				clearTimeout(resizetimer);
