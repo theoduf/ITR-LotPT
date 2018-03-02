@@ -112,7 +112,7 @@ function recalculateWorldObjectData ()
 	// XXX: We put the same number of bricks above and below origin.
 	flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
 
-	towerverts_quads_flatland_pu_coords = new Uint8Array(
+	towerverts_quads_flatland_pu_coords = new Float32Array(
 		  4 // Four verts in a quad
 		* 3 // Three coords in a vert
 		* flatland_tower_positive_extent_x_pu // Extent of positive x-axis
@@ -121,26 +121,27 @@ function recalculateWorldObjectData ()
 		* 2 /* Both positive and negative y-direction */
 		/ (brickwidth_pu * brickheight_pu));
 
-	function gen_verts_for_brick(idx_topleft, bricknum_x, bricknum_y, xsign, ysign)
+	function gen_verts_for_brick(idx_topleft, xleft, ytop, xsign, ysign)
 	{
-		const x_topleft = xsign * (flatland_tower_positive_extent_x_pu - bricknum_x * brickwidth_pu);
-		const y_topleft = ysign * (flatland_tower_positive_extent_y_pu - bricknum_y * brickheight_pu);
+		// Top left corner
+		towerverts_quads_flatland_pu_coords[idx_topleft + 0] = xleft;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 1] = ytop;
+		//towerverts_quads_flatland_pu_coords[idx_topleft + 2] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx_topleft + 0] = true;
-		towerverts_quads_flatland_pu_coords[idx_topleft + 1] = true;
-		towerverts_quads_flatland_pu_coords[idx_topleft + 2] = true;
+		// Bottom left corner
+		towerverts_quads_flatland_pu_coords[idx_topleft + 3] = xleft;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 4] = ytop - ysign * brickheight_pu;
+		//towerverts_quads_flatland_pu_coords[idx_topleft + 5] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx_topleft + 3] = true;
-		towerverts_quads_flatland_pu_coords[idx_topleft + 4] = true;
-		towerverts_quads_flatland_pu_coords[idx_topleft + 5] = true;
+		// Bottom right corner
+		towerverts_quads_flatland_pu_coords[idx_topleft + 6] = xleft - xsign * brickwidth_pu;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 7] = ytop - ysign * brickheight_pu;
+		//towerverts_quads_flatland_pu_coords[idx_topleft + 8] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx_topleft + 6] = true;
-		towerverts_quads_flatland_pu_coords[idx_topleft + 7] = true;
-		towerverts_quads_flatland_pu_coords[idx_topleft + 8] = true;
-
-		towerverts_quads_flatland_pu_coords[idx_topleft + 9] = true;
-		towerverts_quads_flatland_pu_coords[idx_topleft + 10] = true;
-		towerverts_quads_flatland_pu_coords[idx_topleft + 11] = true;
+		// Top right corner
+		towerverts_quads_flatland_pu_coords[idx_topleft + 9] = xleft - xsign * brickwidth_pu;
+		towerverts_quads_flatland_pu_coords[idx_topleft + 10] = ytop;
+		//towerverts_quads_flatland_pu_coords[idx_topleft + 11] = 0;
 	}
 
 	let odd = true;
@@ -157,8 +158,6 @@ function recalculateWorldObjectData ()
 			 * Array holds coordinates of verts of quads row by row top to bottom.
 			 */
 
-			const iq = Array(4); // index into towerverts_quads_flatland_pu_coords for quadrant n
-
 			// 2nd quadrant (top left)
 			i1 = // Index into the array for the current quadgon in 2nd quadrant
 				  bricknum_y // Row number inside of 2nd quadrant
@@ -168,39 +167,58 @@ function recalculateWorldObjectData ()
 				+ bricknum_x // Finally how far into the current row of the quadrant
 				* 4 * 3; // taking into account the number of verts and coords in this row as well.
 
-			gen_verts_for_brick(i1, bricknum_y, bricknum_y, -1, 1);
+			const xleft1 = -(flatland_tower_positive_extent_x_pu - bricknum_x * brickwidth_pu);
+			const ytop1 = flatland_tower_positive_extent_y_pu - bricknum_y * brickheight_pu;
+			gen_verts_for_brick(i1, xleft1, ytop1, -1, 1);
 
 			// 1st quadrant (top right)
 			i0 = i1 + flatland_tower_positive_extent_x_pu / brickwidth_pu
 				// It's the same index as i1 except one quadrant row further in
 				* 4 * 3; // account for verts and coords for the quadrant row.
 
-			gen_verts_for_brick(i0, bricknum_y, bricknum_y, 1, 1);
+			const xleft0 = bricknum_x * brickwidth_pu;
+			const ytop0 = flatland_tower_positive_extent_y_pu - bricknum_y * brickheight_pu;
+			gen_verts_for_brick(i0, xleft0, ytop0, 1, 1);
 
 			// 3rd quadrant (bottom left)
 			i2 = i1 + towerverts_quads_flatland_pu_coords.length / 2;
 				// Same offset as i1 except halfway throught the array further in.
 
-			gen_verts_for_brick(i2, bricknum_y, bricknum_y, -1, -1);
+			const xleft2 = -(flatland_tower_positive_extent_x_pu - bricknum_x * brickwidth_pu);
+			const ytop2 = -(bricknum_y * brickheight_pu);
+			gen_verts_for_brick(i2, xleft2, ytop2, -1, -1);
 
 			// 3rd quadrant (bottom left)
 			i3 = i0 + towerverts_quads_flatland_pu_coords.length / 2;
 				// Likewise with 4th quadrant in relation to first quadrant.
 
-			gen_verts_for_brick(i3, bricknum_y, bricknum_y, 1, -1);
-
-			console.log(i1, i0, i2, i3);
-			k += 4 * 4 * 3;
+			const xleft3 = bricknum_x * brickwidth_pu;
+			const ytop3 = -(bricknum_y * brickheight_pu);
+			gen_verts_for_brick(i3, xleft3, ytop3, 1, -1);
 		}
 	}
-
-	console.log(k, towerverts_quads_flatland_pu_coords.length);
-	assert(k === towerverts_quads_flatland_pu_coords.length);
-	console.log(towerverts_quads_flatland_pu_coords);
-	assert(towerverts_quads_flatland_pu_coords.every(x => x));
 }
 
 recalculateWorldObjectData();
+
+// TODO: Recalculate on resize after timeout.
+
+/*
+ * Screen data.
+ */
+
+let unitpx;
+let middlex;
+let middley;
+
+function recalculateScreenData ()
+{
+	unitpx = tower_diameter_relative_to_screen_width * window.innerWidth / num_bricks_visible_half_ring ;
+	middlex = canv.width / 2;
+	middley = canv.height / 2;
+}
+
+recalculateScreenData();
 
 // TODO: Recalculate on resize after timeout.
 
@@ -210,9 +228,6 @@ recalculateWorldObjectData();
 
 let y = 0; // Unit: Pixels
 let angle = 0; // Unit: radians
-
-const middlex = canv.width / 2;
-const middley = canv.height / 2;
 
 const x_max = 25, y_max = 25;
 const vertical_distortion = 0.05;
@@ -229,36 +244,55 @@ function distortionXY (x, y)
 	return distortion_x + distortion_y;
 }
 
+function renderMesh (verts)
+{
+	ctx.strokeStyle = "#00ffff";
+	ctx.beginPath();
+	for (let i = 0 ; i < verts.length ; i += 12)
+	{
+		const p0 = { 'x': middlex + unitpx * verts[i], 'y': middley + unitpx * verts[i +  1] };
+		ctx.moveTo(p0.x, p0.y);
+
+		const p1 = { 'x': middlex + unitpx * verts[i + 3], 'y': middley + unitpx * verts[i +  4] };
+		ctx.lineTo(p1.x, p1.y);
+
+		const p2 = { 'x': middlex + unitpx * verts[i + 6], 'y': middley + unitpx * verts[i +  7] };
+		ctx.lineTo(p2.x, p2.y);
+
+		const p3 = { 'x': middlex + unitpx * verts[i + 9], 'y': middley + unitpx * verts[i + 10] };
+		ctx.lineTo(p3.x, p3.y);
+
+		ctx.lineTo(p0.x, p0.y);
+	}
+	ctx.stroke();
+
+	/*(
+	ctx.fillStyle = "rgb(0, 0, " + 255 * y / y_max + ")";
+
+	for (let x = 0 ; x < x_max ; x++)
+	{
+		const s = distortionXY(x, y);
+
+		const distorted_x = middlex + s * x * 10;
+		const distorted_y = middley - s * y * 10;
+
+		ctx.fillRect(distorted_x - 1, distorted_y - 1, 2, 2);
+
+		distorted_x_prev = distorted_x;
+		distorted_y_prev = distorted_y;
+
+		ctx.lineTo(distorted_x_prev, distorted_y_prev);
+	}
+	*/
+}
+
 function renderTower ()
 {
 	const t_render_tower_begin = Date.now();
 
 	let distorted_x_prev = 0, distorted_y_prev = 0;
 
-	ctx.strokeStyle = "#00ffff";
-	ctx.beginPath();
-	for (let y = 0 ; y < y_max ; y++)
-	{
-		ctx.moveTo(middlex, middley - middley * y / y_max);
-
-		ctx.fillStyle = "rgb(0, 0, " + 255 * y / y_max + ")";
-
-		for (let x = 0 ; x < x_max ; x++)
-		{
-			const s = distortionXY(x, y);
-
-			const distorted_x = middlex + s * x * 10;
-			const distorted_y = middley - s * y * 10;
-
-			ctx.fillRect(distorted_x - 1, distorted_y - 1, 2, 2);
-
-			distorted_x_prev = distorted_x;
-			distorted_y_prev = distorted_y;
-
-			ctx.lineTo(distorted_x_prev, distorted_y_prev);
-		}
-	}
-	ctx.stroke();
+	renderMesh(towerverts_quads_flatland_pu_coords);
 
 	const t_render_tower_end = Date.now();
 
@@ -275,7 +309,7 @@ let vertical_acceleration_pu = 0; // Unit: pu / s^2
 let num_frames_rendered = 0;
 let t_prev = null;
 let dt = 0;
-let dt_recent = new Array(480);
+const dt_recent = new Array(240);
 
 function render ()
 {
@@ -286,6 +320,8 @@ function render ()
 	ctx.drawImage(farbg, farbg.width - canv.width - offs_x_farbg_srcpx, 0, canv.width, canv.height,
 		0, 0, canv.width, canv.height);
 
+	renderTower();
+
 	ctx.strokeStyle = "#ffff00";
 	ctx.beginPath();
 	ctx.moveTo(middlex, 0);
@@ -294,14 +330,18 @@ function render ()
 	ctx.lineTo(canv.width, middley);
 	ctx.stroke();
 
-	renderTower();
-
+	ctx.fillStyle = '#449';
+	ctx.fillText('Current frame ' + dt + ' ms', 16, 36);
 	if (t_prev !== null)
 	{
-		ctx.fillStyle = '#449';
-		num_recent_dt = (num_frames_rendered < 480) ? num_frames_rendered : 480;
-		ctx.fillText('Current frame ' + dt + ' ms', 16, 36);
-		ctx.fillText('Last 480 frames ' + Math.round(100 * 1000 / (dt_recent.reduce((acc, v) => acc + v) / num_recent_dt)) / 100 + ' FPS', 16, 48);
+		if (num_frames_rendered > dt_recent.length)
+		{
+			ctx.fillText('Last ' + dt_recent.length + ' frames ' + Math.round(100 * 1000 / (dt_recent.reduce((acc, v) => acc + v) / dt_recent.length)) / 100 + ' FPS', 16, 48);
+		}
+		else
+		{
+			ctx.fillText('Last ' + num_frames_rendered + ' frames ' + Math.round(100 * 1000 / (dt_recent.slice(dt_recent.length - num_frames_rendered).reduce((acc, v) => acc + v) / num_frames_rendered)) / 100 + ' FPS', 16, 48);
+		}
 	}
 
 	num_frames_rendered++;
@@ -325,8 +365,8 @@ function run ()
 		dt_recent.push(dt);
 	}
 
-	angle = (angle + angular_velocity_pu * dt / 1000) % (2 * Math.PI);
-	y += vertical_velocity_pu * dt / 1000;
+	angle = (angle + (angular_velocity_pu / unitpx) * dt / 1000) % (2 * Math.PI);
+	y += (vertical_velocity_pu / unitpx) * dt / 1000;
 
 	// TODO: Update game object positions.
 
@@ -347,12 +387,13 @@ function stop ()
 function start ()
 {
 	t_prev = null;
-	dt_recent.fill(0);
 	num_frames_rendered = 0;
 	stopped = false;
 	run();
 }
 
-//start();
+start();
 
-render();
+window.onfocus = start;
+//window.onblur = stop;
+window.onblur = () => { console.log('hurr'); stop(); };
