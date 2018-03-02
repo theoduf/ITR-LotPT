@@ -56,7 +56,7 @@ const num_bricks_tower_ring = 2 * num_bricks_visible_half_ring;
 const tower_diameter_relative_to_screen_width = 0.5;
 
 const flatland_extent_x_pu = Math.floor(
-	num_bricks_visible_half_ring / (brickwidth_pu * tower_diameter_relative_to_screen_width));
+	num_bricks_visible_half_ring / (tower_diameter_relative_to_screen_width));
 let flatland_extent_y_pu; // Screen-ratio dependent.
 
 let num_bricks_visible_tower_vertical;
