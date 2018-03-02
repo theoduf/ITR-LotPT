@@ -395,5 +395,4 @@ function start ()
 start();
 
 window.onfocus = start;
-//window.onblur = stop;
-window.onblur = () => { console.log('hurr'); stop(); };
+window.onblur = stop;
