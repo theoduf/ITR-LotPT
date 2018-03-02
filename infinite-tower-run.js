@@ -198,9 +198,41 @@ function distortionXY (x, y)
 	return (distortion_x + distortion_y) / 2.2; // 2
 }
 
+function idk_man (points, i)
+{
+	ctx.clearRect(0, 0, canv.width, canv.height);
+
+	ctx.strokeStyle = "#ffff00";
+	ctx.beginPath();
+	ctx.moveTo(middlex, 0);
+	ctx.lineTo(middlex, canv.height);
+	ctx.moveTo(0, middley);
+	ctx.lineTo(canv.width, middley);
+	ctx.stroke();
+
+	ctx.strokeStyle = "#0000ff";
+
+	ctx.beginPath();
+	ctx.moveTo(points[i - 1].x, points[i - 1].y);
+	ctx.lineTo(points[i].x, points[i].y);
+	ctx.stroke();
+
+	i++;
+
+	if (i < points.length)
+	{
+		window.setTimeout(() => idk_man(points, i), 500);
+	}
+	else
+	{
+		window.setTimeout(() => idk_man(points, 1), 500);
+	}
+}
+
 function renderMesh (verts)
 {
 	let hurr = [];
+	let durr = [];
 
 	ctx.strokeStyle = "#ff0000";
 	for (let i = 0 ; i < verts.length ; i += 12)
@@ -254,10 +286,17 @@ function renderMesh (verts)
 				'p2x': p2.x, 'p2y': p2.y,
 				'p3x': p3.x, 'p3y': p3.y
 			});
+
+			durr.push(p0);
+			durr.push(p1);
+			durr.push(p2);
+			durr.push(p3);
 		//}
 	}
 	console.table(hurr);
+	console.log(durr);
 	pause();
+	idk_man(durr, 1);
 }
 
 function renderTower ()
