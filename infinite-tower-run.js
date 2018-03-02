@@ -417,6 +417,7 @@ function adaptToDims ()
 		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
 
 	recalculateWorldObjectData();
+	resetFPSCounter();
 }
 
 function handleBlur ()
@@ -435,6 +436,12 @@ function handleFocus ()
 	}
 }
 
+function resetFPSCounter ()
+{
+	num_frames_rendered = 0;
+	t_prev = null;
+}
+
 function initGlobalState ()
 {
 	window.removeEventListener('blur', handleBlur);
@@ -448,9 +455,8 @@ function initGlobalState ()
 	start = null;
 	pause = null;
 
-	num_frames_rendered = 0;
-	t_prev = null;
 	dt = 0;
+	resetFPSCounter();
 
 	vertical_velocity_pu = 3;
 	vertical_acceleration_pu = 0;
@@ -489,8 +495,7 @@ function startNewGame ()
 	{
 		if (paused)
 		{
-			t_prev = null;
-			num_frames_rendered = 0;
+			resetFPSCounter();
 			paused = false;
 			stopped = false;
 			run();
