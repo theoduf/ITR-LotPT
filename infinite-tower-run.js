@@ -173,7 +173,7 @@ function distortionXY (x, y)
 	const distortion_x = Math.cos(angle_max_x_distortion * x / flatland_extent_x_pu);
 	const distortion_y = Math.cos(angle_max_y_distortion * y / flatland_extent_y_pu);
 
-	return (distortion_x * distortion_y) / max_distortion_product;
+	return (distortion_x * distortion_y) * max_distortion_product;
 }
 
 function distortMesh2D (vertex3d_points_xyz)
