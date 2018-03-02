@@ -70,7 +70,7 @@ function recalculateWorldObjectData ()
 	num_bricks_visible_tower_vertical = Math.ceil(flatland_extent_y_pu / brickheight_pu);
 
 	// XXX: We put the same number of bricks above and below origin.
-	const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring + 2;
+	const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring;
 	const flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
 
 	towerverts_quads_flatland_pu_coords = new Float32Array(
@@ -198,6 +198,8 @@ function distortionXY (x, y)
 
 function renderMesh (verts)
 {
+	let k = 0;
+
 	ctx.strokeStyle = "#00ffff";
 	for (let i = 0 ; i < verts.length ; i += 12)
 	{
@@ -230,6 +232,9 @@ function renderMesh (verts)
 		ctx.lineTo(p0.x, p0.y);
 
 		ctx.stroke();
+
+		ctx.fillText(k, p0.x + (p2.x - p0.x) / 2, p0.y + (p2.y - p0.y) / 2);
+		k++;
 	}
 }
 
@@ -258,6 +263,11 @@ let t_prev;
 let dt;
 const dt_recent = new Array(240);
 
+function renderDot ()
+{
+	//const planex = 0.5 * 
+}
+
 let renderInFlight;
 function render ()
 {
@@ -271,6 +281,8 @@ function render ()
 		0, 0, canv.width, canv.height);
 
 	renderTower();
+
+	renderDot();
 
 	ctx.strokeStyle = "#ffff00";
 	ctx.beginPath();
