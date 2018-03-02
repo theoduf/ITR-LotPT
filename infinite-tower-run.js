@@ -213,22 +213,26 @@ function renderMesh (verts)
 
 			const tp0 = { 'x': verts[i], 'y': verts[i + 1] };
 			const s0 = distortionXY(tp0.x, tp0.y);
-			const p0 = { 'x': middlex + s0 * unitpx * tp0.x, 'y': middley + s0 * unitpx * tp0.y };
+			const p0 = { 'x': Math.floor(middlex + s0 * unitpx * tp0.x),
+				'y': Math.floor(middley + s0 * unitpx * tp0.y) };
 			ctx.moveTo(p0.x, p0.y);
 
 			const tp1 = { 'x': verts[i + 3], 'y': verts[i + 4] };
 			const s1 = distortionXY(tp1.x, tp1.y);
-			const p1 = { 'x': middlex + s1 * unitpx * tp1.x, 'y': middley + s1 * unitpx * tp1.y };
+			const p1 = { 'x': Math.floor(middlex + s1 * unitpx * tp1.x),
+				'y': Math.floor(middley + s1 * unitpx * tp1.y) };
 			ctx.lineTo(p1.x, p1.y);
 
 			const tp2 = { 'x': verts[i + 6], 'y': verts[i + 7] };
 			const s2 = distortionXY(tp2.x, tp2.y);
-			const p2 = { 'x': middlex + s2 * unitpx * tp2.x, 'y': middley + s2 * unitpx * tp2.y };
+			const p2 = { 'x': Math.floor(middlex + s2 * unitpx * tp2.x),
+				'y': Math.floor(middley + s2 * unitpx * tp2.y) };
 			ctx.lineTo(p2.x, p2.y);
 
 			const tp3 = { 'x': verts[i + 9], 'y': verts[i + 10] };
 			const s3 = distortionXY(tp3.x, tp3.y);
-			const p3 = { 'x': middlex + s3 * unitpx * tp3.x, 'y': middley + s3 * unitpx * tp3.y };
+			const p3 = { 'x': Math.floor(middlex + s3 * unitpx * tp3.x),
+				'y': Math.floor(middley + s3 * unitpx * tp3.y) };
 			ctx.lineTo(p3.x, p3.y);
 
 			ctx.lineTo(p0.x, p0.y);
@@ -237,11 +241,18 @@ function renderMesh (verts)
 
 			hurr.push(
 			{
-				'i': i, 's0': s0, 's1': s1, 's2': s2, 's3': s3,
-				'tp0.x': tp0.x, 'tp0.y': tp0.y,
-				'tp1.x': tp1.x, 'tp1.y': tp1.y,
-				'tp2.x': tp2.x, 'tp2.y': tp2.y,
-				'tp3.x': tp3.x, 'tp3.y': tp3.y
+				'p0x': tp0.x, 'p0y': tp0.y,
+				'p1x': tp1.x, 'p1y': tp1.y,
+				'p2x': tp2.x, 'p2y': tp2.y,
+				'p3x': tp3.x, 'p3y': tp3.y
+			});
+
+			hurr.push(
+			{
+				'p0x': p0.x, 'p0y': p0.y,
+				'p1x': p1.x, 'p1y': p1.y,
+				'p2x': p2.x, 'p2y': p2.y,
+				'p3x': p3.x, 'p3y': p3.y
 			});
 		//}
 	}
