@@ -170,7 +170,7 @@ function distortionXY (x, y)
 	return (distortion_x + distortion_y) / (vertical_distortion + horizontal_distortion);
 }
 
-function renderMeshEdges (vertex_points)
+function renderMeshEdges2D (vertex_points)
 {
 	//let k = 0;
 
@@ -212,7 +212,7 @@ function renderMeshEdges (vertex_points)
 	}
 }
 
-function renderMeshVerts (vertex_points)
+function renderMeshVerts2D (vertex_points)
 {
 	ctx.fillStyle = '#ff0000';
 	for (let i = 0 ; i < vertex_points.length ; i += 12)
@@ -247,7 +247,7 @@ function renderTower ()
 
 	let distorted_x_prev = 0, distorted_y_prev = 0;
 
-	renderMeshEdges(quadmesh_tower_flatland_pu);
+	renderMeshEdges2D(quadmesh_tower_flatland_pu);
 
 	ctx.strokeStyle = '#ffff00';
 	ctx.beginPath();
@@ -257,7 +257,7 @@ function renderTower ()
 	ctx.lineTo(canv.width, middley);
 	ctx.stroke();
 
-	renderMeshVerts(quadmesh_tower_flatland_pu);
+	renderMeshVerts2D(quadmesh_tower_flatland_pu);
 
 	const t_render_tower_end = Date.now();
 
