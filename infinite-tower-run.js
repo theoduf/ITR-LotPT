@@ -47,7 +47,7 @@ const fctx = farbg.getContext('2d');
 // TOWER
 
 const brickheight_pu = 1; // Brick height is the base unit.
-const brickwidth_pu = 2;  // Brick width must be an integer multiple of brickheight.
+const brickwidth_pu = 2;  // Brick width must be an integer multiple of brick height.
 
 const num_bricks_visible_quarter_ring = 16;
 const num_bricks_visible_half_ring = 2 * num_bricks_visible_quarter_ring;
@@ -82,51 +82,31 @@ function recalculateWorldObjectData ()
 		* 2 /* Both positive and negative y-direction */
 		/ brickwidth_pu);
 
-	function array_store_points_of_brick_verts (row, col, offs_x0, offs_y0) //x0, y0, x1, y1, x2, y2, x3, y3)
+	function array_store_points_of_brick_verts (col, offs_x0, row, offs_y0, xsign, ysign)
 	{
 		const idx = (((flatland_tower_positive_extent_y_pu - row) * (2 * flatland_tower_positive_extent_x_pu)
 			+ (flatland_tower_positive_extent_x_pu + col)) * 4 * 3) / brickwidth_pu;
-		console.log(row, col, idx);
 
-		if ( towerverts_quads_flatland_pu_coords[idx] ||
-		towerverts_quads_flatland_pu_coords[idx +  1] ||
-		towerverts_quads_flatland_pu_coords[idx +  2] ||
+		const x0 = col + offs_x0;
+		const y0 = row + offs_y0;
 
-		towerverts_quads_flatland_pu_coords[idx +  3] ||
-		towerverts_quads_flatland_pu_coords[idx +  4] ||
-		towerverts_quads_flatland_pu_coords[idx +  5] ||
+		towerverts_quads_flatland_pu_coords[idx] = x0;
+		towerverts_quads_flatland_pu_coords[idx +  1] = y0;
+		//towerverts_quads_flatland_pu_coords[idx +  2] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx +  6] ||
-		towerverts_quads_flatland_pu_coords[idx +  7] ||
-		towerverts_quads_flatland_pu_coords[idx +  8] ||
+		towerverts_quads_flatland_pu_coords[idx +  3] = x0;
+		towerverts_quads_flatland_pu_coords[idx +  4] = y0 + ysign * brickheight_pu;
+		//towerverts_quads_flatland_pu_coords[idx +  5] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx +  9] ||
-		towerverts_quads_flatland_pu_coords[idx + 10] ||
-		towerverts_quads_flatland_pu_coords[idx + 11])
-		{
-			throw 'Has value! ' + row + ', ' + col + ', ' + idx;
-		}
+		towerverts_quads_flatland_pu_coords[idx +  6] = x0 + xsign * brickwidth_pu;
+		towerverts_quads_flatland_pu_coords[idx +  7] = y0 + ysign * brickheight_pu;
+		//towerverts_quads_flatland_pu_coords[idx +  8] = 0;
 
-		towerverts_quads_flatland_pu_coords[idx] = true;
-		towerverts_quads_flatland_pu_coords[idx +  1] = true;
-		towerverts_quads_flatland_pu_coords[idx +  2] = true;
-
-		towerverts_quads_flatland_pu_coords[idx +  3] = true;
-		towerverts_quads_flatland_pu_coords[idx +  4] = true;
-		towerverts_quads_flatland_pu_coords[idx +  5] = true;
-
-		towerverts_quads_flatland_pu_coords[idx +  6] = true;
-		towerverts_quads_flatland_pu_coords[idx +  7] = true;
-		towerverts_quads_flatland_pu_coords[idx +  8] = true;
-
-		towerverts_quads_flatland_pu_coords[idx +  9] = true;
-		towerverts_quads_flatland_pu_coords[idx + 10] = true;
-		towerverts_quads_flatland_pu_coords[idx + 11] = true;
+		towerverts_quads_flatland_pu_coords[idx +  9] = x0 + xsign * brickwidth_pu;
+		towerverts_quads_flatland_pu_coords[idx + 10] = y0;
+		//towerverts_quads_flatland_pu_coords[idx + 11] = 0;
 	}
 
-	console.log(
-		'flatland_tower_positive_extent_x_pu', flatland_tower_positive_extent_x_pu,
-		'flatland_tower_positive_extent_y_pu', flatland_tower_positive_extent_y_pu);
 	let odd = true;
 	let k = 0;
 	for (let bricknum_y = 0 ;
@@ -137,70 +117,21 @@ function recalculateWorldObjectData ()
 			bricknum_x < flatland_tower_positive_extent_x_pu / brickwidth_pu ;
 			bricknum_x++)
 		{
-			console.log('bricknum_y', bricknum_y, 'bricknum_x1', bricknum_x);
-
 			row_top_half = flatland_tower_positive_extent_y_pu - bricknum_y;
 			row_btm_half = -bricknum_y;
 
 			col_left_half = -(flatland_tower_positive_extent_x_pu - bricknum_x * brickwidth_pu);
 			col_right_half = bricknum_x * brickwidth_pu;
 
-			console.log('row_top_half', row_top_half, 'col_left_half', col_left_half);
-			array_store_points_of_brick_verts(row_top_half, col_left_half);
+			array_store_points_of_brick_verts(col_left_half, brickwidth_pu, row_top_half, -brickheight_pu, -1, 1);
 
-			console.log('row_top_half', row_top_half, 'col_right_half', col_right_half);
-			array_store_points_of_brick_verts(row_top_half, col_right_half);
+			array_store_points_of_brick_verts(col_right_half, 0, row_top_half, -brickheight_pu, 1, 1);
 
-			console.log('row_btm_half', row_btm_half, 'col_left_half', col_left_half);
-			array_store_points_of_brick_verts(row_btm_half, col_left_half);
+			array_store_points_of_brick_verts(col_left_half, brickwidth_pu, row_btm_half, 0, -1, -1);
 
-			console.log('row_btm_half', row_btm_half, 'col_right_half', col_right_half);
-			array_store_points_of_brick_verts(row_btm_half, col_right_half);
-
-			/*
-			// 2nd quadrant (top left)
-			i1 = // Index into the array for the current quadgon in 2nd quadrant
-				  bricknum_y // Row number inside of 2nd quadrant
-			        * flatland_tower_positive_extent_x_pu / brickwidth_pu // Each row inside of 2nd quadrant has this many quads
-				* 2 // additionally we have the 1st quadrant.
-				* 4 * 3 // Then we have the number of verts in a quad and number of coords in a vert.
-				+ bricknum_x // Finally how far into the current row of the quadrant
-				* 4 * 3; // taking into account the number of verts and coords in this row as well.
-
-			const xleft1 = -(bricknum_x + 1) * brickwidth_pu;
-			const ytop1 = bricknum_y * brickheight_pu;
-			gen_verts_for_brick(i1, xleft1, ytop1, 1, 1);
-
-			// 1st quadrant (top right)
-			i0 = i1 + flatland_tower_positive_extent_x_pu / brickwidth_pu
-				// It's the same index as i1 except one quadrant row further in
-				* 4 * 3; // account for verts and coords for the quadrant row.
-
-			const xleft0 = bricknum_x * brickwidth_pu;
-			const ytop0 = bricknum_y * brickheight_pu;
-			gen_verts_for_brick(i0, xleft0, ytop0, 1, 1);
-
-			// 3rd quadrant (bottom left)
-			i2 = i1 + towerverts_quads_flatland_pu_coords.length / 2;
-				// Same offset as i1 except halfway throught the array further in.
-
-			const xleft2 = -(bricknum_x + 1) * brickwidth_pu;
-			const ytop2 = -(bricknum_y + 1) * brickheight_pu;
-			gen_verts_for_brick(i2, xleft2, ytop2, 1, 1);
-
-			// 3rd quadrant (bottom left)
-			i3 = i0 + towerverts_quads_flatland_pu_coords.length / 2;
-				// Likewise with 4th quadrant in relation to first quadrant.
-
-			const xleft3 = bricknum_x * brickwidth_pu;
-			const ytop3 = -(bricknum_y + 1) * brickheight_pu;
-			gen_verts_for_brick(i3, xleft3, ytop3, 1, 1);
-			*/
+			array_store_points_of_brick_verts(col_right_half, 0, row_btm_half, 0, 1, -1);
 		}
 	}
-
-	console.log(towerverts_quads_flatland_pu_coords);
-	assert(towerverts_quads_flatland_pu_coords.every(x => x), true);
 }
 
 /*
