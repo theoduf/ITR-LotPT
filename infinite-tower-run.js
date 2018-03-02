@@ -236,6 +236,14 @@ function renderMesh (verts)
 		ctx.fillText(k, p0.x + (p2.x - p0.x) / 2, p0.y + (p2.y - p0.y) / 2);
 		k++;
 	}
+
+	const tp0 = { 'x': verts[0], 'y': verts[1] };
+	const s0 = distortionXY(tp0.x, tp0.y);
+	const p0 = { 'x': Math.floor(middlex + /*s0 * */ unitpx * tp0.x),
+		'y': Math.floor(middley - /*s0 * */ unitpx * tp0.y) };
+
+	ctx.fillStyle = '#ff0000';
+	ctx.fillRect(p0.x - 1, p0.y - 1, 2, 2);
 }
 
 function renderTower ()
