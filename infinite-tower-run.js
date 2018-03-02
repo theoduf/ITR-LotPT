@@ -382,6 +382,7 @@ let quitToMainMenu;
 
 function sizeCanvases ()
 {
+	const scale = window.devicePixelRatio;
 	let width, height;
 
 	if (window.innerWidth > 16 * window.innerHeight / 10)
@@ -394,6 +395,12 @@ function sizeCanvases ()
 		width = window.innerWidth;
 		height = width * 10 / 16;
 	}
+
+	canv.style.width = Math.floor(width) + 'px';
+	canv.style.height = Math.floor(height) + 'px';
+
+	width *= scale;
+	height *= scale;
 
 	canv.width = width;
 	canv.height = height;
