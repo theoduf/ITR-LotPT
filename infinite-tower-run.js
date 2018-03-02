@@ -529,7 +529,7 @@ window.addEventListener('load', () =>
 			{
 				clearTimeout(orientationtimer);
 
-				orientationtimer = setTimeout(adaptToDims, 30);
+				orientationtimer = setTimeout(adaptToDims, 250);
 			});
 
 			adaptToDims();
