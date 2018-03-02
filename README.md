@@ -82,6 +82,6 @@ directory are copyright of [Kenney](http://kenney.nl/).
 
 ## Trademark notice
 
-*Infinite Tower Run*, *Legend of the Purple Tower* and
-*Infinite Tower Run: Legend of the Purple Tower* are all
+"Infinite Tower Run", "Legend of the Purple Tower" and
+"Infinite Tower Run: Legend of the Purple Tower" are all
 trademarks of Erik Nordstrøm.
