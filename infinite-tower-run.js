@@ -22,6 +22,8 @@ function assert (cond)
 	}
 }
 
+const title = document.title;
+
 const t_start = Date.now();
 
 const html = document.querySelector('html');
@@ -480,6 +482,7 @@ function startNewGame ()
 	pause = () =>
 	{
 		paused = true;
+		document.title = 'Paused - ' + title;
 
 		if (renderInFlight)
 		{
@@ -503,6 +506,7 @@ function startNewGame ()
 			resetFPSCounter();
 			paused = false;
 			stopped = false;
+			document.title = title;
 			run();
 		}
 	}
