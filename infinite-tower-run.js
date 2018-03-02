@@ -73,6 +73,10 @@ function recalculateWorldObjectData ()
 	const flatland_tower_positive_extent_x_pu = num_bricks_visible_half_ring;
 	const flatland_tower_positive_extent_y_pu = Math.ceil(num_bricks_visible_tower_vertical / 2);
 
+	max_distortion_product =
+		Math.cos(angle_max_x_distortion * flatland_tower_positive_extent_x_pu / flatland_extent_x_pu)
+		* Math.cos(angle_max_y_distortion * flatland_tower_positive_extent_y_pu / flatland_extent_y_pu);
+
 	quadmesh_tower_flatland_pu = new Float32Array(
 		  4 // Four verts in a quad
 		* 3 // Three coords in a vert
@@ -162,12 +166,14 @@ const horizontal_distortion = 1;
 const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
 const angle_max_x_distortion = Math.acos(1 - horizontal_distortion);
 
+let max_distortion_product;
+
 function distortionXY (x, y)
 {
 	const distortion_x = Math.cos(angle_max_x_distortion * x / flatland_extent_x_pu);
 	const distortion_y = Math.cos(angle_max_y_distortion * y / flatland_extent_y_pu);
 
-	return (distortion_x * distortion_y);
+	return (distortion_x * distortion_y) / max_distortion_product;
 }
 
 function distortMesh2D (vertex3d_points_xyz)
