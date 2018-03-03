@@ -14,14 +14,6 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-function assert (cond)
-{
-	if (!cond)
-	{
-		throw 'Assertion failed!';
-	}
-}
-
 const title = document.title;
 
 const t_start = Date.now();
