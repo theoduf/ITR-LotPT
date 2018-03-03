@@ -209,21 +209,6 @@ function calculateWorldObjectData ()
 	quadmesh_tower_distorted_pu = distortMesh2D(quadmesh_tower_flatland_pu);
 }
 
-function drawGuidelines ()
-{
-	ctx.strokeStyle = '#ffff00';
-	ctx.beginPath();
-	ctx.moveTo(middlex, 0);
-	ctx.lineTo(middlex, canv.height);
-	ctx.moveTo(0, middley);
-	ctx.lineTo(canv.width, middley);
-	ctx.moveTo(quarterx, 0);
-	ctx.lineTo(quarterx, canv.height);
-	ctx.moveTo(middlex + quarterx, 0);
-	ctx.lineTo(middlex + quarterx, canv.height);
-	ctx.stroke();
-}
-
 /*
  * Render tower.
  */
@@ -277,6 +262,63 @@ function renderMeshVerts2D (vertex3d_points_xyz)
 
 		ctx.fillRect(p0.x - 1, p0.y - 1, 2, 2);
 	}
+}
+
+function drawGuidelines ()
+{
+	ctx.strokeStyle = '#ffff00';
+	ctx.beginPath();
+
+	// Middle vertical line
+	ctx.moveTo(middlex, 0);
+	ctx.lineTo(middlex, canv.height);
+
+	// Middle horizontal line
+	ctx.moveTo(0, middley);
+	ctx.lineTo(canv.width, middley);
+
+	// Left-most vertical line
+	ctx.moveTo(quarterx, 0);
+	ctx.lineTo(quarterx, canv.height);
+
+	// Right-most vertical line
+	ctx.moveTo(middlex + quarterx, 0);
+	ctx.lineTo(middlex + quarterx, canv.height);
+
+	ctx.stroke();
+
+	/*
+	 * Camera/character lock bounds box.
+	 */
+	const fomb = // "freedom of movement bounds"
+	[
+		-8,  0, // p1
+		-8, -9, // p2
+		-7, -9, // .
+		-6, -9, // .
+		-5, -9, // .
+		-4, -9, // Intermediate points.
+		-3, -9, // .
+		-2, -9, // .
+		-1, -9, // .
+		 0, -9, // p3
+		 0,  0  // p0
+	];
+
+	ctx.strokeStyle = '#ff00ff';
+	ctx.beginPath();
+
+	ctx.moveTo(middlex, middley); // p0; (0, 0)
+	for (let i = 0 ; i < fomb.length ; i += 2)
+	{
+		const s = distortionXY(fomb[i], fomb[i + 1]);
+		ctx.lineTo(middlex + fomb[i] * s * unitpx,
+			middley - fomb[i + 1] * s * unitpx);
+	}
+
+	ctx.stroke();
+	ctx.fillStyle = 'rgba(255, 0, 255, 0.1)';
+	ctx.fill();
 }
 
 function renderTower ()
