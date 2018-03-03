@@ -1,5 +1,7 @@
 # Infinite Tower Run: Legend of the Purple Tower
 
+![ITR: LotPT](assets/firstparty/splash.png)
+
 <a href="http://www.indiedb.com/games/infinite-tower-run" title="View Infinite Tower Run on Indie DB" target="_blank"><img src="http://button.indiedb.com/popularity/medium/games/65797.png" alt="Popularity of Infinite Tower Run on Indie DB" /></a>
 
 Infinite Tower Run: Legend of the Purple Tower is an open source browser based
