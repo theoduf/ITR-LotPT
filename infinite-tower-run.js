@@ -87,12 +87,14 @@ function distortMesh2D (vertex3d_points_xyz)
 
 let unitpx;
 let middlex;
+let quarterx;
 let middley;
 
 function recalculateScreenData ()
 {
 	unitpx = tower_diameter_relative_to_screen_width * canv.width / num_bricks_visible_half_ring ;
 	middlex = canv.width / 2;
+	quarterx = canv.width / 4;
 	middley = canv.height / 2;
 }
 
@@ -207,6 +209,21 @@ function calculateWorldObjectData ()
 	quadmesh_tower_distorted_pu = distortMesh2D(quadmesh_tower_flatland_pu);
 }
 
+function drawGuidelines ()
+{
+	ctx.strokeStyle = '#ffff00';
+	ctx.beginPath();
+	ctx.moveTo(middlex, 0);
+	ctx.lineTo(middlex, canv.height);
+	ctx.moveTo(0, middley);
+	ctx.lineTo(canv.width, middley);
+	ctx.moveTo(quarterx, 0);
+	ctx.lineTo(quarterx, canv.height);
+	ctx.moveTo(middlex + quarterx, 0);
+	ctx.lineTo(middlex + quarterx, canv.height);
+	ctx.stroke();
+}
+
 /*
  * Render tower.
  */
@@ -268,17 +285,9 @@ function renderTower ()
 
 	renderMeshEdges2D(quadmesh_tower_distorted_pu);
 
-	/*
-	ctx.strokeStyle = '#ffff00';
-	ctx.beginPath();
-	ctx.moveTo(middlex, 0);
-	ctx.lineTo(middlex, canv.height);
-	ctx.moveTo(0, middley);
-	ctx.lineTo(canv.width, middley);
-	ctx.stroke();
-	*/
+	drawGuidelines();
 
-	//renderMeshVerts2D(quadmesh_tower_distorted_pu);
+	renderMeshVerts2D(quadmesh_tower_distorted_pu);
 
 	const t_render_tower_end = Date.now();
 
