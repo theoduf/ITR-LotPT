@@ -319,6 +319,24 @@ function drawGuidelines ()
 	ctx.stroke();
 	ctx.fillStyle = 'rgba(255, 0, 255, 0.1)';
 	ctx.fill();
+
+	/*
+	 * Natural position of character nose tip.
+	 */
+	ctx.strokeStyle = '#ff0000';
+	ctx.beginPath();
+
+	const sn = distortionXY(-2, -5);
+
+	// Vertical line
+	ctx.moveTo(middlex + (-2) * sn * unitpx, 0);
+	ctx.lineTo(middlex + (-2) * sn * unitpx, canv.height);
+
+	// Horizontal line
+	ctx.moveTo(0, middley + 5 * sn * unitpx);
+	ctx.lineTo(canv.width, middley + 5 * sn * unitpx);
+
+	ctx.stroke();
 }
 
 function renderTower ()
