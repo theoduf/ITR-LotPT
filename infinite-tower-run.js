@@ -46,7 +46,7 @@ const fctx = farbg.getContext('2d');
  * Distortion
  */
 
-const vertical_distortion = 0.015;
+const vertical_distortion = 0;
 const horizontal_distortion = 1;
 
 const angle_max_y_distortion = Math.acos(1 - vertical_distortion);
