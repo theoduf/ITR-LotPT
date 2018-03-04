@@ -30,7 +30,7 @@ const gl = tcanv.getContext('webgl');
  * Distant background, equivalent of a skybox.
  */
 
-let sun;
+let sunsvg;
 const farbg = document.createElement('canvas');
 const fctx = farbg.getContext('2d');
 
@@ -174,11 +174,11 @@ function calculateWorldObjectData ()
 			bricknum_x < flatland_tower_positive_extent_x_pu / brickwidth_pu ;
 			bricknum_x++)
 		{
-			row_top_half = flatland_tower_positive_extent_y_pu - bricknum_y;
-			row_btm_half = -bricknum_y;
+			const row_top_half = flatland_tower_positive_extent_y_pu - bricknum_y;
+			const row_btm_half = -bricknum_y;
 
-			col_left_half = -(flatland_tower_positive_extent_x_pu - bricknum_x * brickwidth_pu);
-			col_right_half = bricknum_x * brickwidth_pu;
+			const col_left_half = -(flatland_tower_positive_extent_x_pu - bricknum_x * brickwidth_pu);
+			const col_right_half = bricknum_x * brickwidth_pu;
 
 			array_store_points_of_brick_verts(col_left_half,
 				(bricknum_y % 2) ? brickwidth_pu : 0.5 * brickwidth_pu,
@@ -481,7 +481,7 @@ function adaptToDims ()
 {
 	sizeCanvases();
 
-	const sun_diam_srcpx = sun.width;
+	const sun_diam_srcpx = sunsvg.width;
 	const sun_radius_srcpx = Math.ceil(0.5 * sun_diam_srcpx);
 	const sun_offs_y_srcpx = Math.ceil(0.42 * sun_diam_srcpx);
 
@@ -491,13 +491,13 @@ function adaptToDims ()
 
 	// XXX: Sun goes in opposite direction so we place it 75% away from the *right* edge of each "skybox copy".
 
-	fctx.drawImage(sun,
+	fctx.drawImage(sunsvg,
 		0, sun_offs_y_srcpx,
 		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
 		Math.floor(0.25 * 2 * canv.width) - sun_radius_dstpx, 0,
 		sun_diam_dstpx, sun_diam_dstpx - sun_offs_y_dstpx);
 
-	fctx.drawImage(sun,
+	fctx.drawImage(sunsvg,
 		0, sun_offs_y_srcpx,
 		sun_diam_srcpx, sun_diam_srcpx - sun_offs_y_srcpx,
 		Math.floor(1.25 * 2 * canv.width) - sun_radius_dstpx, 0,
@@ -663,7 +663,7 @@ window.addEventListener('load', () =>
 		}
 	}
 
-	sun = new Image();
-	sun.onload = update_resource_loading_progress_bar_until_ready;
-	sun.src = 'assets/thirdparty/images/sun.svg';
+	sunsvg = new Image();
+	sunsvg.onload = update_resource_loading_progress_bar_until_ready;
+	sunsvg.src = 'assets/thirdparty/images/sun.svg';
 });
