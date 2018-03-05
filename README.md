@@ -4,7 +4,15 @@
 
 <a href=http://www.indiedb.com/games/infinite-tower-run title='View Infinite Tower Run on Indie DB' target=_blank><img src=http://button.indiedb.com/popularity/medium/games/65797.png alt='Popularity of Infinite Tower Run on Indie DB' /></a>
 
-Infinite Tower Run: Legend of the Purple Tower is an open source browser based
+The legend of the purple tower tells a tale of unimaginable riches. A reward for the worthy. On the outside of the tower there is a set of stairs and platforms. Inside there is a an elevator. A single button with the infinity symbol on it.
+
+Walk into the elevator and you will surely perish, for once you get in there is no getting out, the ride never ends.
+
+Take the stairs, defeat the obstacles and surely you shall be swimming in gold.
+
+- - - -
+
+*Infinite Tower Run: Legend of the Purple Tower* is an open source browser based
 web game written in JavaScript utilizing the HTML5 canvas. The goal of the game
 is to survive for the longest amount of time, defeating the enemies that you
 encounter, collecting powerups and treasures along the way.
