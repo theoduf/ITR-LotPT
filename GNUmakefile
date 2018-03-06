@@ -1,6 +1,6 @@
 JSSRC:= src/license.js src/main.js src/failure.js src/menus.js src/resourceloader.js src/statechart.js
 JSOUT:= $(subst src/,dist/,${JSSRC})
-CLSRCARG:= $(subst src/,--js=,${JSSRC})
+CLSRCARG:= $(subst src/,,${JSSRC})
 
 all: dist/assets/thirdparty/images/sun.svg dist/index.htm dist/style.min.css dist/main.min.js dist/main.map ${JSOUT}
 
@@ -9,7 +9,7 @@ dist/index.htm: src/index.htm
 	cp src/index.htm dist/
 
 dist/main.min.js dist/main.map: ${JSSRC}
-	cd src && npx google-closure-compiler --charset UTF-8 --compilation_level=ADVANCED_OPTIMIZATIONS --create_source_map ../dist/main.map --output_wrapper "%output%//# sourceMappingURL=main.map" ${CLSRCARG} --js_output_file=../dist/main.min.js
+	cd src && npx google-closure-compiler --charset UTF-8 --compilation_level ADVANCED_OPTIMIZATIONS --create_source_map ../dist/main.map --output_wrapper "%output%//# sourceMappingURL=main.map" --js ${CLSRCARG} --js_output_file ../dist/main.min.js
 
 dist/%.js: src/%.js
 	@mkdir -p dist/
