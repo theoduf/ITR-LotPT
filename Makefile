@@ -1,15 +1,15 @@
-all: dist/assets/thirdparty/images/sun.svg dist/index.htm dist/style.min.css dist/infinite-tower-run.js dist/infinite-tower-run.min.js dist/infinite-tower-run.map
+all: dist/assets/thirdparty/images/sun.svg dist/index.htm dist/style.min.css dist/main.min.js dist/main.map dist/license.js dist/main.js dist/failure.js dist/menus.js dist/resourceloader.js dist/statechart.js
 
 dist/index.htm: src/index.htm
 	@mkdir -p dist/
 	cp src/index.htm dist/
 
-dist/infinite-tower-run.min.js dist/infinite-tower-run.map: src/infinite-tower-run.js
-	cd src && npx google-closure-compiler --charset UTF-8 --compilation_level=ADVANCED_OPTIMIZATIONS --create_source_map ../dist/infinite-tower-run.map --output_wrapper "%output%//# sourceMappingURL=infinite-tower-run.map" --js=infinite-tower-run.js --js_output_file=../dist/infinite-tower-run.min.js
+dist/main.min.js dist/main.map: src/license.js src/main.js src/failure.js src/menus.js src/resourceloader.js src/statechart.js
+	cd src && npx google-closure-compiler --charset UTF-8 --compilation_level=ADVANCED_OPTIMIZATIONS --create_source_map ../dist/main.map --output_wrapper "%output%//# sourceMappingURL=main.map" --js=license.js --js=main.js --js=failure.js --js=menus.js --js=resourceloader.js --js=statechart.js --js_output_file=../dist/main.min.js
 
-dist/infinite-tower-run.js: src/infinite-tower-run.js
+dist/%.js: src/%.js
 	@mkdir -p dist/
-	cp src/infinite-tower-run.js dist/
+	cp $< dist/
 
 dist/style.min.css: src/style.css
 	@mkdir -p dist/
