@@ -1,8 +1,8 @@
 JSSRC:= src/license.js src/main.js src/failure.js src/menus.js src/resourceloader.js src/statechart.js
-JSOUT:= $(subst src/,dist/,${JSSRC})
+JSDIST:= $(subst src/,dist/,${JSSRC})
 CLSRCARG:= $(subst src/,,${JSSRC})
 
-all: dist/assets/thirdparty/images/sun.svg dist/index.htm dist/style.min.css dist/main.min.js dist/main.map ${JSOUT}
+all: dist/assets/thirdparty/images/sun.svg dist/index.htm dist/style.min.css dist/main.min.js dist/main.map ${JSDIST}
 
 dist/index.htm: src/index.htm
 	@mkdir -p dist/
