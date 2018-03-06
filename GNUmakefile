@@ -1,8 +1,10 @@
 JSSRC:= src/license.js src/main.js src/failure.js src/menus.js src/resourceloader.js src/statechart.js
-JSDIST:= $(subst src/,dist/,${JSSRC})
+JSSRCDIST:= $(subst src/,dist/,${JSSRC})
 CLSRCARG:= $(subst src/,,${JSSRC})
 
-all: dist/assets/thirdparty/images/sun.svg dist/index.htm dist/style.min.css dist/main.min.js dist/main.map ${JSDIST}
+IMAGES:= dist/assets/thirdparty/images/sun.svg
+
+all: ${IMAGES} dist/index.htm dist/style.min.css dist/main.min.js dist/main.map ${JSSRCDIST}
 
 dist/index.htm: src/index.htm
 	@mkdir -p dist/
@@ -19,6 +21,6 @@ dist/style.min.css: src/style.css
 	@mkdir -p dist/
 	npx uglifycss src/style.css > dist/style.min.css
 
-dist/assets/thirdparty/images/sun.svg: assets/thirdparty/images/sun.svg
+dist/assets/thirdparty/images/%: assets/thirdparty/images/%
 	@mkdir -p dist/assets/thirdparty/images/
-	cp assets/thirdparty/images/sun.svg dist/assets/thirdparty/images/sun.svg
+	cp $< $@
