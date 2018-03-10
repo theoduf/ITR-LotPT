@@ -65,14 +65,12 @@ export class MainMenu extends state.CanvasViewableState
 		ctx.fillStyle = '#000';
 		ctx.fillRect(0, 0, canv.width, canv.height);
 
-		const default_font = ctx.font;
 		ctx.font = '12pt sans-serif';
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 		ctx.fillStyle = '#fff';
 		ctx.fillText('Touch screen, click primary mouse button or press spacebar to start game.',
 			canv.width / 2, canv.height / 2);
-		ctx.font = default_font;
 
 		if (this.running)
 		{
@@ -147,6 +145,21 @@ export class PauseMenu extends state.CanvasViewableState
 		const s = 0.05 * canv.height;
 		ctx.fillRect(s, s, s, 2.5 * s);
 		ctx.fillRect(2.5 * s, s, s, 2.5 * s);
+
+		ctx.font = '12pt sans-serif';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillStyle = '#fff';
+		if (this.resume_on_focus)
+		{
+			ctx.fillText('Bring game window back in focus to resume game.',
+				canv.width / 2, canv.height / 2);
+		}
+		else
+		{
+			ctx.fillText('Touch screen, click primary mouse button or press escape to resume game.',
+				canv.width / 2, canv.height / 2);
+		}
 	}
 
 	canvResized ()
