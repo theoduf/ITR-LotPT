@@ -31,10 +31,13 @@ export class MainMenu extends state.CanvasViewableState
 				this.stop();
 				this.statemachine.inform('start_game', this.resources);
 			},
-			'mouseup': () =>
+			'mouseup': (evt) =>
 			{
-				this.stop();
-				this.statemachine.inform('start_game', this.resources);
+				if (evt.which === 1) // LMB
+				{
+					this.stop();
+					this.statemachine.inform('start_game', this.resources);
+				}
 			},
 			'keyup': (evt) =>
 			{
