@@ -18,6 +18,7 @@ import * as statechart from './statechart.js';
 import * as resourceloader from './resourceloader.js';
 import * as menus from './menus.js';
 import * as failure from './failure.js';
+import * as gameview from './game/view.js';
 
 const statemachine = new statechart.StateMachine();
 
@@ -36,23 +37,35 @@ statemachine.registerState('loading_resources', resource_loader);
 const main_menu = new menus.MainMenu();
 statemachine.registerState('main_menu', main_menu);
 
-statemachine.registerStateTransition('loading_resources', 'main_menu', (rsc) =>
+statemachine.registerStateTransition('loading_resources', 'resources_loaded', 'main_menu', (rsc) =>
 {
 	main_menu.registerResources(rsc);
 	main_menu.run();
-},
-	'resources_loaded');
+});
 
 const critical_error = new failure.CriticalErrorInformer();
 statemachine.registerState('critical_error', critical_error);
 
-statemachine.registerStateTransition('loading_resources', 'critical_error', () =>
+statemachine.registerStateTransition('loading_resources', 'resource_failed_to_load', 'critical_error', () =>
 {
 	critical_error.setErrorMessageText('A critical error occurred while loading resources :(');
 	critical_error.run();
-},
-	'resource_failed_to_load');
-statemachine.registerStateTransition('critical_error', 'loading_resources', resourceloader.run, 'restart');
+});
+statemachine.registerStateTransition('critical_error', 'restart', 'loading_resources', resourceloader.run);
+
+const game = new gameview.Game();
+statemachine.registerState('in_game', game);
+
+statemachine.registerStateTransition('main_menu', 'start_game', 'in_game', (rsc) =>
+{
+	game.registerResources(rsc);
+
+	// XXX: No need to re-register resources after they've been registered once.
+	statemachine.deregisterStateTransition('main_menu', 'start_game');
+	statemachine.registerStateTransition('main_menu', 'start_game', 'in_game', game.run);
+
+	game.run();
+});
 
 statemachine.setInitialState('loading_resources');
 
@@ -90,7 +103,7 @@ for (let state_name of Object.keys(statemachine.states))
 
 	for (let ext_evt_name of Object.keys(handlers))
 	{
-		statemachine.registerHandlerForExternalEvent(state_name, handlers[ext_evt_name], ext_evt_name);
+		statemachine.registerHandlerForExternalEvent(state_name, ext_evt_name, handlers[ext_evt_name]);
 	}
 }
 

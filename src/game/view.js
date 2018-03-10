@@ -14,35 +14,25 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import CanvasView from './canvasview.js';
+import CanvasView from '../canvasview.js';
 
-export class MainMenu extends CanvasView
+export class Game extends CanvasView
 {
 	constructor ()
 	{
 		super();
 
-		this.resources = undefined;
+		this.msgtext = undefined;
 	}
 
 	_render ()
 	{
-		const canv = this.canv;
 		const ctx = this.ctx;
+		const canv = this.canv;
 
-		// TODO: Proper menu
+		ctx.clearRect(0, 0, canv.width, canv.height);
 
-		ctx.fillStyle = '#000';
-		ctx.fillRect(0, 0, canv.width, canv.height);
-
-		const default_font = ctx.font;
-		ctx.font = '12pt sans-serif';
-		ctx.textAlign = 'center';
-		ctx.textBaseline = 'middle';
-		ctx.fillStyle = '#fff';
-		ctx.fillText('Click primary mouse button, touch screen or press spacebar to start game.',
-			canv.width / 2, canv.height / 2);
-		ctx.font = default_font;
+		// TODO
 
 		if (this.running)
 		{
@@ -50,35 +40,8 @@ export class MainMenu extends CanvasView
 		}
 	}
 
-	registerResources (resources)
-	{
-		this.resources = resources;
-		console.log('Resources registered.', resources);
-	}
-
 	run ()
 	{
-		window.addEventListener('touchend', () =>
-		{
-			this.stop();
-			this.statemachine.inform('start_game', this.resources);
-		});
-
-		window.addEventListener('mouseup', () =>
-		{
-			this.stop();
-			this.statemachine.inform('start_game', this.resources);
-		});
-
-		window.addEventListener('keyup', (evt) =>
-		{
-			if (evt.key === ' ')
-			{
-				this.stop();
-				this.statemachine.inform('start_game', this.resources);
-			}
-		});
-
 		this.running = true;
 		window.requestAnimationFrame(this._render.bind(this));
 	}

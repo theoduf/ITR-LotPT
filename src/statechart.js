@@ -45,7 +45,7 @@ export class StateMachine
 		}
 	}
 
-	registerStateTransition (current_statename, next_statename, call_f, evt)
+	registerStateTransition (current_statename, evt, next_statename, call_f)
 	{
 		if (!this.states.hasOwnProperty(current_statename))
 		{
@@ -55,9 +55,11 @@ export class StateMachine
 		{
 			throw `State ${next_statename} has not been registered!`;
 		}
-		else if (this.state_transitions.hasOwnProperty(evt))
+		else if (this.state_transitions.hasOwnProperty(current_statename) &&
+			this.state_transitions[current_statename].hasOwnProperty(evt))
 		{
-			throw `State transition ${evt} has already been registered!`;
+			throw `State transition event ${evt} from state ${current_statename} `
+				+ 'has already been registered!';
 		}
 		else
 		{
@@ -66,7 +68,23 @@ export class StateMachine
 		}
 	}
 
-	registerHandlerForExternalEvent (current_statename, handler_f, evt)
+	deregisterStateTransition (current_statename, evt)
+	{
+		console.log(this.state_transitions);
+
+		if (!this.state_transitions.hasOwnProperty(current_statename) ||
+			!this.state_transitions[current_statename].hasOwnProperty(evt))
+		{
+			throw `State transation event ${evt} from state ${current_statename} `
+				+ 'does not exist!';
+		}
+		else
+		{
+			delete this.state_transitions[current_statename][evt];
+		}
+	}
+
+	registerHandlerForExternalEvent (current_statename, evt, handler_f)
 	{
 		if (!(this.handlers_external_events.hasOwnProperty(current_statename)))
 		{
