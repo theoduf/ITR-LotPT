@@ -28,10 +28,10 @@ export class Game extends state.CanvasHoldingState
 		this.available_cameras =
 		{
 			'third_person_side_view_camera': new cameras.ThirdPersonSideViewCamera(this),
-			'third_person_behind_character_camera': new cameras.ThirdPersonBehindCharacterCamera(this),
-			'third_person_behind_character_cardboard_camera': new cameras.ThirdPersonBehindCharacterCardboardCamera(this),
-			'first_person_camera': new cameras.FirstPersonCamera(this),
-			'first_person_cardboard_camera': new cameras.FirstPersonCardboardCamera(this)
+			//'third_person_behind_character_camera': new cameras.ThirdPersonBehindCharacterCamera(this),
+			//'third_person_behind_character_cardboard_camera': new cameras.ThirdPersonBehindCharacterCardboardCamera(this),
+			//'first_person_camera': new cameras.FirstPersonCamera(this),
+			//'first_person_cardboard_camera': new cameras.FirstPersonCardboardCamera(this)
 		};
 
 		this.tower = new environment.Tower();
