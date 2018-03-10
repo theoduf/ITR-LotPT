@@ -36,12 +36,23 @@ statemachine.registerState('loading_resources', resource_loader);
 const main_menu = new menus.MainMenu();
 statemachine.registerState('main_menu', main_menu);
 
-statemachine.registerStateTransition('loading_resources', 'main_menu', 'resources_loaded');
+statemachine.registerStateTransition('loading_resources', 'main_menu', (rsc) =>
+{
+	main_menu.registerResources(rsc);
+	main_menu.run();
+},
+	'resources_loaded');
 
-const critical_error = new failure.CriticalError();
+const critical_error = new failure.CriticalErrorInformer();
 statemachine.registerState('critical_error', critical_error);
 
-statemachine.registerStateTransition('loading_resources', 'critical_error', 'resource_failed_to_load');
+statemachine.registerStateTransition('loading_resources', 'critical_error', () =>
+{
+	critical_error.setErrorMessageText('A critical error occurred while loading resources :(');
+	critical_error.run();
+},
+	'resource_failed_to_load');
+statemachine.registerStateTransition('critical_error', 'loading_resources', resourceloader.run, 'restart');
 
 statemachine.setInitialState('loading_resources');
 
@@ -49,5 +60,7 @@ statemachine.setInitialState('loading_resources');
 	const canv = document.getElementById('game');
 	const ctx = canv.getContext('2d');
 
-	statemachine.run(canv, ctx);
+	statemachine.setCanv(canv, ctx);
+
+	statemachine.run();
 }

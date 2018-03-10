@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-export class CriticalError
+export class CriticalErrorInformer
 {
 	constructor ()
 	{
@@ -24,6 +24,8 @@ export class CriticalError
 		this.ctx = undefined;
 
 		this.running = false;
+
+		this.msgtext = undefined;
 	}
 
 	_render ()
@@ -36,19 +38,32 @@ export class CriticalError
 		}
 	}
 
-	run (canv, ctx)
+	associateStatemachine (statemachine)
+	{
+		this.statemachine = statemachine;
+	}
+
+	setCanv (canv, ctx)
 	{
 		this.canv = canv;
 		this.ctx = ctx;
+	}
 
-		// TODO
+	setErrorMessageText (msgtext)
+	{
+		this.msgtext = msgtext;
+	}
 
+	run ()
+	{
 		this.running = true;
+		console.log('Critical error informer running.');
 		window.requestAnimationFrame(this._render.bind(this));
 	}
 
 	stop ()
 	{
 		this.running = false;
+		console.log('Critical error informer has been stopped.');
 	}
 }

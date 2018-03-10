@@ -118,21 +118,30 @@ export class ResourceLoader
 		}
 	}
 
-	run (statemachine, canv, ctx)
+	associateStatemachine (statemachine)
 	{
 		this.statemachine = statemachine;
+	}
 
+	setCanv (canv, ctx)
+	{
 		this.canv = canv;
 		this.ctx = ctx;
+	}
+
+	run ()
+	{
+		this.running = true;
+		console.log('Resource loader running.');
 
 		this._loadResources();
 
-		this.running = true;
 		window.requestAnimationFrame(this._render.bind(this));
 	}
 
 	stop ()
 	{
 		this.running = false;
+		console.log('Resource loader has been stopped.');
 	}
 }

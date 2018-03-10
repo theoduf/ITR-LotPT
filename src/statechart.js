@@ -33,6 +33,8 @@ export class StateMachine
 	{
 		if (!this.states.hasOwnProperty(statename))
 		{
+			obj.associateStatemachine(this);
+
 			this.states[statename] = obj;
 			this.state_transitions[statename] = {};
 		}
@@ -42,7 +44,7 @@ export class StateMachine
 		}
 	}
 
-	registerStateTransition (current_statename, next_statename, evt)
+	registerStateTransition (current_statename, next_statename, call_f, evt)
 	{
 		if (!this.states.hasOwnProperty(current_statename))
 		{
@@ -58,7 +60,8 @@ export class StateMachine
 		}
 		else
 		{
-			this.state_transitions[current_statename][evt] = next_statename;
+			this.state_transitions[current_statename][evt] =
+				{ 'next_statename': next_statename, 'call_f': call_f};
 		}
 	}
 
@@ -74,15 +77,24 @@ export class StateMachine
 		}
 	}
 
-	run (canv, ctx)
+	setCanv (canv, ctx)
+	{
+		this.canv = canv;
+		this.ctx = ctx;
+
+		for (let state of Object.keys(this.states))
+		{
+			this.states[state].setCanv(canv, ctx);
+		}
+	}
+
+	run ()
 	{
 		if (!this.running)
 		{
-			this.canv = canv;
-			this.ctx = ctx;
 			this.running = true;
 
-			this.states[this.current_statename].run(this, canv, ctx);
+			this.states[this.current_statename].run();
 		}
 		else
 		{
@@ -96,7 +108,12 @@ export class StateMachine
 
 		if (this.state_transitions[this.current_statename].hasOwnProperty(evt))
 		{
-			// TODO
+			const sn = this.state_transitions[this.current_statename][evt]['new_statename'];
+			const cf = this.state_transitions[this.current_statename][evt]['call_f'];
+
+			this.current_statename = sn;
+
+			cf(msg);
 		}
 		else
 		{

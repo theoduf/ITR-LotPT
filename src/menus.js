@@ -24,10 +24,17 @@ export class MainMenu
 		this.ctx = undefined;
 
 		this.running = false;
+
+		this.resources = undefined;
 	}
 
 	_render ()
 	{
+		const canv = this.canv;
+		const ctx = this.ctx;
+
+		ctx.clearRect(0, 0, canv.width, canv.height);
+
 		// TODO
 
 		if (this.running)
@@ -36,19 +43,32 @@ export class MainMenu
 		}
 	}
 
-	run (canv, ctx)
+	associateStatemachine (statemachine)
+	{
+		this.statemachine = statemachine;
+	}
+
+	setCanv (canv, ctx)
 	{
 		this.canv = canv;
 		this.ctx = ctx;
+	}
 
-		// TODO
+	registerResources (resources)
+	{
+		this.resources = resources;
+	}
 
+	run ()
+	{
 		this.running = true;
+		console.log('Main menu running.');
 		window.requestAnimationFrame(this._render.bind(this));
 	}
 
 	stop ()
 	{
 		this.running = false;
+		console.log('Main menu has been stopped.');
 	}
 }
