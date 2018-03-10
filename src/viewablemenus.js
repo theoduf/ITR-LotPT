@@ -79,25 +79,105 @@ export class MainMenu extends state.CanvasViewableState
 			window.requestAnimationFrame(this._render.bind(this));
 		}
 	}
+}
+
+export class PauseMenu extends state.CanvasViewableState
+{
+	constructor ()
+	{
+		super();
+
+		this.gamesession = undefined;
+
+		this.basetitle = undefined;
+
+		this.resume_on_focus = undefined;
+
+		this.window_listeners =
+		{
+			'focus': () =>
+			{
+				if (this.resume_on_focus)
+				{
+					this.stop();
+					this.statemachine.inform('resume_game');
+				}
+			},
+			'touchend': () =>
+			{
+				this.stop();
+				this.statemachine.inform('resume_game');
+			},
+			'mouseup': (evt) =>
+			{
+				if (evt.which === 1) // LMB
+				{
+					this.stop();
+					this.statemachine.inform('resume_game');
+				}
+			},
+			'keyup': (evt) =>
+			{
+				if (evt.key === 'Escape')
+				{
+					this.stop();
+					this.statemachine.inform('resume_game');
+				}
+			}
+		};
+	}
+
+	_render ()
+	{
+		if (this.gamesession.active_camera.renderInFlight)
+		{
+			window.requestAnimationFrame(this._render.bind(this));
+			return;
+		}
+
+		this.gamesession.active_camera.render();
+
+		const canv = this.canv;
+		const ctx = this.ctx;
+
+		ctx.fillStyle = 'rgba(64, 64, 128, 0.45)';
+		ctx.fillRect(0, 0, canv.width, canv.height);
+
+		ctx.fillStyle = '#ffffff';
+		const s = 0.05 * canv.height;
+		ctx.fillRect(s, s, s, 2.5 * s);
+		ctx.fillRect(2.5 * s, s, s, 2.5 * s);
+	}
+
+	canvResized ()
+	{
+		console.log('Yohoo');
+		this._render();
+	}
+
+	receiveGameSession (gs)
+	{
+		this.gamesession = gs;
+	}
+
+	setResumeOnFocus (truthness)
+	{
+		this.resume_on_focus = truthness;
+	}
 
 	run ()
 	{
-		for (let event_name of Object.keys(this.window_listeners))
-		{
-			window.addEventListener(event_name, this.window_listeners[event_name]);
-		}
+		this.basetitle = document.title;
 
-		this.running = true;
-		window.requestAnimationFrame(this._render.bind(this));
+		document.title = 'Paused - ' + this.basetitle;
+
+		super.run();
 	}
 
 	stop ()
 	{
-		for (let event_name of Object.keys(this.window_listeners))
-		{
-			window.removeEventListener(event_name, this.window_listeners[event_name]);
-		}
+		document.title = this.basetitle;
 
-		this.running = false;
+		super.stop();
 	}
 }

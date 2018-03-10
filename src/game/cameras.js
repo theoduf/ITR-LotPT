@@ -33,6 +33,8 @@ export class Camera
 
 		this.angular_acceleration_pu = 0;
 		this.vertical_acceleration_pu = 0;
+
+		this.render_in_flight = false;
 	}
 
 	registerResources (resources)
@@ -58,10 +60,14 @@ export class Camera
 
 	render ()
 	{
+		this.render_in_flight = true;
+
 		const canv = this.canv;
 		const ctx = this.ctx;
 
 		ctx.clearRect(0, 0, canv.width, canv.height);
+
+		this.render_in_flight = false;
 	}
 }
 

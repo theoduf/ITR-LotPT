@@ -25,6 +25,23 @@ export class Game extends state.CanvasHoldingState
 	{
 		super();
 
+		this.window_listeners =
+		{
+			'blur': () =>
+			{
+				this.stop();
+				this.statemachine.inform('blur_paused_game', this);
+			},
+			'keyup': (evt) =>
+			{
+				if (evt.key === 'Escape')
+				{
+					this.stop();
+					this.statemachine.inform('user_paused_game', this);
+				}
+			}
+		};
+
 		this.available_cameras =
 		{
 			'third_person_side_view_camera': new cameras.ThirdPersonSideViewCamera(this),
@@ -101,28 +118,5 @@ export class Game extends state.CanvasHoldingState
 		this.t_prev = t_now;
 
 		window.requestAnimationFrame(this._update.bind(this));
-	}
-
-	pause ()
-	{
-		this.running = false;
-		// TODO: ...
-	}
-
-	resume ()
-	{
-		this.running = true;
-		this._update();
-	}
-
-	run ()
-	{
-		this.running = true;
-		this._update();
-	}
-
-	stop ()
-	{
-		this.running = false;
 	}
 }

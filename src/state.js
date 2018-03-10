@@ -24,6 +24,8 @@ export class CanvasHoldingState
 		this.ctx = undefined;
 
 		this.running = false;
+
+		this.window_listeners = {};
 	}
 
 	associateStatemachine (statemachine)
@@ -44,16 +46,38 @@ export class CanvasHoldingState
 
 	getHandlersForExternalEvents ()
 	{
-		return { 'did_resize': this.canvResized };
+		return { 'did_resize': this.canvResized.bind(this) };
+	}
+
+	_update ()
+	{
+		// Subclasses must implement this method themselves if it's going to be used.
 	}
 
 	run ()
 	{
+		console.log('keh', this, this.window_listeners);
+
+		for (let event_name of Object.keys(this.window_listeners))
+		{
+			window.addEventListener(event_name, this.window_listeners[event_name]);
+		}
+
 		this.running = true;
+
+		console.log('yuh');
+
+		this._update();
 	}
 
 	stop ()
 	{
+
+		for (let event_name of Object.keys(this.window_listeners))
+		{
+			window.removeEventListener(event_name, this.window_listeners[event_name]);
+		}
+
 		this.running = false;
 	}
 }
@@ -67,7 +91,13 @@ export class CanvasViewableState extends CanvasHoldingState
 
 	run ()
 	{
+		for (let event_name of Object.keys(this.window_listeners))
+		{
+			window.addEventListener(event_name, this.window_listeners[event_name]);
+		}
+
 		this.running = true;
-		window.requestAnimationFrame(this._render.bind(this));
+
+		this._render();
 	}
 }

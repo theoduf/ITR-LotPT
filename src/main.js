@@ -67,6 +67,34 @@ statemachine.registerStateTransition('main_menu', 'start_game', 'in_game', (rsc)
 	game_session.run();
 });
 
+const pause = new viewablemenus.PauseMenu();
+statemachine.registerState('game_paused', pause);
+
+statemachine.registerStateTransition('in_game', 'user_paused_game', 'game_paused', (gs) =>
+{
+	pause.receiveGameSession(gs);
+
+	pause.setResumeOnFocus(false);
+
+	pause.run();
+});
+
+statemachine.registerStateTransition('in_game', 'blur_paused_game', 'game_paused', (gs) =>
+{
+	pause.receiveGameSession(gs);
+
+	// TODO: Configuration override for users that want to manually resume.
+	pause.setResumeOnFocus(true);
+
+	pause.run();
+});
+
+//statemachine.registerStateTransition('game_paused', 'resume_game', 'in_game', game_session.run.bind(game_session));
+statemachine.registerStateTransition('game_paused', 'resume_game', 'in_game', () =>
+{
+	game_session.run();
+});
+
 statemachine.setInitialState('loading_resources');
 
 function sizeCanvas (canv, ctx)

@@ -18,13 +18,8 @@ const title = document.title;
 
 const t_start = Date.now();
 
-const html = document.querySelector('html');
-
 const canv = document.getElementById('game');
 const ctx = canv.getContext('2d');
-
-const tcanv = document.createElement('canvas');
-const gl = tcanv.getContext('webgl');
 
 /*
  * Distant background, equivalent of a skybox.
@@ -407,9 +402,6 @@ let quitToMainMenu;
 
 function sizeCanvases ()
 {
-	tcanv.width = width;
-	tcanv.height = height;
-
 	// Skybox covers 360 degrees, our view is showing 180 degrees.
 	// Additionally, like with the sliding bricks we draw two copies next to each other so we can slide over.
 	farbg.width = 4 * width;
@@ -448,22 +440,6 @@ function adaptToDims ()
 	resetFPSCounter();
 }
 
-function handleBlur ()
-{
-	if (!manually_paused && !option_disable_autopause)
-	{
-		pause();
-	}
-}
-
-function handleFocus ()
-{
-	if (!manually_paused || option_enable_autoresume_always)
-	{
-		start();
-	}
-}
-
 function resetFPSCounter ()
 {
 	num_frames_rendered = 0;
@@ -472,9 +448,6 @@ function resetFPSCounter ()
 
 function initGlobalState ()
 {
-	window.removeEventListener('blur', handleBlur);
-	window.removeEventListener('focus', handleFocus);
-
 	stopped = true;
 	paused = false;
 	manually_paused = false;
@@ -499,26 +472,6 @@ function initGlobalState ()
 function startNewGame ()
 {
 	initGlobalState();
-
-	pause = () =>
-	{
-		paused = true;
-		document.title = 'Paused - ' + title;
-
-		if (renderInFlight)
-		{
-			requestAnimationFrame(pause);
-			return;
-		}
-
-		ctx.fillStyle = 'rgba(64, 64, 128, 0.45)';
-		ctx.fillRect(0, 0, canv.width, canv.height);
-
-		ctx.fillStyle = '#ffffff';
-		const s = 0.05 * canv.height;
-		ctx.fillRect(s, s, s, 2.5 * s);
-		ctx.fillRect(2.5 * s, s, s, 2.5 * s);
-	}
 
 	start = () =>
 	{
@@ -546,9 +499,6 @@ function startNewGame ()
 
 		mainMenu();
 	}
-
-	window.addEventListener('blur', handleBlur);
-	window.addEventListener('focus', handleFocus);
 
 	stopped = false;
 	run();
