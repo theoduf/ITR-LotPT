@@ -14,15 +14,42 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import CanvasView from './canvasview.js';
+import * as state from './state.js';
 
-export class MainMenu extends CanvasView
+export class MainMenu extends state.CanvasViewableState
 {
 	constructor ()
 	{
 		super();
 
 		this.resources = undefined;
+
+		this.window_listeners =
+		{
+			'touchend': () =>
+			{
+				this.stop();
+				this.statemachine.inform('start_game', this.resources);
+			},
+			'mouseup': () =>
+			{
+				this.stop();
+				this.statemachine.inform('start_game', this.resources);
+			},
+			'keyup': (evt) =>
+			{
+				if (evt.key === ' ')
+				{
+					this.stop();
+					this.statemachine.inform('start_game', this.resources);
+				}
+			}
+		};
+	}
+
+	registerResources (resources)
+	{
+		this.resources = resources;
 	}
 
 	_render ()
@@ -40,7 +67,7 @@ export class MainMenu extends CanvasView
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 		ctx.fillStyle = '#fff';
-		ctx.fillText('Click primary mouse button, touch screen or press spacebar to start game.',
+		ctx.fillText('Touch screen, click primary mouse button or press spacebar to start game.',
 			canv.width / 2, canv.height / 2);
 		ctx.font = default_font;
 
@@ -50,34 +77,12 @@ export class MainMenu extends CanvasView
 		}
 	}
 
-	registerResources (resources)
-	{
-		this.resources = resources;
-		console.log('Resources registered.', resources);
-	}
-
 	run ()
 	{
-		window.addEventListener('touchend', () =>
+		for (let event_name of Object.keys(this.window_listeners))
 		{
-			this.stop();
-			this.statemachine.inform('start_game', this.resources);
-		});
-
-		window.addEventListener('mouseup', () =>
-		{
-			this.stop();
-			this.statemachine.inform('start_game', this.resources);
-		});
-
-		window.addEventListener('keyup', (evt) =>
-		{
-			if (evt.key === ' ')
-			{
-				this.stop();
-				this.statemachine.inform('start_game', this.resources);
-			}
-		});
+			window.addEventListener(event_name, this.window_listeners[event_name]);
+		}
 
 		this.running = true;
 		window.requestAnimationFrame(this._render.bind(this));
@@ -85,6 +90,11 @@ export class MainMenu extends CanvasView
 
 	stop ()
 	{
+		for (let event_name of Object.keys(this.window_listeners))
+		{
+			window.removeEventListener(event_name, this.window_listeners[event_name]);
+		}
+
 		this.running = false;
 	}
 }

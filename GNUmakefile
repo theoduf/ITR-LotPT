@@ -1,4 +1,4 @@
-JSSRC:= src/license.js src/main.js src/canvasview.js src/game/view.js src/failure.js src/menus.js src/resourceloader.js src/statechart.js
+JSSRC:= src/license.js src/main.js src/state.js src/game/characters.js src/game/environment.js src/game/cameras.js src/game/game.js src/viewablefailures.js src/viewablemenus.js src/viewableresourceloader.js src/statechart.js
 JSSRCDIST:= $(subst src/,dist/,${JSSRC})
 CLSRCARG:= $(subst src/,,${JSSRC})
 
@@ -16,6 +16,10 @@ dist/main.min.js dist/main.map: ${JSSRC}
 	  --create_source_map ../dist/main.map \
 	  --output_wrapper "%output%//# sourceMappingURL=main.map" \
 	  --js ${CLSRCARG} --js_output_file ../dist/main.min.js
+
+dist/game/%.js: src/game/%.js
+	@mkdir -p dist/game/
+	cp $< dist/game/
 
 dist/%.js: src/%.js
 	@mkdir -p dist/

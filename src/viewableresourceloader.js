@@ -14,9 +14,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import CanvasView from './canvasview.js';
+import * as state from './state.js';
 
-export class ResourceLoader extends CanvasView
+export class ResourceLoader extends state.CanvasViewableState
 {
 	constructor (resources_pending)
 	{

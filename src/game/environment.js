@@ -14,52 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-export default class CanvasView
+export class Tower
 {
 	constructor ()
 	{
-		this.statemachine = undefined;
-
-		this.canv = undefined;
-		this.ctx = undefined;
-
-		this.running = false;
-	}
-
-	associateStatemachine (statemachine)
-	{
-		this.statemachine = statemachine;
-	}
-
-	setCanv (canv, ctx)
-	{
-		this.canv = canv;
-		this.ctx = ctx;
-	}
-
-	canvResized ()
-	{
 		// TODO
-	}
-
-	getHandlersForExternalEvents ()
-	{
-		return { 'did_resize': this.canvResized };
-	}
-
-	_render ()
-	{
-		// Subclasses must implement this method themselves.
-	}
-
-	run ()
-	{
-		this.running = true;
-		window.requestAnimationFrame(this._render.bind(this));
-	}
-
-	stop ()
-	{
-		this.running = false;
 	}
 }

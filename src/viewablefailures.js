@@ -14,9 +14,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import CanvasView from '../canvasview.js';
+import * as state from './state.js';
 
-export class Game extends CanvasView
+export class CriticalErrorInformer extends state.CanvasViewableState
 {
 	constructor ()
 	{
@@ -27,11 +27,6 @@ export class Game extends CanvasView
 
 	_render ()
 	{
-		const ctx = this.ctx;
-		const canv = this.canv;
-
-		ctx.clearRect(0, 0, canv.width, canv.height);
-
 		// TODO
 
 		if (this.running)
@@ -40,14 +35,8 @@ export class Game extends CanvasView
 		}
 	}
 
-	run ()
+	setErrorMessageText (msgtext)
 	{
-		this.running = true;
-		window.requestAnimationFrame(this._render.bind(this));
-	}
-
-	stop ()
-	{
-		this.running = false;
+		this.msgtext = msgtext;
 	}
 }

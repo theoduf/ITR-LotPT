@@ -14,29 +14,27 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import CanvasView from './canvasview.js';
+export class Character
+{
+	constructor ()
+	{
+		this.health = 100;
 
-export class CriticalErrorInformer extends CanvasView
+		this.angle_pu = 0;
+		this.y_pu = 0;
+
+		this.angular_velocity_pu = 0;
+		this.vertical_velocity_pu = 0;
+
+		this.angular_acceleration_pu = 0;
+		this.vertical_acceleration_pu = 0;
+	}
+}
+
+export class Player extends Character
 {
 	constructor ()
 	{
 		super();
-
-		this.msgtext = undefined;
-	}
-
-	_render ()
-	{
-		// TODO
-
-		if (this.running)
-		{
-			window.requestAnimationFrame(this._render.bind(this));
-		}
-	}
-
-	setErrorMessageText (msgtext)
-	{
-		this.msgtext = msgtext;
 	}
 }

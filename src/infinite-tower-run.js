@@ -353,11 +353,6 @@ let angular_acceleration_pu; // Unit: pu / s^2
 let vertical_velocity_pu; // Unit: pu / second
 let vertical_acceleration_pu; // Unit: pu / s^2
 
-let num_frames_rendered;
-let t_prev;
-let dt;
-const dt_recent = new Array(240);
-
 let renderInFlight;
 function render ()
 {
@@ -394,37 +389,6 @@ function render ()
 let stopped;
 let paused;
 let manually_paused;
-
-function run ()
-{
-	if (paused || stopped)
-	{
-		return;
-	}
-
-	const t_now = Date.now();
-
-	if (t_prev !== null)
-	{
-		dt = t_now - t_prev;
-
-		dt_recent.shift();
-		dt_recent.push(dt);
-	}
-
-	angle = (angle + (angular_velocity_pu / unitpx) * dt / 1000) % (2 * Math.PI);
-	y += (vertical_velocity_pu / unitpx) * dt / 1000;
-
-	// TODO: Update game object positions.
-
-	// TODO: Check collisions.
-
-	render();
-
-	t_prev = t_now;
-
-	requestAnimationFrame(run);
-}
 
 /*
  * Options. TODO: Configure from user interface. Save values in localStorage.

@@ -15,10 +15,10 @@
  */
 
 import * as statechart from './statechart.js';
-import * as resourceloader from './resourceloader.js';
-import * as menus from './menus.js';
-import * as failure from './failure.js';
-import * as gameview from './game/view.js';
+import * as viewableresourceloader from './viewableresourceloader.js';
+import * as viewablemenus from './viewablemenus.js';
+import * as viewablefailures from './viewablefailures.js';
+import * as game from './game/game.js';
 
 const statemachine = new statechart.StateMachine();
 
@@ -30,11 +30,11 @@ const resources_pending =
 	},
 };
 
-const resource_loader = new resourceloader.ResourceLoader(resources_pending);
+const resource_loader = new viewableresourceloader.ResourceLoader(resources_pending);
 
 statemachine.registerState('loading_resources', resource_loader);
 
-const main_menu = new menus.MainMenu();
+const main_menu = new viewablemenus.MainMenu();
 statemachine.registerState('main_menu', main_menu);
 
 statemachine.registerStateTransition('loading_resources', 'resources_loaded', 'main_menu', (rsc) =>
@@ -43,7 +43,7 @@ statemachine.registerStateTransition('loading_resources', 'resources_loaded', 'm
 	main_menu.run();
 });
 
-const critical_error = new failure.CriticalErrorInformer();
+const critical_error = new viewablefailures.CriticalErrorInformer();
 statemachine.registerState('critical_error', critical_error);
 
 statemachine.registerStateTransition('loading_resources', 'resource_failed_to_load', 'critical_error', () =>
@@ -51,20 +51,20 @@ statemachine.registerStateTransition('loading_resources', 'resource_failed_to_lo
 	critical_error.setErrorMessageText('A critical error occurred while loading resources :(');
 	critical_error.run();
 });
-statemachine.registerStateTransition('critical_error', 'restart', 'loading_resources', resourceloader.run);
+statemachine.registerStateTransition('critical_error', 'restart', 'loading_resources', resource_loader.run);
 
-const game = new gameview.Game();
-statemachine.registerState('in_game', game);
+const game_session = new game.Game();
+statemachine.registerState('in_game', game_session);
 
 statemachine.registerStateTransition('main_menu', 'start_game', 'in_game', (rsc) =>
 {
-	game.registerResources(rsc);
+	game_session.registerResources(rsc);
 
 	// XXX: No need to re-register resources after they've been registered once.
 	statemachine.deregisterStateTransition('main_menu', 'start_game');
-	statemachine.registerStateTransition('main_menu', 'start_game', 'in_game', game.run);
+	statemachine.registerStateTransition('main_menu', 'start_game', 'in_game', game_session.run);
 
-	game.run();
+	game_session.run();
 });
 
 statemachine.setInitialState('loading_resources');
