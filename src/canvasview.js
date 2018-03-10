@@ -42,6 +42,11 @@ export default class CanvasView
 		// TODO
 	}
 
+	getHandlersForExternalEvents ()
+	{
+		return { 'did_resize': this.canvResized };
+	}
+
 	_render ()
 	{
 		// Subclasses must implement this method themselves.

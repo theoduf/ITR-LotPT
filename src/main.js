@@ -82,9 +82,17 @@ function sizeCanvas (canv, ctx)
 	canv.height = height;
 }
 
-statemachine.registerHandlerForExternalEvent('loading_resources', resource_loader.canvResized, 'did_resize');
-statemachine.registerHandlerForExternalEvent('main_menu', main_menu.canvResized, 'did_resize');
-statemachine.registerHandlerForExternalEvent('critical_error', critical_error.canvResized, 'did_resize');
+for (let state_name of Object.keys(statemachine.states))
+{
+	const state = statemachine.states[state_name];
+
+	const handlers = state.getHandlersForExternalEvents();
+
+	for (let ext_evt_name of Object.keys(handlers))
+	{
+		statemachine.registerHandlerForExternalEvent(state_name, handlers[ext_evt_name], ext_evt_name);
+	}
+}
 
 window.addEventListener('load', () =>
 {
