@@ -57,6 +57,7 @@ export class MainMenu
 	registerResources (resources)
 	{
 		this.resources = resources;
+		console.log('Resources registered.', resources);
 	}
 
 	run ()
