@@ -14,22 +14,19 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-export class ResourceLoader
+import CanvasView from './canvasview.js';
+
+export class ResourceLoader extends CanvasView
 {
 	constructor (resources_pending)
 	{
+		super();
+
 		this.resources_pending = resources_pending;
 
 		this.num_resources_to_load = undefined;
 		this.num_resources_loaded = 0;
 		this.num_resources_failed_to_load = 0;
-
-		this.statemachine = undefined;
-
-		this.canv = undefined;
-		this.ctx = undefined;
-
-		this.running = false;
 	}
 
 	_loadResources ()
@@ -118,30 +115,12 @@ export class ResourceLoader
 		}
 	}
 
-	associateStatemachine (statemachine)
-	{
-		this.statemachine = statemachine;
-	}
-
-	setCanv (canv, ctx)
-	{
-		this.canv = canv;
-		this.ctx = ctx;
-	}
-
 	run ()
 	{
 		this.running = true;
-		console.log('Resource loader running.');
 
 		this._loadResources();
 
 		window.requestAnimationFrame(this._render.bind(this));
-	}
-
-	stop ()
-	{
-		this.running = false;
-		console.log('Resource loader has been stopped.');
 	}
 }

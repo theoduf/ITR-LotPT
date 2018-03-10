@@ -14,29 +14,47 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-import CanvasView from './canvasview.js';
-
-export class CriticalErrorInformer extends CanvasView
+export default class CanvasView
 {
 	constructor ()
 	{
-		super();
+		this.statemachine = undefined;
 
-		this.msgtext = undefined;
+		this.canv = undefined;
+		this.ctx = undefined;
+
+		this.running = false;
+	}
+
+	associateStatemachine (statemachine)
+	{
+		this.statemachine = statemachine;
+	}
+
+	setCanv (canv, ctx)
+	{
+		this.canv = canv;
+		this.ctx = ctx;
+	}
+
+	canvResized ()
+	{
+		// TODO
 	}
 
 	_render ()
 	{
-		// TODO
-
-		if (this.running)
-		{
-			window.requestAnimationFrame(this._render.bind(this));
-		}
+		// Subclasses must implement this method themselves.
 	}
 
-	setErrorMessageText (msgtext)
+	run ()
 	{
-		this.msgtext = msgtext;
+		this.running = true;
+		window.requestAnimationFrame(this._render.bind(this));
+	}
+
+	stop ()
+	{
+		this.running = false;
 	}
 }

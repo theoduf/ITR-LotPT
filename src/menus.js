@@ -14,16 +14,13 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-export class MainMenu
+import CanvasView from './canvasview.js';
+
+export class MainMenu extends CanvasView
 {
 	constructor ()
 	{
-		this.statemachine = undefined;
-
-		this.canv = undefined;
-		this.ctx = undefined;
-
-		this.running = false;
+		super();
 
 		this.resources = undefined;
 	}
@@ -33,9 +30,16 @@ export class MainMenu
 		const canv = this.canv;
 		const ctx = this.ctx;
 
-		ctx.clearRect(0, 0, canv.width, canv.height);
+		// TODO: Proper menu
 
-		// TODO
+		ctx.fillStyle = '#000';
+		ctx.fillRect(0, 0, canv.width, canv.height);
+
+		const default_font = ctx.font;
+		ctx.font = '32pt sans-serif';
+		ctx.fillStyle = '#fff';
+		ctx.fillText('Press SPACE to start game', canv.width / 2, canv.height / 2);
+		ctx.font = default_font;
 
 		if (this.running)
 		{
@@ -43,33 +47,9 @@ export class MainMenu
 		}
 	}
 
-	associateStatemachine (statemachine)
-	{
-		this.statemachine = statemachine;
-	}
-
-	setCanv (canv, ctx)
-	{
-		this.canv = canv;
-		this.ctx = ctx;
-	}
-
 	registerResources (resources)
 	{
 		this.resources = resources;
 		console.log('Resources registered.', resources);
-	}
-
-	run ()
-	{
-		this.running = true;
-		console.log('Main menu running.');
-		window.requestAnimationFrame(this._render.bind(this));
-	}
-
-	stop ()
-	{
-		this.running = false;
-		console.log('Main menu has been stopped.');
 	}
 }

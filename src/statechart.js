@@ -25,6 +25,7 @@ export class StateMachine
 
 		this.states = {};
 		this.state_transitions = {};
+		this.handlers_external_events = {};
 
 		this.current_statename = undefined;
 	}
@@ -62,6 +63,24 @@ export class StateMachine
 		{
 			this.state_transitions[current_statename][evt] =
 				{ 'next_statename': next_statename, 'call_f': call_f};
+		}
+	}
+
+	registerHandlerForExternalEvent (current_statename, handler_f, evt)
+	{
+		if (!(this.handlers_external_events.hasOwnProperty(current_statename)))
+		{
+			this.handlers_external_events[current_statename] = {};
+		}
+
+		if (this.handlers_external_events[current_statename].hasOwnProperty(evt))
+		{
+			throw `Handler for external event ${evt} has already been `
+				+ `registered for state ${current_statename}!`;
+		}
+		else
+		{
+			this.handlers_external_events[current_statename][evt] = handler_f;
 		}
 	}
 
@@ -108,7 +127,7 @@ export class StateMachine
 
 		if (this.state_transitions[this.current_statename].hasOwnProperty(evt))
 		{
-			const sn = this.state_transitions[this.current_statename][evt]['new_statename'];
+			const sn = this.state_transitions[this.current_statename][evt]['next_statename'];
 			const cf = this.state_transitions[this.current_statename][evt]['call_f'];
 
 			this.current_statename = sn;
@@ -119,6 +138,24 @@ export class StateMachine
 		{
 			console.log('State machine does not know where to send this event '
 				+ `given its current state ${this.current_statename}.`);
+		}
+	}
+
+	externalInform (evt)
+	{
+		console.log('State machine was informed of an external event:', evt);
+
+		if (this.handlers_external_events.hasOwnProperty(this.current_statename)
+			&& this.handlers_external_events[this.current_statename].hasOwnProperty(evt))
+		{
+			const handler_f = this.handlers_external_events[this.current_statename][evt];
+
+			handler_f();
+		}
+		else
+		{
+			console.log(`Current state ${this.current_statename} does not `
+				+ 'have the handler required for this event.');
 		}
 	}
 }

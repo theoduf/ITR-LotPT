@@ -56,11 +56,71 @@ statemachine.registerStateTransition('critical_error', 'loading_resources', reso
 
 statemachine.setInitialState('loading_resources');
 
+function sizeCanvas (canv, ctx)
+{
+	const scale = window.devicePixelRatio;
+	let width, height;
+
+	if (window.innerWidth > 16 * window.innerHeight / 10)
+	{
+		height = window.innerHeight;
+		width = height * 16 / 10;
+	}
+	else
+	{
+		width = window.innerWidth;
+		height = width * 10 / 16;
+	}
+
+	canv.style.width = Math.floor(width) + 'px';
+	canv.style.height = Math.floor(height) + 'px';
+
+	width *= scale;
+	height *= scale;
+
+	canv.width = width;
+	canv.height = height;
+}
+
+statemachine.registerHandlerForExternalEvent('loading_resources', resource_loader.canvResized, 'did_resize');
+statemachine.registerHandlerForExternalEvent('main_menu', main_menu.canvResized, 'did_resize');
+statemachine.registerHandlerForExternalEvent('critical_error', critical_error.canvResized, 'did_resize');
+
+window.addEventListener('load', () =>
 {
 	const canv = document.getElementById('game');
 	const ctx = canv.getContext('2d');
 
+	sizeCanvas(canv, ctx);
+	ctx.fillStyle = '#fff';
+	ctx.fillRect(0, 0, canv.width, canv.height);
+	canv.hidden = false;
+
 	statemachine.setCanv(canv, ctx);
 
+	function sizeMainCanvas ()
+	{
+		sizeCanvas(canv, ctx);
+		statemachine.externalInform('did_resize');
+	}
+
+	let resizetimer;
+
+	window.addEventListener('resize', () =>
+	{
+		clearTimeout(resizetimer);
+
+		resizetimer = setTimeout(sizeMainCanvas, 30);
+	});
+
+	let orientationtimer;
+
+	window.addEventListener('orientationchange', () =>
+	{
+		clearTimeout(orientationtimer);
+
+		orientationtimer = setTimeout(sizeMainCanvas, 250);
+	});
+
 	statemachine.run();
-}
+});

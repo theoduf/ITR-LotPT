@@ -443,29 +443,6 @@ let quitToMainMenu;
 
 function sizeCanvases ()
 {
-	const scale = window.devicePixelRatio;
-	let width, height;
-
-	if (window.innerWidth > 16 * window.innerHeight / 10)
-	{
-		height = window.innerHeight;
-		width = height * 16 / 10;
-	}
-	else
-	{
-		width = window.innerWidth;
-		height = width * 10 / 16;
-	}
-
-	canv.style.width = Math.floor(width) + 'px';
-	canv.style.height = Math.floor(height) + 'px';
-
-	width *= scale;
-	height *= scale;
-
-	canv.width = width;
-	canv.height = height;
-
 	tcanv.width = width;
 	tcanv.height = height;
 
@@ -639,20 +616,6 @@ window.addEventListener('load', () =>
 		if (++num_resources_loaded === num_resources_to_load)
 		{
 			calculateWorldObjectData();
-
-			window.addEventListener('resize', () =>
-			{
-				clearTimeout(resizetimer);
-
-				resizetimer = setTimeout(adaptToDims, 30);
-			});
-
-			window.addEventListener('orientationchange', () =>
-			{
-				clearTimeout(orientationtimer);
-
-				orientationtimer = setTimeout(adaptToDims, 250);
-			});
 
 			adaptToDims();
 			mainMenu();

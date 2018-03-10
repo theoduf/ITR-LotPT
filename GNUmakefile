@@ -1,4 +1,4 @@
-JSSRC:= src/license.js src/main.js src/failure.js src/menus.js src/resourceloader.js src/statechart.js
+JSSRC:= src/license.js src/main.js src/canvasview.js src/failure.js src/menus.js src/resourceloader.js src/statechart.js
 JSSRCDIST:= $(subst src/,dist/,${JSSRC})
 CLSRCARG:= $(subst src/,,${JSSRC})
 
