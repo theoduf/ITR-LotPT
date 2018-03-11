@@ -86,7 +86,7 @@ export class ThirdPersonSideViewCamera extends Camera
 
 		this.angle_max_x_distortion = Math.acos(0);
 
-		const flatland_tower_positive_extent_x_pu = 14;
+		const flatland_tower_positive_extent_x_pu = 24;
 
 		this.flatland_extent_x_pu = 2 * flatland_tower_positive_extent_x_pu;
 		this.flatland_extent_y_pu = this.flatland_extent_x_pu * 10 / 16;
@@ -107,7 +107,7 @@ export class ThirdPersonSideViewCamera extends Camera
 		this.middlex = this.canv.width / 2;
 		this.middley = this.canv.height / 2;
 
-		this.tile_linewidth = Math.min(Math.max(this.canv.height / 200, 1.25), 1.75);
+		this.tile_linewidth = Math.min(Math.max(this.canv.height / 200, 0.75), 1) * this.canv.scale;
 	}
 
 	updatePosition (player)
@@ -141,11 +141,12 @@ export class ThirdPersonSideViewCamera extends Camera
 
 		ctx.clearRect(0, 0, canv.width, canv.height);
 
-		const num_points_per_half_y_axis = 21;
-		const num_points_per_column = 2 * num_points_per_half_y_axis + 1;
 
-		const num_points_per_half_x_axis = 14;
+		const num_points_per_half_x_axis = 24;
 		const num_points_per_row = 2 * num_points_per_half_x_axis + 1;
+
+		const num_points_per_half_y_axis = num_points_per_half_x_axis * 10 / 16 * 1.75;
+		const num_points_per_column = 2 * num_points_per_half_y_axis + 1;
 
 		const brickratio = 2;
 		const angleratio = 2 * num_points_per_half_x_axis / Math.PI;
