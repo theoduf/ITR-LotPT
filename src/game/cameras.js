@@ -107,7 +107,7 @@ export class ThirdPersonSideViewCamera extends Camera
 		this.middlex = this.canv.width / 2;
 		this.middley = this.canv.height / 2;
 
-		this.tile_linewidth = Math.max(this.canv.height / 200, 1.25);
+		this.tile_linewidth = Math.min(Math.max(this.canv.height / 200, 1.25), 1.75);
 	}
 
 	updatePosition (player)
