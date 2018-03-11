@@ -96,13 +96,19 @@ export class ThirdPersonSideViewCamera extends Camera
 		this.middley = undefined;
 
 		this.tile_linewidth = undefined;
+
+		this.num_points_per_half_x_axis = 24;
+		this.num_points_per_row = 2 * this.num_points_per_half_x_axis + 1;
+
+		this.num_points_per_half_y_axis = this.num_points_per_half_x_axis * 10 / 16 * 1.75;
+		this.num_points_per_column = 2 * this.num_points_per_half_y_axis + 1;
 	}
 
 	calculateDimensions ()
 	{
 		super.calculateDimensions();
 
-		this.unitpx = this.canv.height / this.flatland_extent_y_pu;
+		this.unitpx = this.canv.height / 30;
 
 		this.middlex = this.canv.width / 2;
 		this.middley = this.canv.height / 2;
@@ -127,7 +133,7 @@ export class ThirdPersonSideViewCamera extends Camera
 
 	distortionXY (x)
 	{
-		return Math.cos(this.angle_max_x_distortion * x / this.flatland_extent_x_pu) / 1.25;
+		return Math.cos(this.angle_max_x_distortion * x / this.flatland_extent_x_pu);
 	}
 
 	render ()
@@ -141,15 +147,8 @@ export class ThirdPersonSideViewCamera extends Camera
 
 		ctx.clearRect(0, 0, canv.width, canv.height);
 
-
-		const num_points_per_half_x_axis = 24;
-		const num_points_per_row = 2 * num_points_per_half_x_axis + 1;
-
-		const num_points_per_half_y_axis = num_points_per_half_x_axis * 10 / 16 * 1.75;
-		const num_points_per_column = 2 * num_points_per_half_y_axis + 1;
-
 		const brickratio = 2;
-		const angleratio = 2 * num_points_per_half_x_axis / Math.PI;
+		const angleratio = 2 * this.num_points_per_half_x_axis / Math.PI;
 
 		if ((this.y_pu % 1) !== (this.prev_y_pu % 1) ||
 			(this.angle_rad % angleratio) != (this.prev_angle_rad % angleratio))
@@ -160,7 +159,7 @@ export class ThirdPersonSideViewCamera extends Camera
 			ctx.strokeStyle = '#0ff';
 			ctx.lineWidth = this.tile_linewidth;
 
-			const left_x = -num_points_per_half_x_axis;
+			const left_x = -this.num_points_per_half_x_axis;
 			const s_utmost = this.distortionXY(left_x);
 			const left_x_d = left_x * s_utmost;
 			const left_x_d_screen = this.middlex + left_x_d * this.unitpx;
@@ -181,11 +180,11 @@ export class ThirdPersonSideViewCamera extends Camera
 			ctx.lineTo(right_x_d_screen, bottom_y_d_screen);
 			ctx.stroke();
 
-			for (let i = 0 ; i < num_points_per_column ; i++)
+			for (let i = 0 ; i < this.num_points_per_column ; i++)
 			{
-				const y = num_points_per_half_y_axis - i - (this.y_pu % 2);
+				const y = this.num_points_per_half_y_axis - i - (this.y_pu % 2);
 
-				const first_in_row_x = -num_points_per_half_x_axis;
+				const first_in_row_x = -this.num_points_per_half_x_axis;
 
 				const s0 = this.distortionXY(first_in_row_x);
 
@@ -200,7 +199,7 @@ export class ThirdPersonSideViewCamera extends Camera
 				ctx.beginPath();
 				ctx.moveTo(first_in_row_x_d_screen, first_in_row_y_d_screen);
 
-				for (let j = 0 ; j < num_points_per_row ; j++)
+				for (let j = 0 ; j < this.num_points_per_row ; j++)
 				{
 					const x = first_in_row_x + j;
 
@@ -235,7 +234,7 @@ export class ThirdPersonSideViewCamera extends Camera
 					ctx.lineTo(first_x_d_screen, first_y_d2_screen);
 				}
 
-				for (let j = 2 ; j < num_points_per_row - 1 ; j += 2)
+				for (let j = 2 ; j < this.num_points_per_row - 1 ; j += 2)
 				{
 					const x = first_in_row_x + j + (i % 2 ? 1 : 0) - (this.angle_rad / angleratio) % 2;
 
@@ -249,11 +248,11 @@ export class ThirdPersonSideViewCamera extends Camera
 					ctx.lineTo(x_d_screen, y_d2_screen);
 				}
 
-				const last_x_vertical = num_points_per_half_x_axis + 1 - (i % 2 ? 1 : 0) - (this.angle_rad / angleratio) % 2;
+				const last_x_vertical = this.num_points_per_half_x_axis + 1 - (i % 2 ? 1 : 0) - (this.angle_rad / angleratio) % 2;
 				const last_s_vertical = this.distortionXY(last_x_vertical);
 				const last_x_d_screen = this.middlex + last_s_vertical * last_x_vertical * this.unitpx;
 
-				const last_in_row_x_d_screen = this.middlex + num_points_per_half_x_axis * last_s_vertical * this.unitpx;
+				const last_in_row_x_d_screen = this.middlex + this.num_points_per_half_x_axis * last_s_vertical * this.unitpx;
 
 				if (last_x_d_screen < last_in_row_x_d_screen)
 				{

@@ -23,14 +23,14 @@ export class Character
 		this.angle_rad = 0;
 		this.y_pu = 0;
 
-		this.angular_velocity_rad_s = 0;
-		this.vertical_velocity_pu_s = 0.08;
+		this.angular_velocity_rad_s = Math.PI / 16;
+		this.vertical_velocity_pu_s = 0.05;
 
-		this.angular_acceleration_rad_s2 = 1;
-		this.vertical_acceleration_pu_s2 = 0;
+		this.angular_acceleration_rad_s2 = Math.PI / 8;
+		this.vertical_acceleration_pu_s2 = 0.01;
 
-		this.angular_velocity_rad_s_clamp_abs_max = Math.PI / 8;
-		this.vertical_velocity_pu_s_clamp_abs_max = 0.1337;
+		this.angular_velocity_rad_s_clamp_abs_max = Math.PI / 2;
+		this.vertical_velocity_pu_s_clamp_abs_max = 0.25;
 	}
 }
 
