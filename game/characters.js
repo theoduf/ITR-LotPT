@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2018 Erik Nordstrøm <erik@nordstroem.no>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -12,4 +12,32 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */*{margin:0;padding:0}html{background:#000}html,body{height:100%}#game{position:absolute;top:0;right:0;bottom:0;left:0;margin:auto;background:linear-gradient(#0084ff,#449)}
+ */
+
+export class Character
+{
+	constructor ()
+	{
+		this.health = 100;
+
+		this.angle_rad = 0;
+		this.y_pu = 0;
+
+		this.angular_velocity_rad_s = Math.PI / 16;
+		this.vertical_velocity_pu_s = 0.05;
+
+		this.angular_acceleration_rad_s2 = Math.PI / 8;
+		this.vertical_acceleration_pu_s2 = 0.01;
+
+		this.angular_velocity_rad_s_clamp_abs_max = Math.PI / 2;
+		this.vertical_velocity_pu_s_clamp_abs_max = 0.25;
+	}
+}
+
+export class Player extends Character
+{
+	constructor ()
+	{
+		super();
+	}
+}
