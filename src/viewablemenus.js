@@ -164,7 +164,6 @@ export class PauseMenu extends state.CanvasViewableState
 
 	canvResized ()
 	{
-		console.log('Yohoo');
 		this._render();
 	}
 

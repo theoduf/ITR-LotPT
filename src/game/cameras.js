@@ -85,7 +85,6 @@ export class ThirdPersonSideViewCamera extends Camera
 		super(gamesession);
 
 		this.angle_max_x_distortion = Math.acos(0);
-		console.log(this.angle_max_x_distortion);
 
 		const flatland_tower_positive_extent_x_pu = 14;
 
@@ -99,8 +98,6 @@ export class ThirdPersonSideViewCamera extends Camera
 
 	calculateDimensions ()
 	{
-		console.log('yeee');
-
 		super.calculateDimensions();
 
 		this.unitpx = this.canv.height / this.flatland_extent_y_pu;
@@ -140,19 +137,19 @@ export class ThirdPersonSideViewCamera extends Camera
 
 		ctx.clearRect(0, 0, canv.width, canv.height);
 
+		const num_points_per_half_y_axis = 21;
+		const num_points_per_column = 2 * num_points_per_half_y_axis + 1;
+
+		const num_points_per_half_x_axis = 14;
+		const num_points_per_row = 2 * num_points_per_half_x_axis + 1;
+
 		const brickratio = 2;
-		const angleratio = 2 * Math.PI / 32;
+		const angleratio = 2 * num_points_per_half_x_axis / Math.PI;
 
 		if ((this.y_pu % 1) !== (this.prev_y_pu % 1) ||
 			(this.angle_rad % angleratio) != (this.prev_angle_rad % angleratio))
 		{
 			this.dirty = true;
-
-			const num_points_per_half_y_axis = 21;
-			const num_points_per_column = 2 * num_points_per_half_y_axis + 1;
-
-			const num_points_per_half_x_axis = 14;
-			const num_points_per_row = 2 * num_points_per_half_x_axis + 1;
 
 			ctx.fillStyle = '#449'; // '#f00'; // It actually almost looks better in red... :/
 			ctx.strokeStyle = '#0ff';
@@ -199,7 +196,7 @@ export class ThirdPersonSideViewCamera extends Camera
 
 				for (let j = 0 ; j < num_points_per_row ; j++)
 				{
-					const x = first_in_row_x + j; // + this.angle_rad % angleratio);
+					const x = first_in_row_x + j;
 
 					const s = this.distortionXY(x);
 
@@ -218,22 +215,48 @@ export class ThirdPersonSideViewCamera extends Camera
 
 				ctx.beginPath();
 
-				for (let j = 0 ; j < (num_points_per_row - 1) ; j += 2)
+				const first_x_vertical = first_in_row_x + 1 + (i % 2 ? 0 : 1) - (this.angle_rad / angleratio) % 2;
+				const first_s_vertical = this.distortionXY(first_x_vertical);
+				const first_x_d_screen = this.middlex + first_s_vertical * first_x_vertical * this.unitpx;
+
+				if (first_x_d_screen > first_in_row_x_d_screen)
 				{
-					const x = first_in_row_x + j + (i % 2 ? 1 : 0);
+
+					const first_y_d1_screen = this.middley - first_s_vertical * y * this.unitpx;
+					const first_y_d2_screen = this.middley - first_s_vertical * (y - 1) * this.unitpx;
+
+					ctx.moveTo(first_x_d_screen, first_y_d1_screen);
+					ctx.lineTo(first_x_d_screen, first_y_d2_screen);
+				}
+
+				for (let j = 2 ; j < num_points_per_row - 1 ; j += 2)
+				{
+					const x = first_in_row_x + j + (i % 2 ? 1 : 0) - (this.angle_rad / angleratio) % 2;
 
 					const s = this.distortionXY(x);
 
-					const x_d = s * x;
-					const y_d1 = s * y;
-					const y_d2 = s * (y - 1);
-
-					const x_d_screen = this.middlex + x_d * this.unitpx;
-					const y_d1_screen = this.middley - y_d1 * this.unitpx;
-					const y_d2_screen = this.middley - y_d2 * this.unitpx;
+					const x_d_screen = this.middlex + s * x * this.unitpx;
+					const y_d1_screen = this.middley - s * y * this.unitpx;
+					const y_d2_screen = this.middley - s * (y - 1) * this.unitpx;
 
 					ctx.moveTo(x_d_screen, y_d1_screen);
 					ctx.lineTo(x_d_screen, y_d2_screen);
+				}
+
+				const last_x_vertical = num_points_per_half_x_axis + 1 - (i % 2 ? 1 : 0) - (this.angle_rad / angleratio) % 2;
+				const last_s_vertical = this.distortionXY(last_x_vertical);
+				const last_x_d_screen = this.middlex + last_s_vertical * last_x_vertical * this.unitpx;
+
+				const last_in_row_x_d_screen = this.middlex + num_points_per_half_x_axis * last_s_vertical * this.unitpx;
+
+				if (last_x_d_screen < last_in_row_x_d_screen)
+				{
+
+					const last_y_d1_screen = this.middley - last_s_vertical * (y + 1) * this.unitpx;
+					const last_y_d2_screen = this.middley - last_s_vertical * y * this.unitpx;
+
+					ctx.moveTo(last_x_d_screen, last_y_d1_screen);
+					ctx.lineTo(last_x_d_screen, last_y_d2_screen);
 				}
 
 				ctx.stroke();
