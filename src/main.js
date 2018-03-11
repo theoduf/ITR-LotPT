@@ -64,6 +64,7 @@ statemachine.registerStateTransition('main_menu', 'start_game', 'in_game', (rsc)
 	statemachine.deregisterStateTransition('main_menu', 'start_game');
 	statemachine.registerStateTransition('main_menu', 'start_game', 'in_game', game_session.run);
 
+	game_session.calculateDimensions();
 	game_session.run();
 });
 

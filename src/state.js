@@ -56,16 +56,12 @@ export class CanvasHoldingState
 
 	run ()
 	{
-		console.log('keh', this, this.window_listeners);
-
 		for (let event_name of Object.keys(this.window_listeners))
 		{
 			window.addEventListener(event_name, this.window_listeners[event_name]);
 		}
 
 		this.running = true;
-
-		console.log('yuh');
 
 		this._update();
 	}

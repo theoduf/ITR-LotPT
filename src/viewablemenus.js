@@ -127,7 +127,7 @@ export class PauseMenu extends state.CanvasViewableState
 
 	_render ()
 	{
-		if (this.gamesession.active_camera.renderInFlight)
+		if (this.gamesession.active_camera.render_in_flight)
 		{
 			window.requestAnimationFrame(this._render.bind(this));
 			return;

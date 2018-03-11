@@ -20,14 +20,17 @@ export class Character
 	{
 		this.health = 100;
 
-		this.angle_pu = 0;
+		this.angle_rad = 0;
 		this.y_pu = 0;
 
-		this.angular_velocity_pu = 0;
-		this.vertical_velocity_pu = 0;
+		this.angular_velocity_rad_s = 0;
+		this.vertical_velocity_pu_s = 0;
 
-		this.angular_acceleration_pu = 0;
-		this.vertical_acceleration_pu = 0;
+		this.angular_acceleration_rad_s2 = 1;
+		this.vertical_acceleration_pu_s2 = 1;
+
+		this.angular_velocity_rad_s_clamp_abs_max = Math.PI / 4;
+		this.vertical_velocity_pu_s_clamp_abs_max = 0.1337;
 	}
 }
 

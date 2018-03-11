@@ -55,7 +55,13 @@ export class Game extends state.CanvasHoldingState
 
 		this.player = new characters.Player();
 
-		this.world_objects = [this.player];
+		this.world_objects =
+		{
+			'tower': this.tower,
+			'player': this.player
+		};
+
+		this.movable_world_objects = [this.player];
 
 		this.active_camera = this.available_cameras['third_person_side_view_camera'];
 
@@ -77,6 +83,16 @@ export class Game extends state.CanvasHoldingState
 		{
 			this.available_cameras[camera_name].setCanv(canv, ctx);
 		}
+	}
+
+	calculateDimensions ()
+	{
+		this.active_camera.calculateDimensions();
+	}
+
+	canvResized ()
+	{
+		this.calculateDimensions();
 	}
 
 	getWorldObjects ()
@@ -105,14 +121,43 @@ export class Game extends state.CanvasHoldingState
 			dt_recent.push(dt);
 		}
 
-		this.player.angle_pu = (this.player.angle_pu + this.player.angular_velocity_pu * dt / 1000) % (2 * Math.PI);
-		this.player.y_pu += this.player.vertical_velocity_pu * dt / 1000;
+		for (let movable of this.movable_world_objects)
+		{
+			movable.angular_velocity_rad_s += movable.angular_acceleration_rad_s2 * dt / 1000;
+
+			if (movable.angular_velocity_rad_s > movable.angular_velocity_rad_s_clamp_abs_max)
+			{
+				movable.angular_velocity_rad_s = movable.angular_velocity_rad_s_clamp_abs_max;
+			}
+			else if (movable.angular_velocity_rad_s < -movable.angular_velocity_rad_s_clamp_abs_max)
+			{
+				movable.angular_velocity_rad_s = -movable.angular_velocity_rad_s_clamp_abs_max;
+			}
+
+			movable.angle_rad += movable.angular_velocity_rad_s;
+
+			movable.vertical_velocity_pu_s += movable.vertical_acceleration_pu_s2 * dt / 1000;
+
+			if (movable.vertical_velocity_pu_s > movable.vertical_velocity_pu_s_clamp_abs_max)
+			{
+				movable.vertical_velocity_pu_s = movable.vertical_velocity_pu_s_clamp_abs_max;
+			}
+			else if (movable.vertical_velocity_pu_s < -movable.vertical_velocity_pu_s_clamp_abs_max)
+			{
+				movable.vertical_velocity_pu_s = -movable.vertical_velocity_pu_s_clamp_abs_max;
+			}
+
+			movable.y_pu += movable.vertical_velocity_pu_s;
+		}
+
+		//console.log(this.player.angle_rad, this.player.y_pu);
 
 		// TODO: Update game object positions.
 
 		// TODO: Check collisions.
 
 		this.active_camera.updatePosition(this.player);
+		this.active_camera.updateLookAt(this.player);
 		this.active_camera.render();
 
 		this.t_prev = t_now;
