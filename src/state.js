@@ -80,6 +80,13 @@ export class CanvasHoldingState
 
 export class CanvasViewableState extends CanvasHoldingState
 {
+	constructor ()
+	{
+		super();
+
+		this.anim_req = undefined;
+	}
+
 	_render ()
 	{
 		// Subclasses must implement this method themselves.
@@ -95,5 +102,14 @@ export class CanvasViewableState extends CanvasHoldingState
 		this.running = true;
 
 		this._render();
+	}
+
+	stop ()
+	{
+		window.cancelAnimationFrame(this.anim_req);
+
+		this.anim_req = null;
+
+		super.stop();
 	}
 }

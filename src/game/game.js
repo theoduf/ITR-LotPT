@@ -67,6 +67,8 @@ export class Game extends state.CanvasHoldingState
 
 		this.t_prev = undefined;
 		this.dt_recent = new Array(240);
+
+		this.anim_req = undefined;
 	}
 
 	registerResources (resources)
@@ -162,6 +164,13 @@ export class Game extends state.CanvasHoldingState
 
 		this.t_prev = t_now;
 
-		window.requestAnimationFrame(this._update.bind(this));
+		this.anim_req = window.requestAnimationFrame(this._update.bind(this));
+	}
+
+	stop ()
+	{
+		window.cancelAnimationFrame(this.anim_req);
+
+		super.stop();
 	}
 }

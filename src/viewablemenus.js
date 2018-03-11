@@ -74,7 +74,7 @@ export class MainMenu extends state.CanvasViewableState
 
 		if (this.running)
 		{
-			window.requestAnimationFrame(this._render.bind(this));
+			this.anim_req = window.requestAnimationFrame(this._render.bind(this));
 		}
 	}
 }
@@ -129,7 +129,7 @@ export class PauseMenu extends state.CanvasViewableState
 	{
 		if (this.gamesession.active_camera.render_in_flight)
 		{
-			window.requestAnimationFrame(this._render.bind(this));
+			this.anim_req = window.requestAnimationFrame(this._render.bind(this));
 			return;
 		}
 

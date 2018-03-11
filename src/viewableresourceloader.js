@@ -111,7 +111,7 @@ export class ResourceLoader extends state.CanvasViewableState
 
 		if (this.running)
 		{
-			window.requestAnimationFrame(this._render.bind(this));
+			this.anim_req = window.requestAnimationFrame(this._render.bind(this));
 		}
 	}
 
@@ -121,6 +121,6 @@ export class ResourceLoader extends state.CanvasViewableState
 
 		this._loadResources();
 
-		window.requestAnimationFrame(this._render.bind(this));
+		this.anim_req = window.requestAnimationFrame(this._render.bind(this));
 	}
 }

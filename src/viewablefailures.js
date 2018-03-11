@@ -31,7 +31,7 @@ export class CriticalErrorInformer extends state.CanvasViewableState
 
 		if (this.running)
 		{
-			window.requestAnimationFrame(this._render.bind(this));
+			this.anim_req = window.requestAnimationFrame(this._render.bind(this));
 		}
 	}
 
