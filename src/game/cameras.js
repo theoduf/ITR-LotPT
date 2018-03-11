@@ -94,6 +94,8 @@ export class ThirdPersonSideViewCamera extends Camera
 		this.unitpx = undefined;
 		this.middlex = undefined;
 		this.middley = undefined;
+
+		this.tile_linewidth = undefined;
 	}
 
 	calculateDimensions ()
@@ -104,6 +106,8 @@ export class ThirdPersonSideViewCamera extends Camera
 
 		this.middlex = this.canv.width / 2;
 		this.middley = this.canv.height / 2;
+
+		this.tile_linewidth = Math.max(this.canv.height / 200, 1.25);
 	}
 
 	updatePosition (player)
@@ -153,7 +157,7 @@ export class ThirdPersonSideViewCamera extends Camera
 
 			ctx.fillStyle = '#449'; // '#f00'; // It actually almost looks better in red... :/
 			ctx.strokeStyle = '#0ff';
-			ctx.lineWidth = 3;
+			ctx.lineWidth = this.tile_linewidth;
 
 			const left_x = -num_points_per_half_x_axis;
 			const s_utmost = this.distortionXY(left_x);
