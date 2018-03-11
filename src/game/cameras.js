@@ -153,6 +153,7 @@ export class ThirdPersonSideViewCamera extends Camera
 
 			ctx.fillStyle = '#449'; // '#f00'; // It actually almost looks better in red... :/
 			ctx.strokeStyle = '#0ff';
+			ctx.lineWidth = 3;
 
 			const left_x = -num_points_per_half_x_axis;
 			const s_utmost = this.distortionXY(left_x);
