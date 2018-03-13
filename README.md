@@ -87,8 +87,10 @@ See the file [assets/LICENSE.md](assets/LICENSE.md) for the CC0 license text.
 
 ### Copyright of third-party CC0 assets
 
-All third-party assets present in the [assets/thirdparty](assets/thirdparty)
+All third-party assets present in the [assets/thirdparty/images](assets/thirdparty/images)
 directory are copyright of [Kenney](http://kenney.nl/).
+
+The soundtrack TowerRunSoundtrack8bit.wav is copyright of [Theodor Hoff](https://github.com/theoduf).
 
 ## Trademark notice
 
